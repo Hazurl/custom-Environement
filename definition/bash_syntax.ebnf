@@ -3,21 +3,17 @@
 ;
 
 <expr> =
-    <term> { "+" <term> }* |
-    <term> { "-" <term> }*
+    <term> { ( "+" | "-" ) <term> }*
 ;
 
 <term> =
-    <factor> { "*" <factor> }* |
-    <factor> { "/" <factor> }* |
-    <factor> { "%" <factor> }*
+    <factor> { ( "*" | "/" | "%" ) <factor> }* |
 ;
 
 <factor> =
     <number> |
     "(" <expr> ")" |
-    "-" <factor> |
-    "+" <factor>
+    ( "+" | "-" ) <factor>
 ;
 
 <number> =
