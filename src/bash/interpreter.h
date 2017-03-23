@@ -20,22 +20,22 @@ public:
     std::string             run                         (std::string code);
 private:  
 
-    enum class              charType;
+    enum class CharType {
+        ALPHA, NUM, OTHER, SPACE
+    };
+
     struct                  Token;
     class                   AST;
 
     std::vector<Token>      tokens;
     AST*                    ast                         = nullptr;
 
+    CharType                getCharType                 (char c);
+
     void                    tokenize                    (std::string code);
     void                    parse                       ();
     std::string             evaluate                    ();
 
-    enum class charType {
-        ALPHA, NUM, DOT, 
-        PLUS, MINUS, DIV, MUL, MOD,
-        PARENTHESIS_LEFT, PARENTHESIS_RIGHT
-    };
 
 
 struct Token {

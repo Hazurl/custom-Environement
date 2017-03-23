@@ -43,13 +43,23 @@ void Interpreter::runTest () {
     std::cout << "TEST" << std::endl;
 }
 
+Interpreter::CharType Interpreter::getCharType (char c) {
+    if (c >= '0' && c <= '9')
+        return CharType::NUM;
+    if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_')
+        return CharType::ALPHA;
+    if (c == ' ' || c == '\t' || c == '\n')
+        return CharType::SPACE;
+
+    return CharType::OTHER;
+}
+
 void Interpreter::tokenize (std::string code) {
 
     std::string curTokenContent = "";
 
     for (char& c : code) {
-        
-          
+        CharType type = getCharType(c);          
     }
     std::cout << std::endl;
 }
