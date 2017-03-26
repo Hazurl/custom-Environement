@@ -1,4 +1,4 @@
-SRC_DIR := src/bash src
+SRC_DIR := lib src/bash src
 
 SRC := $(foreach d,$(SRC_DIR),$(wildcard $(d)/*.cpp))
 
