@@ -7,6 +7,8 @@ Brackets
     ( )
 *)
 
+(* SYNTAX *)
+
 <instruction> =
     <expr>
 ;
