@@ -7,17 +7,17 @@
 #include <string>
 #include <ctime>
 #include <sstream>
-#include <assert.h>
+#include <unordered_set>
 
 //          COLOR
-#define RST  "\x1B[0m"
-#define KRED  "\x1B[31m"
-#define KGRN  "\x1B[32m"
-#define KYEL  "\x1B[33m"
-#define KBLU  "\x1B[34m"
-#define KMAG  "\x1B[35m"
-#define KCYN  "\x1B[36m"
-#define KWHT  "\x1B[37m"
+#define RST  "\033[0m"
+#define KRED  "\033[31m"
+#define KGRN  "\033[32m"
+#define KYEL  "\033[33m"
+#define KBLU  "\033[34m"
+#define KMAG  "\033[35m"
+#define KCYN  "\033[36m"
+#define KWHT  "\033[37m"
 
 #define FRED(x) KRED << x << RST
 #define FGRN(x) KGRN << x << RST
@@ -27,18 +27,18 @@
 #define FCYN(x) KCYN << x << RST
 #define FWHT(x) KWHT << x << RST
 
-#define BOLD(x) "\x1B[1m" << x << RST
-#define UNDL(x) "\x1B[4m" << x << RST
-
-//          LEVEL DEBUG (Flag)
-#define Error 1
-#define Warning 2
-#define Log 4
-#define Info 8
-#define Verbose 16
+#define BOLD(x) "\033[1m" << x << RST
+#define UNDL(x) "\033[4m" << x << RST
 
 class Logger {
 public:
+//          LEVEL DEBUG (Flag)
+    static const unsigned int Error = 1;
+    static const unsigned int Warning = 2;
+    static const unsigned int Log = 4;
+    static const unsigned int Info = 8;
+    static const unsigned int Verbose = 16;
+    static const unsigned int All = Error | Warning | Log | Info | Verbose;
 
     static void error (std::string msg) { Logger::get()._error(msg); }
     static void warning(std::string msg) { Logger::get()._warning(msg); }
@@ -47,7 +47,12 @@ public:
     static void verbose(std::string msg) { Logger::get()._verbose(msg); }
 
     static void redirectTo (unsigned int levels, std::ostream& os) { Logger::get()._redirectTo(levels, os); }
-    static void redirectToFile (unsigned int levels, std::string path) { Logger::get()._redirectToFile(levels, path); }
+    static void redirectToFile (unsigned int levels, char* const path) { Logger::get()._redirectToFile(levels, path); }
+
+    static void beginSection (std::string name, unsigned int level) { Logger::get()._beginSection(name, level); }
+    static void endSection (std::string name) { Logger::get()._endSection(name); }
+    static void hideSection (std::string name) { Logger::get()._hideSection(name); }
+    static void showSection (std::string name, unsigned int level) { Logger::get()._showSection(name, level); }
 
     static void setDatePrinting (bool b)  { Logger::get()._setDatePrinting(b); }
     static void setHourPrinting (bool b)  { Logger::get()._setHourPrinting(b); }
@@ -65,7 +70,14 @@ private:
     void _verbose(std::string msg);
 
     void _redirectTo (unsigned int levels, std::ostream& os);
-    void _redirectToFile (unsigned int levels, std::string path);
+    void _redirectToFile (unsigned int levels, char* const path);
+
+    void _beginSection (std::string name, unsigned int level);
+    void _endSection (std::string name);
+    void _showSection (std::string name, unsigned int level);
+    void _hideSection (std::string name);
+    void header (std::string title, std::ostream& os);
+    bool showThis();
 
     void _setDatePrinting (bool b) { printDate = b; };
     void _setHourPrinting (bool b) { printHour = b; };
@@ -94,6 +106,9 @@ private:
     bool printHour = true;
     bool printDate = false;
     int dateHoursSize = 0;
+
+    std::unordered_set<std::string> sectionHide;
+    std::unordered_set<std::string> inSections;
 };
 
 #endif
