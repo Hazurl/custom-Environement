@@ -78,9 +78,10 @@ public:
     void                    tokenize                    (std::string code);
 
 //              PARSER
-    Token*                  getNextToken                (unsigned int delta = 1);
+    Token*                  getNextToken                (unsigned int delta = 0);
     Token*                  eat                         (Interpreter::Token::Type type = Interpreter::Token::Type::ALL);
     ValueNode*              eatTerm                     ();
+    BinOpNode*              eatBinOp                    ();
     InstructionNode*        eatInstruction              ();
     ExpressionNode*         eatExpression               ();
     void                    parse                       ();

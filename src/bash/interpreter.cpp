@@ -45,16 +45,20 @@ std::string Interpreter::run(std::string code) {
 
     Logger::log("Tokenize");
     tokenize(code);
-    Logger::info("Tokens : ");
+    Logger::beginSection("Tokens", Logger::Info);
     for (auto t : tokens) {
         Logger::verbose("At pos = " + std::to_string(t->position) + ", " + Token::type_to_string(t->type) + " '" + t->content + "'");
     }
-/*
-    Logger::log("Parsing");
+    Logger::endSection("Tokens");
+
+    Logger::beginSection("Parser", Logger::Info);
     parse();
-    Logger::log("Evaluate");
-    return evaluate();*/
-    return "<token only>";
+    Logger::endSection("Parser");
+    
+    Logger::beginSection("Evaluate", Logger::Info);
+    auto ret = evaluate();
+    Logger::endSection("Evaluate");
+    return ret;
 }
 
 void Interpreter::runTest () {
@@ -226,6 +230,7 @@ void Interpreter::InstructionNode::visit () {
 //      =====   PARSER    =====
 
 Interpreter::InstructionNode* Interpreter::eatInstruction () {
+    Logger::info("eatInstruction");
     auto ins = new InstructionNode();
     ins->expr = eatExpression();
 
@@ -233,26 +238,37 @@ Interpreter::InstructionNode* Interpreter::eatInstruction () {
 }
 
 Interpreter::ExpressionNode* Interpreter::eatExpression () {
+    Logger::info("eatExpression");
     auto expr = new ExpressionNode();
-    auto vNode = eatTerm();
 
-    auto nextT = getNextToken();
-    if (nextT->type == Interpreter::Token::Type::PLUS || nextT->type == Interpreter::Token::Type::MINUS) {
-        Logger::verbose("eat a binOp");
-        auto opNode = new BinOpNode();
-        opNode->leftValue = vNode;
-        opNode->token = eat();
-        opNode->rightValue = eatTerm();
-        expr->valueNode = opNode;
-    } else
-        expr->valueNode = vNode;
+    auto tok_1 = getNextToken(1);
+    if (tok_1->type == Interpreter::Token::Type::PLUS || tok_1->type == Interpreter::Token::Type::MINUS)
+        expr->valueNode = eatBinOp();
+    else
+        expr->valueNode = eatTerm();
 
     return expr;
+}
+
+Interpreter::BinOpNode* Interpreter::eatBinOp() {
+    Logger::info("eatBinOp");
+    auto opNode = new BinOpNode();
+    opNode->leftValue = eatTerm();
+    opNode->token = eat();
+
+    auto tok_1 = getNextToken(1);
+    if (tok_1->type == Interpreter::Token::Type::PLUS || tok_1->type == Interpreter::Token::Type::MINUS)
+        opNode->rightValue = eatBinOp();
+    else
+        opNode->rightValue = eatTerm();
+
+    return opNode;
 }
 
 Interpreter::ValueNode* Interpreter::eatTerm() {
     auto vnode = new ValueNode();
     vnode->value = std::stod(eat(Token::Type::FLOAT)->content);
+    Logger::verbose("eatTerm : " + std::to_string(vnode->value));
 
     return vnode;
 }
@@ -261,7 +277,7 @@ Interpreter::Token* Interpreter::eat(Token::Type type) {
     auto t = this->tokens.at(this->tok_pos++);
     Logger::verbose("eat " + Token::type_to_string(type));
     if (t->type != type && type != Interpreter::Token::Type::ALL)
-        throw "Unexpected Token";
+        throw std::runtime_error("Unexpected Token");
     else
         return t;
 }
@@ -269,17 +285,18 @@ Interpreter::Token* Interpreter::eat(Token::Type type) {
 Interpreter::Token* Interpreter::getNextToken (unsigned int delta) {
     try {
         auto t = this->tokens.at(this->tok_pos + delta);
-        Logger::verbose("next Token : '" + t->content + "'");
+        Logger::verbose("next Token (d += " + std::to_string(delta) + ") : '" + t->content + "'");
         return t;
     } catch (std::exception const& e) {
         this->tokens.push_back(new Token("", -1, Interpreter::Token::Type::END_OF_FILE));
-        Logger::verbose("next Token : 'EOF'");
+        Logger::verbose("next Token (d += " + std::to_string(delta) + ") : 'EOF'");
         return this->tokens[this->tokens.size() - 1];
     }
 }
 
 void Interpreter::parse () {
     this->tok_pos = 0;
+    Logger::info("begin Parse -- tok_pos = 0");
     this->ast = eatInstruction();
 }
 
@@ -288,7 +305,7 @@ void Interpreter::parse () {
 std::string Interpreter::evaluate () {
     if (this->ast && this->ast->expr)
         return std::to_string(ast->expr->getValue());
-    return "wtf ?";
+    throw std::runtime_error("evaluate failed");
 }
 
 //      =====   TOKEN    =====
