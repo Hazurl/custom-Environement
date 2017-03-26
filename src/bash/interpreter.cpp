@@ -49,11 +49,12 @@ std::string Interpreter::run(std::string code) {
     for (auto t : tokens) {
         Logger::verbose("At pos = " + std::to_string(t->position) + ", " + Token::type_to_string(t->type) + " '" + t->content + "'");
     }
-
+/*
     Logger::log("Parsing");
     parse();
     Logger::log("Evaluate");
-    return evaluate();
+    return evaluate();*/
+    return "<token only>";
 }
 
 void Interpreter::runTest () {
@@ -83,81 +84,81 @@ void Interpreter::validToken (std::string content, long pos, bool isFloat) {
 
 void Interpreter::tokenize (std::string code) {
 
-    /*
-    std::string curTokenContent = "";
-    long pos = -1;
+    std::string curContent = "";
+    long size = code.length();
+    char curChar;
+    CharType curType;
 
-    bool isFloat = false;
+    long startPos = 0;
+    bool number = false;
 
-    for (char& c : code) {
-        CharType type = getCharType(c);
-        pos ++;
+    for (long pos = 0; pos < size; ++pos) {
+        curChar = code[pos];
+        curType = getCharType(curChar);
 
-        switch (type) {
-            case CharType::SPACE :
-                if (curTokenContent != "") {
-                    validToken(curTokenContent, pos, isFloat);
-                    curTokenContent = "";
-                    isFloat = false;
+        if (curType == CharType::SPACE) {
+            if (curContent != "") {
+                if (number)
+                    tokens.push_back(new Token (curContent, startPos, Token::Type::FLOAT)); // for the moment only float
+                else
+                    throw std::runtime_error("Can't put a type on this token : " + curContent);
+                curContent = "";
+                number = false;
+            }
+            startPos = pos + 1;
+        } else if (curType == CharType::NUM) {
+            // eat a number float or integer
+            if (!number && curContent != "")
+                throw std::runtime_error("digit is not allowed here (" + std::to_string(pos) + ")");
+            
+            curContent += curChar;
+            number = true;
+        } else if (curType == CharType::OTHER) {
+            if (curChar == '.') {
+                // float
+                if (!number && curContent != "")
+                    throw std::runtime_error("digit is not allowed here (" + std::to_string(pos) + ")");
+                
+                if (curContent == "") 
+                    curContent = "0";
+                curContent += curChar;
+                number = true;
+            } else if (curChar == '+') {
+                if (curContent != "") {
+                    if (number)
+                        tokens.push_back(new Token (curContent, startPos, Token::Type::FLOAT)); // for the moment only float
+                    else
+                        throw std::runtime_error("Can't put a type on this token : " + curContent);
+                    curContent = "";
+                    number = false;
+                    startPos = pos;
                 }
-            break;
-
-            case CharType::NUM :
-                curTokenContent += c;
-            break;
-
-            case CharType::ALPHA :
-                if (curTokenContent != ""){
-                    validToken(curTokenContent, pos - 1, isFloat);
-                    curTokenContent = "";
-                    isFloat = false;
+                tokens.push_back(new Token ("+", startPos, Token::Type::PLUS));
+                startPos = pos + 1;
+            } else if (curChar == '-') {
+                if (curContent != "") {
+                    if (number)
+                        tokens.push_back(new Token (curContent, startPos, Token::Type::FLOAT)); // for the moment only float
+                    else
+                        throw std::runtime_error("Can't put a type on this token : " + curContent);
+                    curContent = "";
+                    number = false;
+                    startPos = pos;
                 }
-
-                throw "Unexpected Token";
-            break;
-
-            case CharType::OTHER :
-                if (c == '.') {
-                    if (isFloat)
-                        // Already a dot
-                        throw "Unexpected token";
-                    if (curTokenContent == "")
-                        curTokenContent += "0";
-                    isFloat = true;
-                    curTokenContent += c;
-                } else {
-                    if (curTokenContent != "") {
-                        validToken(curTokenContent, pos - 1, isFloat);
-                        curTokenContent = "";
-                    }
-
-                    if (c == '+')
-                        tokens.push_back(new Token (std::string(1, c), pos, Token::Type::PLUS));
-                    else if (c == '-')
-                        tokens.push_back(new Token (std::string(1, c), pos, Token::Type::MINUS));
-                    else if (c == '/')
-                        tokens.push_back(new Token (std::string(1, c), pos, Token::Type::DIV));
-                    else if (c == '*')
-                        tokens.push_back(new Token (std::string(1, c), pos, Token::Type::MUL));
-                    else if (c == '%')
-                        tokens.push_back(new Token (std::string(1, c), pos, Token::Type::MOD));
-
-                    else if (c == '(')
-                        tokens.push_back(new Token (std::string(1, c), pos, Token::Type::PARENTHESIS_LEFT));
-                    else if (c == ')')
-                        tokens.push_back(new Token (std::string(1, c), pos, Token::Type::PARENTHESIS_RIGHT));
-
-                    else throw "Unexpected Token";
-                }
-            break;
-        }
+                tokens.push_back(new Token ("-", startPos, Token::Type::MINUS));
+                startPos = pos + 1;
+            } else
+                throw std::runtime_error("'" + std::to_string(curChar) + "' is not supported");
+        } else
+            throw std::runtime_error("Alpha characters are not supported");
     }
 
-    if (curTokenContent != "") {
-        validToken(curTokenContent, pos, isFloat);
-        curTokenContent = "";
-        isFloat = false;
-    }*/
+    if (curContent != "") {
+        if (number)
+            tokens.push_back(new Token (curContent, startPos, Token::Type::FLOAT)); // for the moment only float
+        else
+            throw std::runtime_error("Can't put a type on this token : " + curContent);
+    }
 }
 
 //      =====   AST    =====

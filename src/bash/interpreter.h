@@ -4,6 +4,7 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <exception>
 #include <stdlib.h>
 #include "../../lib/Logger.h"
 
