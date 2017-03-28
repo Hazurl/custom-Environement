@@ -8,7 +8,7 @@ int main (int argc, char* argv[]) {
     Logger::setMinimumDateHoursSize(0);
     Logger::setDatePrinting(false);
     Logger::setHourPrinting(false);
-    Logger::redirectToFile(Logger::Error | Logger::Warning | Logger::Log | Logger::Info | Logger::Verbose, "debugguer.txt");
+    Logger::redirectToFile(Logger::Error | Logger::Warning | Logger::Log | Logger::Info | Logger::Verbose, "Debug/debugguer.txt");
 
     // Sections
     //Logger::hideSection("Tokens");

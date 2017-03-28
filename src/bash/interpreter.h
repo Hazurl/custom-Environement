@@ -6,6 +6,7 @@
 #include <vector>
 #include <exception>
 #include <stdlib.h>
+#include <assert.h>
 #include "../../lib/Logger.h"
 
 namespace bash {
@@ -56,7 +57,8 @@ public:
                     case Type::FLOAT : return "FLOAT"; break;
                     case Type::INTEGER : return "INTEGER"; break;
                     case Type::ALL : return "ALL"; break;
-                    case Type::END_OF_FILE : return "EOF"; break;}
+                    case Type::END_OF_FILE : return "EOF"; break;
+                    default: return "<UNKNOWN_TYPE>";}
     }
 }; // class Token
 
@@ -74,14 +76,15 @@ public:
 
 //              TOKENIZE
     CharType                getCharType                 (char c);
-    void                    validToken                  (std::string content, long pos, bool isFloat);
     void                    tokenize                    (std::string code);
 
 //              PARSER
     Token*                  getNextToken                (unsigned int delta = 0);
     Token*                  eat                         (Interpreter::Token::Type type = Interpreter::Token::Type::ALL);
     ValueNode*              eatTerm                     ();
-    BinOpNode*              eatBinOp                    ();
+    ValueNode*              eatNumber                   ();
+    BinOpNode*              eatBinOpHigh                ();
+    BinOpNode*              eatBinOpLow                 ();
     InstructionNode*        eatInstruction              ();
     ExpressionNode*         eatExpression               ();
     void                    parse                       ();
@@ -95,6 +98,7 @@ class AST {
 public:
     virtual                 ~AST                        ();
     virtual void            visit                       () = 0;
+    virtual void            print                       (std::ostream& os) = 0;
 
     Token*                  token;
 
@@ -106,6 +110,7 @@ public:
 
     virtual float           getValue                    ();
     virtual void            visit                       ();
+    virtual void            print                       (std::ostream& os);
     virtual                 ~ValueNode                  ();
 }; // class ValueNode
 
@@ -115,6 +120,7 @@ public:
     ValueNode*              rightValue;
 
     virtual void            visit                       ();
+    virtual void            print                       (std::ostream& os);
     virtual                 ~BinOpNode                  ();
 }; // class BinOpNode
 
@@ -123,6 +129,7 @@ public:
     ValueNode*              valueNode;
 
     virtual void            visit                       ();
+    virtual void            print                       (std::ostream& os);
     virtual                 ~ExpressionNode             ();
 }; // class ExpressionNode
 
@@ -131,6 +138,7 @@ public:
     ExpressionNode*         expr;
 
     virtual void            visit                       ();
+    virtual void            print                       (std::ostream& os);
     virtual                 ~InstructionNode            ();
 }; // class InstructionNode
 

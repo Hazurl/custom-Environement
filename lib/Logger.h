@@ -46,6 +46,12 @@ public:
     static void info(std::string msg) { Logger::get()._info(msg); }
     static void verbose(std::string msg) { Logger::get()._verbose(msg); }
 
+    static std::ostream& getErrorStream() { return Logger::get()._getErrorStream(); }
+    static std::ostream& getWarningStream() { return Logger::get()._getWarningStream(); }
+    static std::ostream& getLogStream() { return Logger::get()._getLogStream(); }
+    static std::ostream& getInfoStream() { return Logger::get()._getInfoStream(); }
+    static std::ostream& getVerboseStream() { return Logger::get()._getVerboseStream(); }
+
     static void redirectTo (unsigned int levels, std::ostream& os) { Logger::get()._redirectTo(levels, os); }
     static void redirectToFile (unsigned int levels, char* const path) { Logger::get()._redirectToFile(levels, path); }
 
@@ -68,6 +74,12 @@ private:
     void _log(std::string msg);
     void _info(std::string msg);
     void _verbose(std::string msg);
+
+    std::ostream& _getErrorStream() { return s_error; }
+    std::ostream& _getWarningStream() { return s_warning; }
+    std::ostream& _getLogStream() { return s_log; }
+    std::ostream& _getInfoStream() { return s_info; }
+    std::ostream& _getVerboseStream() { return s_verbose; }
 
     void _redirectTo (unsigned int levels, std::ostream& os);
     void _redirectToFile (unsigned int levels, char* const path);

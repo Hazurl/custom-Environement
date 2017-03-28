@@ -31,4 +31,5 @@
 # Perso
 /build
 /.vscode
+/Debug
 debugguer.txt

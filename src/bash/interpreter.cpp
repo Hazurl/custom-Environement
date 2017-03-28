@@ -78,14 +78,6 @@ Interpreter::CharType Interpreter::getCharType (char c) {
     return CharType::OTHER;
 }
 
-void Interpreter::validToken (std::string content, long pos, bool isFloat) {
-    // can only e a number for the moment
-    if (true) // (isFloat) for the moment
-        tokens.push_back(new Token (content, pos, Token::Type::FLOAT));
-    else
-        tokens.push_back(new Token (content, pos, Token::Type::INTEGER));
-}
-
 void Interpreter::tokenize (std::string code) {
 
     std::string curContent = "";
@@ -151,8 +143,32 @@ void Interpreter::tokenize (std::string code) {
                 }
                 tokens.push_back(new Token ("-", startPos, Token::Type::MINUS));
                 startPos = pos + 1;
+            } else if (curChar == '*') {
+                if (curContent != "") {
+                    if (number)
+                        tokens.push_back(new Token (curContent, startPos, Token::Type::FLOAT)); // for the moment only float
+                    else
+                        throw std::runtime_error("Can't put a type on this token : " + curContent);
+                    curContent = "";
+                    number = false;
+                    startPos = pos;
+                }
+                tokens.push_back(new Token ("*", startPos, Token::Type::MUL));
+                startPos = pos + 1;
+            } else if (curChar == '/') {
+                if (curContent != "") {
+                    if (number)
+                        tokens.push_back(new Token (curContent, startPos, Token::Type::FLOAT)); // for the moment only float
+                    else
+                        throw std::runtime_error("Can't put a type on this token : " + curContent);
+                    curContent = "";
+                    number = false;
+                    startPos = pos;
+                }
+                tokens.push_back(new Token ("/", startPos, Token::Type::DIV));
+                startPos = pos + 1;
             } else
-                throw std::runtime_error("'" + std::to_string(curChar) + "' is not supported");
+                throw std::runtime_error("'" + std::string(1, curChar) + "' is not supported");
         } else
             throw std::runtime_error("Alpha characters are not supported");
     }
@@ -179,6 +195,10 @@ Interpreter::ValueNode::~ValueNode() {}
 void Interpreter::ValueNode::visit () {
     Logger::verbose("Visit a value ( " + std::to_string(this->value) + " )");
     return;
+}
+
+void Interpreter::ValueNode::print (std::ostream& os) {
+    os << this->value;
 }
 
 Interpreter::BinOpNode::~BinOpNode() {
@@ -210,6 +230,34 @@ void Interpreter::BinOpNode::visit () {
     }
 }
 
+void Interpreter::BinOpNode::print (std::ostream& os) {
+    os << "("; 
+    this->leftValue->print(os);
+    switch (this->token->type) {
+        case Token::Type::PLUS :
+            os << "+";
+        break;
+
+        case Token::Type::MINUS :
+            os << "-";
+        break;
+
+        case Token::Type::DIV :
+            os << "/";
+        break;
+
+        case Token::Type::MUL :
+            os << "*";
+        break;
+
+        case Token::Type::MOD :
+            os << "%";
+        break;
+    }
+    this->rightValue->print(os);
+    os << ")";
+}
+
 Interpreter::ExpressionNode::~ExpressionNode() {
     delete this->valueNode;
 }
@@ -219,12 +267,20 @@ void Interpreter::ExpressionNode::visit () {
         this->value = this->valueNode->getValue();
 }
 
+void Interpreter::ExpressionNode::print (std::ostream& os) {
+    this->valueNode->print(os);
+}
+
 Interpreter::InstructionNode::~InstructionNode() {
     delete this->expr;
 }
 
 void Interpreter::InstructionNode::visit () {
     this->expr->visit();
+}
+
+void Interpreter::InstructionNode::print (std::ostream& os) {
+    this->expr->print(os);
 }
 
 //      =====   PARSER    =====
@@ -241,45 +297,95 @@ Interpreter::ExpressionNode* Interpreter::eatExpression () {
     Logger::info("eatExpression");
     auto expr = new ExpressionNode();
 
-    auto tok_1 = getNextToken(1);
-    if (tok_1->type == Interpreter::Token::Type::PLUS || tok_1->type == Interpreter::Token::Type::MINUS)
-        expr->valueNode = eatBinOp();
-    else
-        expr->valueNode = eatTerm();
+    expr->valueNode = eatTerm();
+
+    auto tok_0 = getNextToken(0);
+    while (tok_0->type == Interpreter::Token::Type::PLUS || tok_0->type == Interpreter::Token::Type::MINUS) {
+        Logger::verbose("new add/minus");
+        auto binOp = new BinOpNode();
+        binOp->leftValue = expr->valueNode;
+        binOp->token = eat();
+        binOp->rightValue = eatTerm();
+        expr->valueNode = binOp;
+        tok_0 = getNextToken(0);
+    }
 
     return expr;
 }
 
-Interpreter::BinOpNode* Interpreter::eatBinOp() {
-    Logger::info("eatBinOp");
+Interpreter::BinOpNode* Interpreter::eatBinOpLow() {
+    Logger::info("eatBinOpLow");
     auto opNode = new BinOpNode();
-    opNode->leftValue = eatTerm();
+    opNode->rightValue = eatTerm();
+    assert(getNextToken()->type == Interpreter::Token::Type::PLUS || getNextToken()->type == Interpreter::Token::Type::MINUS);
     opNode->token = eat();
 
     auto tok_1 = getNextToken(1);
     if (tok_1->type == Interpreter::Token::Type::PLUS || tok_1->type == Interpreter::Token::Type::MINUS)
-        opNode->rightValue = eatBinOp();
+        opNode->leftValue = eatBinOpLow();
     else
-        opNode->rightValue = eatTerm();
+        opNode->leftValue = eatTerm();
+
+    return opNode;
+}
+
+Interpreter::BinOpNode* Interpreter::eatBinOpHigh() {
+    Logger::info("eatBinOpHigh");
+    auto opNode = new BinOpNode();
+    opNode->leftValue = eatNumber();
+    assert(getNextToken()->type == Interpreter::Token::Type::MUL || getNextToken()->type == Interpreter::Token::Type::DIV);
+    opNode->token = eat();
+
+    auto tok_1 = getNextToken(1);
+    if (tok_1->type == Interpreter::Token::Type::DIV || tok_1->type == Interpreter::Token::Type::MUL)
+        opNode->rightValue = eatBinOpHigh();
+    else
+        opNode->rightValue = eatNumber();
 
     return opNode;
 }
 
 Interpreter::ValueNode* Interpreter::eatTerm() {
+    Logger::info("eatTerm");
+    ValueNode* node = eatNumber();
+
+    auto tok_0 = getNextToken(0);
+    while (tok_0->type == Interpreter::Token::Type::MUL || tok_0->type == Interpreter::Token::Type::DIV) {
+        Logger::verbose("new mul/div");
+        auto binOp = new BinOpNode();
+        binOp->leftValue = node;
+        binOp->token = eat();
+        binOp->rightValue = eatNumber();
+        node = binOp;
+        tok_0 = getNextToken(0);
+    }
+
+    return node;
+
+}
+
+Interpreter::ValueNode* Interpreter::eatNumber() {
+    Logger::verbose("I want a number");
     auto vnode = new ValueNode();
     vnode->value = std::stod(eat(Token::Type::FLOAT)->content);
-    Logger::verbose("eatTerm : " + std::to_string(vnode->value));
+    Logger::info("eatNumber : " + std::to_string(vnode->value));
 
     return vnode;
 }
 
 Interpreter::Token* Interpreter::eat(Token::Type type) {
-    auto t = this->tokens.at(this->tok_pos++);
-    Logger::verbose("eat " + Token::type_to_string(type));
-    if (t->type != type && type != Interpreter::Token::Type::ALL)
-        throw std::runtime_error("Unexpected Token");
-    else
-        return t;
+    try {
+        auto t = this->tokens.at(this->tok_pos++);
+        Logger::warning("eat " + Token::type_to_string(type));
+        Logger::warning("next token type is : " + Token::type_to_string(getNextToken(0)->type));
+        if (t->type != type && type != Interpreter::Token::Type::ALL)
+            throw std::runtime_error("Unexpected Token");
+        else
+            return t;
+    } catch (std::exception const& e) {
+        Logger::error("try to eat a '" + Token::type_to_string(type) + "' there is no one more");
+        throw e;
+    }
 }
 
 Interpreter::Token* Interpreter::getNextToken (unsigned int delta) {
@@ -298,6 +404,10 @@ void Interpreter::parse () {
     this->tok_pos = 0;
     Logger::info("begin Parse -- tok_pos = 0");
     this->ast = eatInstruction();
+
+    Logger::info("PRINT");
+    this->ast->print(Logger::getInfoStream());
+    Logger::getInfoStream() << std::endl;
 }
 
 //      =====   EXECUTE    =====
