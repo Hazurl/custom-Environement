@@ -7,7 +7,7 @@
 #include <exception>
 #include <stdlib.h>
 #include <assert.h>
-#include "../../lib/Logger.h"
+#include "../../lib/Logger/src/Logger.h"
 
 namespace bash {
 

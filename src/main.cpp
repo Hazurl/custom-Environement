@@ -2,6 +2,7 @@
 #include <string>
 
 #include "bash/interpreter.h"
+#include "../lib/Logger/src/Logger.h"
 
 int main (int argc, char* argv[]) {
     // Logger : 

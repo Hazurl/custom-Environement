@@ -1,8 +1,11 @@
-SRC_DIR := lib src/bash src
+SRC_DIR := lib/Logger/src src/bash src
+EXCLUDE := lib/Logger/src/main.cpp
 
-SRC := $(foreach d,$(SRC_DIR),$(wildcard $(d)/*.cpp))
+SRC_ALL := $(foreach d,$(SRC_DIR),$(wildcard $(d)/*.cpp))
+SRC := $(filter-out $(EXCLUDE),$(SRC_ALL))
 
 BUILD_DIR := $(addprefix build/,$(SRC_DIR))
+
 DEST := build/customEnv
 
 OBJ := $(patsubst %.cpp,build/%.o,$(SRC))
