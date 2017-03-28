@@ -227,6 +227,10 @@ void Interpreter::BinOpNode::visit () {
         case Token::Type::MOD :
             this->value = 0.0;// float cannot be use with % //this->leftValue->getValue() % this->rightValue->getValue();
         break;
+
+        default:
+            throw std::runtime_error("BinOpNode::visit : this operation is not allowed");
+        break;
     }
 }
 
@@ -252,6 +256,10 @@ void Interpreter::BinOpNode::print (std::ostream& os) {
 
         case Token::Type::MOD :
             os << "%";
+        break;
+        
+        default:
+            throw std::runtime_error("BinOpNode::visit : this operation is not allowed");
         break;
     }
     this->rightValue->print(os);
