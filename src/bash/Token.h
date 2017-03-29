@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <exception>
+#include <stdexcept>
 
 namespace bash {
 
@@ -24,8 +25,7 @@ public:
         PLUS, MINUS, DIV, MUL,
         PARENTHESIS_LEFT, PARENTHESIS_RIGHT,
         NUMBER, // float
-
-        EOF, FREE // used to eat a token who his type don't care 
+        END, FREE // used to eat a token who his type don't care 
     };
 
     static std::string type_to_string (Type type) {
@@ -37,7 +37,7 @@ public:
             case Type::PARENTHESIS_LEFT: return "Parenthesis left";
             case Type::PARENTHESIS_RIGHT: return "Parenthesis right";
             case Type::NUMBER: return "Number";
-            case Type::EOF: return "EOF";
+            case Type::END: return "END";
             case Type::FREE: return "Free";
         }
         throw std::runtime_error("type_to_string : unkknown type (" + std::to_string((int)type) + ")");

@@ -2,6 +2,8 @@
 
 using namespace bash;
 
+Token::~Token() {}
+
 Token::Token(std::string content, long charPos, long linePos, Type type) :
     content(content), charPos(charPos), linePos(linePos), type(type) {}
 
@@ -9,7 +11,7 @@ Token::Token(std::string content, long charPos, long linePos, Type type) :
 Token* TokenFlow::current () {
     if (iteratorReset) {
         if (tokens.empty()) {
-            push(new Token("", -1, -1, Token::Type::EOF));
+            push(new Token("", -1, -1, Token::Type::END));
         }
         cur = tokens.begin();
     }
@@ -19,7 +21,7 @@ Token* TokenFlow::current () {
 Token* TokenFlow::next(long delta) {
     if (iteratorReset) {
         if (tokens.empty()) {
-            push(new Token("", -1, -1, Token::Type::EOF));
+            push(new Token("", -1, -1, Token::Type::END));
             cur = tokens.begin();
             return *cur;
         }
@@ -27,7 +29,7 @@ Token* TokenFlow::next(long delta) {
     }
 
     if (cur + delta == tokens.end()) {
-        push(new Token("", -1, -1, Token::Type::EOF));
+        push(new Token("", -1, -1, Token::Type::END));
         return tokens.back();
     }
 
