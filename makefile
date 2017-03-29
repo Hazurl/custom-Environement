@@ -19,10 +19,13 @@ all: build/customEnv
 
 # Main build task
 build/customEnv: $(BUILD_DIR) $(OBJ)
+	@echo -n "\033[32m"
 	g++ $(FLAGS) -o $(DEST) $(OBJ) $(LIBS)
+	@echo -n "\033[34m"
 	@echo "---------------"
 	@echo "Build finished!"
 	@echo "---------------"
+	@echo -n "\033[0m"
 
 build/%.o: %.cpp
 	g++ -c $(OPTIM) $(FLAGS) -o "$@" "$<"
@@ -33,20 +36,26 @@ $(BUILD_DIR):
 # Clean every build files by destroying the build/ folder.
 clean:
 	rm -rf build
+	@echo -n "\033[34m"
 	@echo "----------------"
 	@echo "Project  Cleaned"
 	@echo "----------------"
+	@echo -n "\033[0m"
 
 
 run: build/customEnv
 	@clear
+	@echo -n "\033[34m"
 	@echo "----------------"
 	@echo "      Run       "
 	@echo "----------------"
+	@echo -n "\033[0m"
 	@$(DEST)
+	@echo -n "\033[34m"
 	@echo "----------------"
 	@echo "      Stop      "
 	@echo "----------------"
+	@echo -n "\033[0m"
 
 again:
 	@make clean
@@ -54,10 +63,14 @@ again:
 
 test: build/customEnv
 	@clear
+	@echo -n "\033[34m"
 	@echo "----------------"
 	@echo "    Run Test    "
 	@echo "----------------"
+	@echo -n "\033[0m"
 	@$(DEST) -t
+	@echo -n "\033[34m"
 	@echo "----------------"
 	@echo "      Stop      "
 	@echo "----------------"
+	@echo -n "\033[0m"
