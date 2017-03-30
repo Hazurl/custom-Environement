@@ -33,6 +33,7 @@ void Interpreter::interactive () {
 }
 
 std::string Interpreter::run(std::string code) {
+
     Logger::log("Running code : " + code);
     Logger::info("cleaning ast/tokens");
     if (this->ast)

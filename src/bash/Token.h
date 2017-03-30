@@ -1,10 +1,13 @@
 #ifndef __BASH_TOKEN__
 #define __BASH_TOKEN__
 
+#include "../../lib/Logger/src/Logger.h"
+
 #include <vector>
 #include <string>
 #include <exception>
 #include <stdexcept>
+#include <iostream>
 
 namespace bash {
 

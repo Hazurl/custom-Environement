@@ -10,16 +10,22 @@ Token::Token(std::string content, long charPos, long linePos, Type type) :
 
 Token* TokenFlow::current () {
     if (iteratorReset) {
+        iteratorReset = false;
         if (tokens.empty()) {
             push(new Token("", -1, -1, Token::Type::END));
         }
         cur = tokens.begin();
+    } else if (cur == tokens.end()) {
+        push(new Token("", -1, -1, Token::Type::END));
+        return tokens.back();
     }
+    
     return *cur;
 }
 
 Token* TokenFlow::next(long delta) {
     if (iteratorReset) {
+        iteratorReset = false;
         if (tokens.empty()) {
             push(new Token("", -1, -1, Token::Type::END));
             cur = tokens.begin();
@@ -28,7 +34,7 @@ Token* TokenFlow::next(long delta) {
         cur = tokens.begin();
     }
 
-    if (cur + delta == tokens.end()) {
+    if ((cur + delta) == tokens.end()) {
         push(new Token("", -1, -1, Token::Type::END));
         return tokens.back();
     }

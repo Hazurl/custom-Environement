@@ -2,8 +2,10 @@
 #define __BASH_LEXICAL__
 
 #include "Token.h"
+#include "../../lib/Logger/src/Logger.h"
 #include <vector>
 #include <string>
+#include <exception>
 
 namespace bash {
 
@@ -14,11 +16,17 @@ public:
 
 private:
     std::string code;
+    long len;
     long curLine;
-    long curChar;
+    long curPos;
 
     void tokenize();
     Token* findNextToken();
+    void skipSpace();
+    bool isDigit(char c);
+    char next();
+    char previous();
+    char currentChar();
 };
 
 }; // namespace bash
