@@ -44,9 +44,7 @@ int main (int argc, char* argv[]) {
 
     bash::Token* t;
     while((t = l.eat())->type != bash::Token::Type::END)
-        Logger::verbose(
-            "At line " + std::to_string(t->linePos) + "(" + std::to_string(t->charPos) + ") \"" + t->content + "\" : " + bash::Token::type_to_string(t->type)
-        );
+        Logger::verbose( t->to_string(true) );
 
     return 0;
 }

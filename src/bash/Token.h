@@ -19,6 +19,8 @@ public:
     Token(std::string content, long charPos, long linePos, Type type);
     ~Token();
 
+    std::string to_string(bool allowColor = false);
+
     std::string content;
     long charPos;
     long linePos;
