@@ -24,6 +24,7 @@ private:
     Token* findNextToken();
     void skipSpace();
     bool isDigit(char c);
+    bool isOperator(char c);
     char next();
     char previous();
     char currentChar();

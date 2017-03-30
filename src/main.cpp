@@ -17,6 +17,7 @@ int main (int argc, char* argv[]) {
     //Logger::hideSection("Tokens");
     //Logger::hideSection("Parser");
     //Logger::hideSection("Evaluate");
+    //Logger::hideSection("BEGIN TOKENIZE");
 
     Logger::log("===== New Run =====");
 
@@ -39,7 +40,7 @@ int main (int argc, char* argv[]) {
     bash_interpreter.interactive();
 */
 
-    auto l = bash::LexicalAnalyzer("5 12\t\n   1.0 \t0 5.2 .5 000.500 1. 000000000 999999999999999999.99999 1.2.3 .4 .5. 6 .. \t");
+    auto l = bash::LexicalAnalyzer("1 + \n \t 2 - \t(2/2 - 1.2).+.6");
 
     bash::Token* t;
     while((t = l.eat())->type != bash::Token::Type::END)

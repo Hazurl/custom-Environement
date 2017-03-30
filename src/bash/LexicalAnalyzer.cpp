@@ -13,13 +13,14 @@ LexicalAnalyzer::~LexicalAnalyzer () {}
 void LexicalAnalyzer::tokenize() {
     this->reset();
 
-    Logger::log("BEGIN TOKENIZE");
+    Logger::beginSection("BEGIN TOKENIZE", Logger::Log);
     for(curPos = 0; curPos < len; ++curPos) {
-        Logger::info("NEXT TOKEN (" + std::to_string(curPos) + ")");
+        //Logger::info("NEXT TOKEN (" + std::to_string(curPos) + ")");
         Token* t = findNextToken();
         if (t) // not null
             this->push(t);
     }
+    Logger::endSection("BEGIN TOKENIZE");
 }
 
 Token* LexicalAnalyzer::findNextToken () {
@@ -50,6 +51,24 @@ Token* LexicalAnalyzer::findNextToken () {
         return new Token(word, startPos, curLine, Token::Type::NUMBER);
     }
 
+    if (isOperator(c)) { // OPERATOR
+        if (c == '+')
+            return new Token(std::string(1, c), curPos, curLine, Token::Type::PLUS);
+        if (c == '*')
+            return new Token(std::string(1, c), curPos, curLine, Token::Type::MUL);
+        if (c == '-')
+            return new Token(std::string(1, c), curPos, curLine, Token::Type::MINUS);
+        if (c == '/')
+            return new Token(std::string(1, c), curPos, curLine, Token::Type::DIV);
+    }
+
+    // OTHER
+
+    if (c == '(')
+        return new Token (std::string(1, c), curPos, curLine, Token::Type::PARENTHESIS_LEFT);
+    if (c == ')')
+        return new Token (std::string(1, c), curPos, curLine, Token::Type::PARENTHESIS_RIGHT);
+
     Logger::error("No token found");
     return nullptr;
 }
@@ -65,6 +84,10 @@ void LexicalAnalyzer::skipSpace () {
 
 bool LexicalAnalyzer::isDigit(char c) {
     return c >= '0' && c <= '9';
+}
+
+bool LexicalAnalyzer::isOperator(char c) {
+    return c == '+' || c == '-' || c == '*' || c == '/';
 }
 
 char LexicalAnalyzer::currentChar() {
