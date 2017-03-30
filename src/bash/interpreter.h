@@ -8,6 +8,9 @@
 #include <stdlib.h>
 #include <assert.h>
 #include "../../lib/Logger/src/Logger.h"
+#include "Token.h"
+#include "LexicalAnalyzer.h"
+#include "SyntaxicalAnalyzer.h"
 
 namespace bash {
 

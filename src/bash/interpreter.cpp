@@ -35,31 +35,29 @@ void Interpreter::interactive () {
 std::string Interpreter::run(std::string code) {
 
     Logger::log("Running code : " + code);
-    Logger::info("cleaning ast/tokens");
-    if (this->ast)
-        delete this->ast;
 
-    for (Token* t : this->tokens)
-        delete t;
+    Logger::beginSection("Tokenize", Logger::Info);
 
-    this->tokens.clear();
+        auto l = LexicalAnalyzer(code);
 
-    Logger::log("Tokenize");
-    tokenize(code);
-    Logger::beginSection("Tokens", Logger::Info);
-    for (auto t : tokens) {
-        Logger::verbose("At pos = " + std::to_string(t->position) + ", " + Token::type_to_string(t->type) + " '" + t->content + "'");
-    }
-    Logger::endSection("Tokens");
+        bash::Token* t;
+        while((t = l.eat())->type != bash::Token::Type::END)
+            Logger::verbose( t->to_string(true) );
+
+    Logger::endSection("Tokenize");
 
     Logger::beginSection("Parser", Logger::Info);
-    parse();
+
+        auto s = SyntaxicalAnalyzer(l);
+
     Logger::endSection("Parser");
     
     Logger::beginSection("Evaluate", Logger::Info);
-    auto ret = evaluate();
+
+        //auto ret = evaluate();
+
     Logger::endSection("Evaluate");
-    return ret;
+    return "";
 }
 
 void Interpreter::runTest () {

@@ -14,10 +14,9 @@ int main (int argc, char* argv[]) {
     Logger::redirectToFile(Logger::Error | Logger::Warning | Logger::Log | Logger::Info | Logger::Verbose, "Debug/debugguer.txt");
 
     // Sections
-    //Logger::hideSection("Tokens");
+    //Logger::hideSection("Tokenize");
     //Logger::hideSection("Parser");
     //Logger::hideSection("Evaluate");
-    //Logger::hideSection("BEGIN TOKENIZE");
 
     Logger::log("===== New Run =====");
 
@@ -28,23 +27,18 @@ int main (int argc, char* argv[]) {
 
         if (v == "-t" || v == "-T" || v == "--test") runTest = true;
     }
-/*
+
     bash::Interpreter bash_interpreter;
 
     if (runTest) {
         bash_interpreter.runTest();
+        bash_interpreter.run("1 + 2 - (2/2 - 1.2) * . + .6 * 5. + 1 - 1.000");
 
         return 0;
     }
 
     bash_interpreter.interactive();
-*/
 
-    auto l = bash::LexicalAnalyzer("1 + \n \t 2 - \t(2/2 - 1.2).+.6");
-
-    bash::Token* t;
-    while((t = l.eat())->type != bash::Token::Type::END)
-        Logger::verbose( t->to_string(true) );
 
     return 0;
 }
