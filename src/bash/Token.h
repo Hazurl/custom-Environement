@@ -37,7 +37,7 @@ public:
             case Type::PARENTHESIS_LEFT: return "Parenthesis left";
             case Type::PARENTHESIS_RIGHT: return "Parenthesis right";
             case Type::NUMBER: return "Number";
-            case Type::END: return "END";
+            case Type::END: return "End";
             case Type::FREE: return "Free";
         }
         throw std::runtime_error("type_to_string : unkknown type (" + std::to_string((int)type) + ")");
