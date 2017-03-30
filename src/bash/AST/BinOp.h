@@ -4,6 +4,7 @@
 #include "../Token.h"
 #include "Value.h"
 #include <string>
+#include <stdexcept>
 
 namespace bash {
 

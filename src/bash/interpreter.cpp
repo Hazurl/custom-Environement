@@ -49,6 +49,7 @@ std::string Interpreter::run(std::string code) {
     Logger::beginSection("Parser", Logger::Info);
 
         auto s = SyntaxicalAnalyzer(l);
+        Logger::log("To_string : " + s.getAST()->to_string());
 
     Logger::endSection("Parser");
     

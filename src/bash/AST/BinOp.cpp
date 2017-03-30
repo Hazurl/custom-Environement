@@ -21,6 +21,7 @@ std::string BinOp::to_string() {
             return " ( " + left->to_string() + "*" + right->to_string() + " ) ";
         if (token->type == Token::Type::DIV)
             return " ( " + left->to_string() + "/" + right->to_string() + " ) ";
+        throw std::runtime_error("BinOp - operator not allow");
     } else 
         return "<empty binary operation>";
 }
@@ -28,12 +29,12 @@ std::string BinOp::to_string() {
 void BinOp::visit () {
     if (left && right) {
         if (token->type == Token::Type::PLUS)
-            value = left->getValue() + "+" + right->getValue();
+            value = left->getValue() + right->getValue();
         if (token->type == Token::Type::MINUS)
-            value = left->getValue() + "-" + right->getValue();
+            value = left->getValue() - right->getValue();
         if (token->type == Token::Type::MUL)
-            value = left->getValue() + "*" + right->getValue();
+            value = left->getValue() * right->getValue();
         if (token->type == Token::Type::DIV)
-            value = left->getValue() + "/" + right->getValue();
+            value = left->getValue() / right->getValue();
     }
 }
