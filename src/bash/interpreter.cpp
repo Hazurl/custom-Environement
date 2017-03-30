@@ -59,6 +59,13 @@ std::string Interpreter::run(std::string code) {
 
 void Interpreter::runTest () {
     Logger::log("Run Test");
+    run("./5");
+    run("1+1");
+    run("\t5/2 + 1");
+    run("2+2*8");
+    run("5+(((5*2+(2) )))");
+    run("1-1+1*2");
+    run(".+.-.+1");
 }
 
 //      =====   TOKENIZE    =====

@@ -32,7 +32,6 @@ int main (int argc, char* argv[]) {
 
     if (runTest) {
         bash_interpreter.runTest();
-        bash_interpreter.run("1 + 2 - (2/2 - 1.2) * . + .6 * 5. + 1 - 1.000");
 
         return 0;
     }
