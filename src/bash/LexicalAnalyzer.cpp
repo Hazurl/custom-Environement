@@ -13,18 +13,12 @@ LexicalAnalyzer::~LexicalAnalyzer () {}
 void LexicalAnalyzer::tokenize() {
     this->reset();
 
-    try {
-        Logger::warning("Begin");
-        for(curPos = 0; curPos < len; ++curPos) {
-            Logger::info("NEXT TOKEN (" + std::to_string(curPos) + ")");
-            Token* t = findNextToken();
-            if (t) // not null
-                this->push(t);
-        }
-    } catch (std::exception const& e) {
-        // out of bound probably
-        // TODO : make sure it's that ok, or verify when incrementing charPos/look up code
-        Logger::error("tokenize -- Out of bounds !");
+    Logger::log("BEGIN TOKENIZE");
+    for(curPos = 0; curPos < len; ++curPos) {
+        Logger::info("NEXT TOKEN (" + std::to_string(curPos) + ")");
+        Token* t = findNextToken();
+        if (t) // not null
+            this->push(t);
     }
 }
 
