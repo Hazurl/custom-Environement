@@ -27,6 +27,9 @@ Token* LexicalAnalyzer::findNextToken () {
 
     long startPos = curPos;
     char c = currentChar();
+    if (c == -1) // EOF
+        return nullptr;
+
     std::string word;
 
     if (isDigit(c) || c == '.') { // NUMBER
