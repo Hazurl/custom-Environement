@@ -8,7 +8,7 @@ namespace bash {
 
 class AST {
 public:
-    AST (Token* t);
+    AST (Token* t = nullptr);
     virtual ~AST ();
     virtual std::string to_string() = 0;
     virtual void visit() = 0;

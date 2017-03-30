@@ -2,7 +2,7 @@
 
 using namespace bash;
 
-BinOp::BinOp (Token* t) : Value(t, 0) {}
+BinOp::BinOp (Token* t) : Value(0, t) {}
 
 BinOp::~BinOp() {
     if (left)

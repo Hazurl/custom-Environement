@@ -29,6 +29,7 @@ Token* TokenFlow::current () {
         return tokens.back();
     }
     
+    Logger::verbose("current : " + (*cur)->to_string(true));
     return *cur;
 }
 
@@ -47,7 +48,7 @@ Token* TokenFlow::next(long delta) {
         push(new Token("", -1, -1, Token::Type::END));
         return tokens.back();
     }
-
+    Logger::verbose("next(+" + std::to_string(delta) + ") : " + (*cur)->to_string(true));
     return *(cur + delta);
 }
 

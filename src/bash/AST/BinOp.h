@@ -10,7 +10,7 @@ namespace bash {
 
 class BinOp : public Value {
 public:
-    BinOp(Token* t);
+    BinOp(Token* t = nullptr);
     virtual ~BinOp ();
     virtual std::string to_string();
     virtual void visit();

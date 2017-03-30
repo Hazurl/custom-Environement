@@ -9,7 +9,7 @@ namespace bash {
 
 class Expression : public Value {
 public:
-    Expression(Token* t);
+    Expression(Token* t = nullptr);
     virtual ~Expression ();
     virtual std::string to_string();
     virtual void visit();

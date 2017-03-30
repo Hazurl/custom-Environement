@@ -2,7 +2,7 @@
 
 using namespace bash;
 
-Number::Number(Token* t, double v) : Value(t, v) {}
+Number::Number(double v, Token* t) : Value(v, t) {}
 
 Number::~Number() {}
 

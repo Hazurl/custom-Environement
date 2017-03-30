@@ -38,11 +38,7 @@ std::string Interpreter::run(std::string code) {
 
     Logger::beginSection("Tokenize", Logger::Info);
 
-        auto l = LexicalAnalyzer(code);
-
-        bash::Token* t;
-        while((t = l.eat())->type != bash::Token::Type::END)
-            Logger::verbose( t->to_string(true) );
+        auto l = LexicalAnalyzer(code);            
 
     Logger::endSection("Tokenize");
 

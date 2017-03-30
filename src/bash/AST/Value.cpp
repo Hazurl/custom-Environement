@@ -2,7 +2,7 @@
 
 using namespace bash;
 
-Value::Value(Token* t, double v) : AST(t), value(v) {}
+Value::Value(double v, Token* t) : AST(t), value(v) {}
 
 double Value::getValue() {
     this->visit();

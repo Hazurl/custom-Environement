@@ -16,8 +16,10 @@ void LexicalAnalyzer::tokenize() {
     for(curPos = 0; curPos < len; ++curPos) {
         //Logger::info("NEXT TOKEN (" + std::to_string(curPos) + ")");
         Token* t = findNextToken();
-        if (t) // not null
+        if (t) { // not null
             this->push(t);
+            Logger::verbose( t->to_string(true) );
+        }
     }
 }
 

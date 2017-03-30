@@ -1,6 +1,7 @@
 #ifndef __BASH_SYNTAXICAL__
 #define __BASH_SYNTAXICAL__
 
+#include "../../lib/Logger/src/Logger.h"
 #include "Token.h"
 #include "AST/AST.h"
 #include "AST/Value.h"
@@ -29,6 +30,7 @@ private:
     // EAT
     Expression* eatExpression();
     Value* eatFactor();
+    Value* eatValue();
     Number* eatNumber();
 
 };

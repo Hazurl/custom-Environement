@@ -9,7 +9,7 @@ namespace bash {
 
 class Number : public Value {
 public:
-    Number(Token* t, double v);
+    Number(double v, Token* t = nullptr);
     virtual ~Number ();
     virtual std::string to_string();
     virtual void visit();

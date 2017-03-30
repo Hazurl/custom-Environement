@@ -9,7 +9,7 @@ namespace bash {
 
 class Value : public AST {
 public:
-    Value(Token* t, double v);
+    Value(double v, Token* t = nullptr);
     virtual std::string to_string() = 0;
     virtual void visit() = 0;
     double getValue();
