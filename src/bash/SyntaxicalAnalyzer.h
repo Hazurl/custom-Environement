@@ -19,11 +19,11 @@ public:
     SyntaxicalAnalyzer(TokenFlow& flow);
     ~SyntaxicalAnalyzer();
 
-    AST* getAST();
+    Expression* getAST();
 
 private:
     TokenFlow& flow;
-    AST* ast = nullptr;
+    Expression* ast = nullptr;
 
     void parse();
 

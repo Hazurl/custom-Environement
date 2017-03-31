@@ -18,6 +18,7 @@ std::string Token::to_string(bool allowColor) {
 
 
 Token* TokenFlow::current () {
+    Logger::warning("CURRENT");
     if (iteratorReset) {
         iteratorReset = false;
         if (tokens.empty()) {
@@ -25,7 +26,9 @@ Token* TokenFlow::current () {
         }
         cur = tokens.begin();
     } else if (cur == tokens.end()) {
+        Logger::warning("Reach the end !");
         push(new Token("", -1, -1, Token::Type::END));
+        cur = tokens.end() - 1;
         return tokens.back();
     }
     

@@ -13,6 +13,9 @@ SyntaxicalAnalyzer::~SyntaxicalAnalyzer() {
 
 void SyntaxicalAnalyzer::parse() {
     ast = eatExpression();
+
+    if (ast == nullptr)
+        Logger::error("ast is null...");
 }
 
 Expression* SyntaxicalAnalyzer::eatExpression() {
@@ -74,4 +77,4 @@ Number* SyntaxicalAnalyzer::eatNumber() {
     return num;
 }
 
-AST* SyntaxicalAnalyzer::getAST() { return ast; }
+Expression* SyntaxicalAnalyzer::getAST() { return ast; }

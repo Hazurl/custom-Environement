@@ -15,5 +15,7 @@ std::string Expression::to_string() {
 
 void Expression::visit () {
     if (expr)
-        value = getValue();
+        value = expr->getValue();
+    else
+        Logger::error("no expr");
 }
