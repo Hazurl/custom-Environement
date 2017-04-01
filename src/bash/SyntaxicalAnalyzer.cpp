@@ -59,6 +59,11 @@ Value* SyntaxicalAnalyzer::eatFactor() {
 }
 
 Value* SyntaxicalAnalyzer::eatValue() {
+    if (flow.current()->type == Token::Type::MINUS) {
+        auto v = new UnOp(flow.eat());
+        v->v = eatValue();
+        return v;
+    }
     if (flow.current()->type == Token::Type::PARENTHESIS_LEFT) {
         flow.eat();
         auto e = eatExpression();

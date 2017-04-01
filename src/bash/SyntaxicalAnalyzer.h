@@ -7,6 +7,7 @@
 #include "AST/Value.h"
 #include "AST/Expression.h"
 #include "AST/BinOp.h"
+#include "AST/UnOp.h"
 #include "AST/Number.h"
 
 #include <vector>
