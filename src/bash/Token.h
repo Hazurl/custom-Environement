@@ -82,6 +82,7 @@ public:
     Token* current ();
     Token* next(long delta = 1);
     Token* previous(); // maybe useless
+    bool isType(Token::Type type, long delta = 0);
 
     Token* eat(Token::Type type = Token::Type::FREE);
 };

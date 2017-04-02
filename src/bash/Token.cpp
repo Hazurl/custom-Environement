@@ -59,6 +59,12 @@ Token* TokenFlow::previous() {
     return next(-1);
 }
 
+bool TokenFlow::isType(Token::Type type, long delta) {
+    if (delta == 0)
+        return current()->type == type;
+    return next(delta)->type == type;
+}
+
 Token* TokenFlow::eat(Token::Type type) {
     Token* t = current();
 
