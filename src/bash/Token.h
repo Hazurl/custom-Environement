@@ -30,7 +30,7 @@ public:
         PLUS, MINUS, DIV, MUL,
         PARENTHESIS_LEFT, PARENTHESIS_RIGHT,
         EQUAL, COLON,
-        NUMBER, // float
+        IDENT, NUMBER, // float
         IF, THEN, ELSE, ENDIF, // if
         WHILE, ENDWH, // while
         FOR, FROM, TO, STEP, ENDFOR, // for
@@ -49,6 +49,7 @@ public:
             case Type::PARENTHESIS_RIGHT: return "Parenthesis right";
             case Type::EQUAL: return "Equal";
             case Type::COLON: return "Colon";
+            case Type::IDENT: return "Ident";
             case Type::NUMBER: return "Number";
             case Type::IF: return "If";
             case Type::THEN: return "Then";
@@ -64,8 +65,11 @@ public:
             case Type::PRINT: return "Print";
             case Type::END: return "End";
             case Type::FREE: return "Free";
+
+            default:
+                throw std::runtime_error("type_to_string : unkknown type (" + std::to_string((int)type) + ")");
+            break;
         }
-        throw std::runtime_error("type_to_string : unkknown type (" + std::to_string((int)type) + ")");
     }
 };
 

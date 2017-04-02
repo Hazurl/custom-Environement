@@ -62,12 +62,26 @@ Token* LexicalAnalyzer::findNextToken () {
             return new Token(std::string(1, c), curPos, curLine, Token::Type::DIV);
     }
 
+    if (isAlpha(c)) {
+        do
+            word += c;
+        while(isAlphanum(c = next()));
+
+        previous();
+
+        return new Token(word, startPos, curLine, getTypeOfIdent(word));
+    }
+
     // OTHER
 
     if (c == '(')
         return new Token (std::string(1, c), curPos, curLine, Token::Type::PARENTHESIS_LEFT);
     if (c == ')')
         return new Token (std::string(1, c), curPos, curLine, Token::Type::PARENTHESIS_RIGHT);
+    if (c == '=')
+        return new Token (std::string(1, c), curPos, curLine, Token::Type::EQUAL);
+    if (c == ':')
+        return new Token (std::string(1, c), curPos, curLine, Token::Type::COLON);
 
     Logger::error("No token found");
     return nullptr;
@@ -110,3 +124,41 @@ char LexicalAnalyzer::previous() {
     else
         return -1;
 }
+
+bool LexicalAnalyzer::isAlpha(char c) {
+    return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
+}
+
+bool LexicalAnalyzer::isAlphanum(char c) {
+    return isAlpha(c) || isDigit(c);
+}
+
+Token::Type LexicalAnalyzer::getTypeOfIdent(std::string const& ident) {
+    if (ident == "if")
+        return Token::Type::IF;
+    if (ident == "endif")
+        return Token::Type::ENDIF;
+    if (ident == "while")
+        return Token::Type::WHILE;
+    if (ident == "endwh")
+        return Token::Type::ENDWH;
+    if (ident == "for")
+        return Token::Type::FOR;
+    if (ident == "endfor")
+        return Token::Type::ENDFOR;
+    if (ident == "print")
+        return Token::Type::PRINT;
+    if (ident == "then")
+        return Token::Type::THEN;
+    if (ident == "else")
+        return Token::Type::ELSE;
+    if (ident == "from")
+        return Token::Type::FROM;
+    if (ident == "to")
+        return Token::Type::TO;
+    if (ident == "step")
+        return Token::Type::STEP;
+
+    return Token::Type::IDENT;
+}
+

@@ -23,8 +23,11 @@ private:
     void tokenize();
     Token* findNextToken();
     void skipSpace();
-    bool isDigit(char c);
     bool isOperator(char c);
+    bool isDigit(char c);
+    bool isAlpha(char c);
+    bool isAlphanum(char c);
+    Token::Type getTypeOfIdent(std::string const& ident);
     char next();
     char previous();
     char currentChar();

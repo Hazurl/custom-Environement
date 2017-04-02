@@ -33,7 +33,7 @@ std::string Interpreter::run(std::string code) {
         auto l = LexicalAnalyzer(code);            
 
     Logger::section_end("Tokenize");
-
+    return "";
     Logger::section("Parser", Logger::ALL, Logger::INFO);
 
         auto s = SyntaxicalAnalyzer(l);
