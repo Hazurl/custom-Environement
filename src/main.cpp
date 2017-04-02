@@ -8,17 +8,15 @@
 
 int main (int argc, char* argv[]) {
     // Logger : 
-    Logger::setMinimumDateHoursSize(0);
-    Logger::setDatePrinting(false);
-    Logger::setHourPrinting(false);
-    Logger::redirectToFile(Logger::Error | Logger::Warning | Logger::Log | Logger::Info | Logger::Verbose, "Debug/debugguer.txt");
+    Logger::createTransport(new Transport("Debug/debugguer.txt"), "debug");
+    Logger::setTransportOf(Logger::ALL, "debug");
 
     // Sections
     //Logger::hideSection("Tokenize");
     //Logger::hideSection("Parser");
     //Logger::hideSection("Evaluate");
 
-    Logger::log("===== New Run =====");
+    Logger::title("Nouveau Run", Logger::SPE);
 
     bool runTest = false;
 
@@ -31,6 +29,9 @@ int main (int argc, char* argv[]) {
     bash::Interpreter bash_interpreter;
 
     if (runTest) {
+        Logger::hideSection("Tokenize");
+        Logger::hideSection("Parser");
+        Logger::hideSection("Evaluate");
         bash_interpreter.runTest();
 
         return 0;

@@ -28,27 +28,27 @@ std::string Interpreter::run(std::string code) {
 
     Logger::log("Running code : " + code);
 
-    Logger::beginSection("Tokenize", Logger::Info);
+    Logger::section("Tokenize", Logger::ALL, Logger::INFO);
 
         auto l = LexicalAnalyzer(code);            
 
-    Logger::endSection("Tokenize");
+    Logger::section_end("Tokenize");
 
-    Logger::beginSection("Parser", Logger::Info);
+    Logger::section("Parser", Logger::ALL, Logger::INFO);
 
         auto s = SyntaxicalAnalyzer(l);
         Logger::log("To_string : " + s.getAST()->to_string());
 
-    Logger::endSection("Parser");
+    Logger::section_end("Parser");
     
-    Logger::beginSection("Evaluate", Logger::Info);
+    Logger::section("Evaluate", Logger::ALL, Logger::INFO);
 
     if (s.getAST() == nullptr)
         Logger::error("AST is null");
 
         auto ret = s.getAST()->getValue();
 
-    Logger::endSection("Evaluate");
+    Logger::section_end("Evaluate");
     return std::to_string(ret);
 }
 
