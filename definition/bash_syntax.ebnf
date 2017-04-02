@@ -1,16 +1,59 @@
 (* TokenType 
 
+Private keywords
+    if
+    endif
+    while
+    endwh
+    for
+    endfor
+    print
+    then
+    else
+    from
+    to
+    step
+
 Bin_op
     + - / * %
 
-Brackets
-    ( )
+Other
+    :
+    =
+    (
+    )
+
 *)
 
 (* SYNTAX *)
 
 <instruction> =
-    <expr>
+    <ifstatement> |
+    <whilestatement> |
+    <forstatement> |
+    <ident> "=" <expr> |
+    "print" ":" <expr>
+;
+
+<listinstructions> =
+    <instruction> |
+    <instruction> <listinstructions>
+;
+
+<ifstatement> =
+    "if" <expr> "then" <listinstructions> [ "else" <listinstructions> ] "endif"
+;
+
+<whilestatement> =
+    "while" <expr> "then" <listinstructions> "endwh"
+;
+
+<ifstatement> =
+    "for" <ident> "from" <expr> "to" <expr> [ "step" <number> ] "then" <listinstructions> "endfor"
+;
+
+<ident> =
+    <alpha> [ <alphanum> ]
 ;
 
 <expr> =
@@ -24,11 +67,13 @@ Brackets
 <factor> =
     <number> |
     "(" <expr> ")" |
-    ( "+" | "-" ) <factor>
+    ( "-" ) <factor>
 ;
 
 <number> =
-    <digitList> [ "." <digitList> ]
+    <digitList> [ "." [ <digitList> ] ] |
+    "." [ <digitList> ] |
+    <ident>
 ;
 
 <digitList> =
@@ -36,5 +81,13 @@ Brackets
 ;
 
 <digit> =
-    0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+    "0" to "9"
+;
+
+<alpha> =
+    "a" to "z" | "A" to "Z" | "_"
+;
+
+<alphanum> =
+    <alpha> | <digit>
 ;
