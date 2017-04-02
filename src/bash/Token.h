@@ -29,7 +29,13 @@ public:
     enum class Type {
         PLUS, MINUS, DIV, MUL,
         PARENTHESIS_LEFT, PARENTHESIS_RIGHT,
+        EQUAL, COLON,
         NUMBER, // float
+        IF, THEN, ELSE, ENDIF, // if
+        WHILE, ENDWH, // while
+        FOR, FROM, TO, STEP, ENDFOR, // for
+        PRINT, // used to print value to standard output
+
         END, FREE // used to eat a token who his type don't care 
     };
 
@@ -41,7 +47,21 @@ public:
             case Type::MUL: return "Multiply";
             case Type::PARENTHESIS_LEFT: return "Parenthesis left";
             case Type::PARENTHESIS_RIGHT: return "Parenthesis right";
+            case Type::EQUAL: return "Equal";
+            case Type::COLON: return "Colon";
             case Type::NUMBER: return "Number";
+            case Type::IF: return "If";
+            case Type::THEN: return "Then";
+            case Type::ELSE: return "Else";
+            case Type::ENDIF: return "EndIf";
+            case Type::WHILE: return "While";
+            case Type::ENDWH: return "EndWhile";
+            case Type::FOR: return "For";
+            case Type::FROM: return "From";
+            case Type::TO: return "To";
+            case Type::STEP: return "Step";
+            case Type::ENDFOR: return "EndFor";
+            case Type::PRINT: return "Print";
             case Type::END: return "End";
             case Type::FREE: return "Free";
         }
