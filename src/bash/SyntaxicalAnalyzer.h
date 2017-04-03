@@ -39,6 +39,8 @@ private:
     Expression* eatExpression();
     Assignment* eatAssignment();
     If* eatIf();
+    While* eatWhile();
+    For* eatFor();
     Value* eatFactor();
     Value* eatValue();
     Number* eatNumber();

@@ -22,17 +22,23 @@ void SyntaxicalAnalyzer::parse() {
 
 Instruction* SyntaxicalAnalyzer::eatInstruction() {
     Logger::info("eatInstruction");
-    if (flow.isType(Token::Type::IF)) {
+    if (flow.isType(Token::Type::IF))
         return eatIf();
-    } else if (flow.next()->type == Token::Type::EQUAL) {
+
+    else if (flow.isType(Token::Type::FOR))
+        return eatFor();
+
+    else if (flow.isType(Token::Type::WHILE))
+        return eatWhile();
+        
+    else if (flow.next()->type == Token::Type::EQUAL) 
         return eatAssignment();
-    }
 
     return nullptr;
 }
 
 If* SyntaxicalAnalyzer::eatIf() {
-    Logger::verbose("eatIf");
+    Logger::info("eatIf");
     If* iff = new If(flow.eat());
 
     iff->cond = eatExpression();
@@ -49,6 +55,43 @@ If* SyntaxicalAnalyzer::eatIf() {
     }
 
     return iff;
+}
+
+While* SyntaxicalAnalyzer::eatWhile() {
+    Logger::info("eatWhile");
+    While* wh = new While(flow.eat());
+
+    wh->cond = eatExpression();
+
+    flow.eat(Token::Type::THEN);
+    while(!flow.isType(Token::Type::ENDWH) && !flow.isType(Token::Type::END))
+        wh->block.push_back(eatInstruction());
+
+    return wh;
+}
+
+For* SyntaxicalAnalyzer::eatFor() {
+    Logger::info("eatFor");
+    For* fr = new For(flow.eat());
+
+    fr->var = new Ident(flow.eat(Token::Type::IDENT));
+
+    flow.eat(Token::Type::FROM);
+    fr->from = eatNumber();
+
+    flow.eat(Token::Type::TO);
+    fr->to = eatNumber();
+
+    if (flow.isType(Token::Type::STEP)) {
+        flow.eat(Token::Type::STEP);
+        fr->step = eatNumber();
+    }
+
+    flow.eat(Token::Type::THEN);
+    while(!flow.isType(Token::Type::ENDFOR) && !flow.isType(Token::Type::END))
+        fr->block.push_back(eatInstruction());
+
+    return fr;
 }
 
 Assignment* SyntaxicalAnalyzer::eatAssignment() {
