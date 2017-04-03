@@ -11,11 +11,38 @@ SyntaxicalAnalyzer::~SyntaxicalAnalyzer() {
         delete ast;
 }
 
+Instruction* SyntaxicalAnalyzer::getAST() { return ast; }
+
 void SyntaxicalAnalyzer::parse() {
-    ast = eatExpression();
+    ast = eatInstruction();
 
     if (ast == nullptr)
         Logger::error("ast is null...");
+}
+
+Instruction* SyntaxicalAnalyzer::eatInstruction() {
+    Logger::info("eatInstruction");
+    if (flow.isType(Token::Type::IF)) {
+        Logger::verbose("new if");
+        If* iff = new If(flow.eat());
+
+        iff->cond = eatExpression();
+
+        flow.eat(Token::Type::THEN);
+        while(!flow.isType(Token::Type::ENDIF) && !flow.isType(Token::Type::ELSE) && !flow.isType(Token::Type::END))
+            iff->thenBlock.push_back(eatInstruction());
+
+        if (flow.isType(Token::Type::ELSE)) {
+            Logger::verbose("with an else");
+            flow.eat();
+            while(!flow.isType(Token::Type::ENDIF) && !flow.isType(Token::Type::END))
+                iff->elseBlock.push_back(eatInstruction());
+        }
+
+        return iff;
+    }
+
+    return nullptr;
 }
 
 Expression* SyntaxicalAnalyzer::eatExpression() {
@@ -76,4 +103,3 @@ Number* SyntaxicalAnalyzer::eatNumber() {
     return num;
 }
 
-Expression* SyntaxicalAnalyzer::getAST() { return ast; }

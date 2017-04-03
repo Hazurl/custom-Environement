@@ -33,23 +33,25 @@ std::string Interpreter::run(std::string code) {
         auto l = LexicalAnalyzer(code);            
 
     Logger::section_end("Tokenize");
-    return "";
+
     Logger::section("Parser", Logger::ALL, Logger::INFO);
 
         auto s = SyntaxicalAnalyzer(l);
         Logger::log("To_string : " + s.getAST()->to_string());
 
     Logger::section_end("Parser");
-    
+
+    return "";
+
     Logger::section("Evaluate", Logger::ALL, Logger::INFO);
 
     if (s.getAST() == nullptr)
         Logger::error("AST is null");
-
-        auto ret = s.getAST()->getValue();
+    else;
+        //auto ret = s.getAST()->getValue();
 
     Logger::section_end("Evaluate");
-    return std::to_string(ret);
+    return "";//std::to_string(ret);
 }
 
 void Interpreter::runTest () {

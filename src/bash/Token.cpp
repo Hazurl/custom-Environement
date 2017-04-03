@@ -18,7 +18,6 @@ std::string Token::to_string(bool allowColor) {
 
 
 Token* TokenFlow::current () {
-    Logger::warning("CURRENT");
     if (iteratorReset) {
         iteratorReset = false;
         if (tokens.empty()) {

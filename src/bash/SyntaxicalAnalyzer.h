@@ -4,10 +4,15 @@
 #include "../../lib/Logger/src/Logger.h"
 #include "Token.h"
 #include "AST/AST.h"
+#include "AST/Instruction.h"
+#include "AST/If.h"
+#include "AST/For.h"
+#include "AST/While.h"
 #include "AST/Value.h"
 #include "AST/Expression.h"
 #include "AST/BinOp.h"
 #include "AST/UnOp.h"
+#include "AST/Ident.h"
 #include "AST/Number.h"
 
 #include <vector>
@@ -20,15 +25,16 @@ public:
     SyntaxicalAnalyzer(TokenFlow& flow);
     ~SyntaxicalAnalyzer();
 
-    Expression* getAST();
+    Instruction* getAST();
 
 private:
     TokenFlow& flow;
-    Expression* ast = nullptr;
+    Instruction* ast = nullptr;
 
     void parse();
 
     // EAT
+    Instruction* eatInstruction();
     Expression* eatExpression();
     Value* eatFactor();
     Value* eatValue();
