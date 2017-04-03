@@ -5,10 +5,11 @@
 #include "Token.h"
 #include "AST/AST.h"
 #include "AST/Instruction.h"
-#include "AST/If.h"
+#include "AST/Assignment.h"
 #include "AST/For.h"
 #include "AST/While.h"
 #include "AST/Value.h"
+#include "AST/If.h"
 #include "AST/Expression.h"
 #include "AST/BinOp.h"
 #include "AST/UnOp.h"
@@ -36,6 +37,8 @@ private:
     // EAT
     Instruction* eatInstruction();
     Expression* eatExpression();
+    Assignment* eatAssignment();
+    If* eatIf();
     Value* eatFactor();
     Value* eatValue();
     Number* eatNumber();

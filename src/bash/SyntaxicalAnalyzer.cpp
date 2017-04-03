@@ -23,26 +23,42 @@ void SyntaxicalAnalyzer::parse() {
 Instruction* SyntaxicalAnalyzer::eatInstruction() {
     Logger::info("eatInstruction");
     if (flow.isType(Token::Type::IF)) {
-        Logger::verbose("new if");
-        If* iff = new If(flow.eat());
-
-        iff->cond = eatExpression();
-
-        flow.eat(Token::Type::THEN);
-        while(!flow.isType(Token::Type::ENDIF) && !flow.isType(Token::Type::ELSE) && !flow.isType(Token::Type::END))
-            iff->thenBlock.push_back(eatInstruction());
-
-        if (flow.isType(Token::Type::ELSE)) {
-            Logger::verbose("with an else");
-            flow.eat();
-            while(!flow.isType(Token::Type::ENDIF) && !flow.isType(Token::Type::END))
-                iff->elseBlock.push_back(eatInstruction());
-        }
-
-        return iff;
+        return eatIf();
+    } else if (flow.next()->type == Token::Type::EQUAL) {
+        return eatAssignment();
     }
 
     return nullptr;
+}
+
+If* SyntaxicalAnalyzer::eatIf() {
+    Logger::verbose("eatIf");
+    If* iff = new If(flow.eat());
+
+    iff->cond = eatExpression();
+
+    flow.eat(Token::Type::THEN);
+    while(!flow.isType(Token::Type::ENDIF) && !flow.isType(Token::Type::ELSE) && !flow.isType(Token::Type::END))
+        iff->thenBlock.push_back(eatInstruction());
+
+    if (flow.isType(Token::Type::ELSE)) {
+        Logger::verbose("with an else");
+        flow.eat();
+        while(!flow.isType(Token::Type::ENDIF) && !flow.isType(Token::Type::END))
+            iff->elseBlock.push_back(eatInstruction());
+    }
+
+    return iff;
+}
+
+Assignment* SyntaxicalAnalyzer::eatAssignment() {
+    Logger::info("eatAssignment");
+    Assignment* ass = new Assignment(flow.current());
+    ass->var = new Ident(flow.eat(Token::Type::IDENT));
+    flow.eat(Token::Type::EQUAL);
+    ass->expr = eatExpression();
+    
+    return ass;
 }
 
 Expression* SyntaxicalAnalyzer::eatExpression() {

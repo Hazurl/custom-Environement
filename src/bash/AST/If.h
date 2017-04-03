@@ -16,7 +16,7 @@ public:
     virtual std::string to_string();
     virtual void visit();
 
-    Value* cond;
+    Value* cond = nullptr;
     std::vector<Instruction*> thenBlock;
     std::vector<Instruction*> elseBlock;
 };

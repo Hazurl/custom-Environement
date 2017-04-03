@@ -13,7 +13,7 @@ public:
     virtual std::string to_string() = 0;
     virtual void visit() = 0;
 
-    Token* token;
+    Token* token = nullptr;
 };
 
 }; // namespace bash

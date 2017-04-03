@@ -5,6 +5,9 @@ using namespace bash;
 If::If (Token* t) : Instruction(t) {}
 
 If::~If() {
+    if(cond)
+        delete cond;
+
     for (auto& i : thenBlock)
         delete i;
 
