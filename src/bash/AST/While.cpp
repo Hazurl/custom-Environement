@@ -12,8 +12,8 @@ While::~While() {
         delete i;
 }
 
-void While::visit() {
-
+void While::visit(Context& ctx) {
+    
 }
 
 std::string While::to_string() {

@@ -15,7 +15,7 @@ If::~If() {
         delete i;
 }
 
-void If::visit() {
+void If::visit(Context& ctx) {
 
 }
 

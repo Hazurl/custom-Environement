@@ -41,27 +41,22 @@ std::string Interpreter::run(std::string code) {
 
     Logger::section_end("Parser");
 
-    return "";
-
     Logger::section("Evaluate", Logger::ALL, Logger::INFO);
 
     if (s.getAST() == nullptr)
         Logger::error("AST is null");
-    else;
-        //auto ret = s.getAST()->getValue();
+    else {
+        Context ctx;
+        s.getAST()->visit(ctx);
+        Logger::section_end("Evaluate");
+        return ctx.to_string();
+    }
 
     Logger::section_end("Evaluate");
-    return "";//std::to_string(ret);
+    return "";
 }
 
 void Interpreter::runTest () {
-    Logger::log("Run Test");
-    std::cout << "./5 : " << run("./5") << std::endl;
-    std::cout << "1+1 : " << run("1+1") << std::endl;
-    std::cout << "\t5/2 + 1 : " << run("\t5/2 + 1") << std::endl;
-    std::cout << "2+2*8 : " << run("2+2*8") << std::endl;
-    std::cout << "5+(((5*2+(2) ))) : " << run("5+(((5*2+(2) )))") << std::endl;
-    std::cout << "1-1+1*2 : " << run("1-1+1*2") << std::endl;
-    std::cout << ".+.-.+1 : " << run(".+.-.+1") << std::endl;
+    Logger::log("Run Test (Nothing)");
 }
 

@@ -21,7 +21,7 @@ For::~For() {
         delete i;
 }
 
-void For::visit() {
+void For::visit(Context& ctx) {
 
 }
 

@@ -13,9 +13,9 @@ std::string Expression::to_string() {
     return expr ? expr->to_string() : "<empty expression>";
 }
 
-void Expression::visit () {
+void Expression::visit (Context& ctx) {
     if (expr)
-        value = expr->getValue();
+        value = expr->getValue(ctx);
     else
         Logger::error("no expr");
 }

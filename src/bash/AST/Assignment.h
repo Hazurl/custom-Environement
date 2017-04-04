@@ -16,7 +16,7 @@ public:
     virtual ~Assignment ();
 
     virtual std::string to_string();
-    virtual void visit();
+    virtual void visit(Context& ctx);
 
     Ident* var = nullptr;
     Expression* expr = nullptr;

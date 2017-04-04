@@ -11,8 +11,8 @@ class Value : public AST {
 public:
     Value(double v, Token* t = nullptr);
     virtual std::string to_string() = 0;
-    virtual void visit() = 0;
-    double getValue();
+    virtual void visit(Context& ctx) = 0;
+    double getValue(Context& ctx);
 
     double value = 0.0;
 };

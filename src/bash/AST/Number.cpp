@@ -10,4 +10,4 @@ std::string Number::to_string() {
     return std::to_string(value);
 }
 
-void Number::visit () {}
+void Number::visit (Context& ctx) {}

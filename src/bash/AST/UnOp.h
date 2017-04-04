@@ -13,7 +13,7 @@ public:
     UnOp(Token* t = nullptr);
     virtual ~UnOp ();
     virtual std::string to_string();
-    virtual void visit();
+    virtual void visit(Context& ctx);
 
     Value* v = nullptr;
 };

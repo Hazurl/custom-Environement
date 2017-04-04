@@ -26,15 +26,15 @@ std::string BinOp::to_string() {
         return "<empty binary operation>";
 }
 
-void BinOp::visit () {
+void BinOp::visit (Context& ctx) {
     if (left && right) {
         if (token->type == Token::Type::PLUS)
-            value = left->getValue() + right->getValue();
+            value = left->getValue(ctx) + right->getValue(ctx);
         if (token->type == Token::Type::MINUS)
-            value = left->getValue() - right->getValue();
+            value = left->getValue(ctx) - right->getValue(ctx);
         if (token->type == Token::Type::MUL)
-            value = left->getValue() * right->getValue();
+            value = left->getValue(ctx) * right->getValue(ctx);
         if (token->type == Token::Type::DIV)
-            value = left->getValue() / right->getValue();
+            value = left->getValue(ctx) / right->getValue(ctx);
     }
 }

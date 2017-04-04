@@ -13,7 +13,7 @@ public:
     BinOp(Token* t = nullptr);
     virtual ~BinOp ();
     virtual std::string to_string();
-    virtual void visit();
+    virtual void visit(Context& ctx);
 
     Value* left = nullptr;
     Value* right = nullptr;

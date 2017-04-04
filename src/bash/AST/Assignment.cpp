@@ -12,8 +12,8 @@ Assignment::~Assignment() {
         delete expr;
 }
 
-void Assignment::visit() {
-
+void Assignment::visit(Context& ctx) {
+    ctx.setVar(var->name, expr->getValue(ctx));
 }
 
 std::string Assignment::to_string() {

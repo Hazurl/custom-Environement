@@ -18,9 +18,7 @@ std::string UnOp::to_string() {
         return "<empty unary operation>";
 }
 
-void UnOp::visit () {
-    if (v) {
-        if (token->type == Token::Type::MINUS)
-            value = - v->getValue();
-    }
+void UnOp::visit (Context& ctx) {
+    if (token->type == Token::Type::MINUS)
+        value = - v->getValue(ctx);
 }

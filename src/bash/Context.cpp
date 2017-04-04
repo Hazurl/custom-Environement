@@ -1,23 +1,30 @@
-#ifndef __BASH_CONTEXT__
-#define __BASH_CONTEXT__
+#include "Context.h"
 
-#include <map>
-#include <string>
+using namespace bash;
 
-namespace bash {
+Context::Context() {}
+Context::~Context() {}
 
-class Context {
-public:
-    Context();
-    ~Context();
+double Context::setVar(std::string name, double value) {
+    if (variables.find(name) == variables.end())
+        variables.insert( { name, value });
+    else 
+        variables[name] = value;
+    return value;
+}
 
-    double setVar(std::string name, double value);
-    double getVar(std::string name);
+double Context::getVar(std::string name) {
+    if (variables.find(name) == variables.end())
+        variables.insert({ name, 0 });
 
-private:
-    std::map<std::string, double> variables;
-};
+    return variables[name];
+}
 
-}; // namespace bash
+std::string Context::to_string () {
+    std::string s = "";
 
-#endif
+    for (auto pair : variables)
+        s += pair.first + " : " + std::to_string(pair.second) + ", ";
+
+    return s;
+}
