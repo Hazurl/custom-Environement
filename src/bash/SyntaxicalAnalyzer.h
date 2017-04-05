@@ -4,6 +4,7 @@
 #include "../../lib/Logger/src/Logger.h"
 #include "Token.h"
 #include "AST/AST.h"
+#include "AST/Block.h"
 #include "AST/Instruction.h"
 #include "AST/Assignment.h"
 #include "AST/For.h"

@@ -43,15 +43,15 @@ If* SyntaxicalAnalyzer::eatIf() {
 
     iff->cond = eatExpression();
 
-    flow.eat(Token::Type::THEN);
+    iff->then = new Block(flow.eat(Token::Type::THEN));
     while(!flow.isType(Token::Type::ENDIF) && !flow.isType(Token::Type::ELSE) && !flow.isType(Token::Type::END))
-        iff->thenBlock.push_back(eatInstruction());
+        iff->then->push(eatInstruction());
 
     if (flow.isType(Token::Type::ELSE)) {
         Logger::verbose("with an else");
-        flow.eat();
+        iff->elze = new Block(flow.eat(Token::Type::ELSE));
         while(!flow.isType(Token::Type::ENDIF) && !flow.isType(Token::Type::END))
-            iff->elseBlock.push_back(eatInstruction());
+            iff->elze->push(eatInstruction());
     }
 
     return iff;
@@ -63,9 +63,9 @@ While* SyntaxicalAnalyzer::eatWhile() {
 
     wh->cond = eatExpression();
 
-    flow.eat(Token::Type::THEN);
+    wh->then = new Block(flow.eat(Token::Type::THEN));
     while(!flow.isType(Token::Type::ENDWH) && !flow.isType(Token::Type::END))
-        wh->block.push_back(eatInstruction());
+        wh->then->push(eatInstruction());
 
     return wh;
 }
@@ -87,9 +87,9 @@ For* SyntaxicalAnalyzer::eatFor() {
         fr->step = eatNumber();
     }
 
-    flow.eat(Token::Type::THEN);
+    fr->then = new Block(flow.eat(Token::Type::THEN));
     while(!flow.isType(Token::Type::ENDFOR) && !flow.isType(Token::Type::END))
-        fr->block.push_back(eatInstruction());
+        fr->then->push(eatInstruction());
 
     return fr;
 }

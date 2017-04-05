@@ -17,25 +17,21 @@ For::~For() {
     if(step)
         delete step;
 
-    for (auto& i : block)
-        delete i;
+    if(then)
+        delete then;
 }
 
 void For::visit(Context& ctx) {
     if (from->getValue(ctx) < to->getValue(ctx))
         for(ctx.setVar(var->name, from->getValue(ctx));                             // init
             ctx.getVar(var->name) < to->getValue(ctx);                             // cond
-            ctx.setVar(var->name, ctx.getVar(var->name) + (step ? step->getValue(ctx) : 1))) {   // incrementation
-                for (auto i : block)
-                    i->visit(ctx);
-            }
+            ctx.setVar(var->name, ctx.getVar(var->name) + (step ? step->getValue(ctx) : 1)))   // incrementation
+                then->visit(ctx);
     else
         for(ctx.setVar(var->name, from->getValue(ctx));                             // init
             ctx.getVar(var->name) > to->getValue(ctx);                             // cond
-            ctx.setVar(var->name, ctx.getVar(var->name) + (step ? step->getValue(ctx) : -1))) {   // incrementation
-                for (auto i : block)
-                    i->visit(ctx);
-            }
+            ctx.setVar(var->name, ctx.getVar(var->name) + (step ? step->getValue(ctx) : -1)))   // incrementation
+                then->visit(ctx);
 
 }
 
@@ -43,8 +39,8 @@ std::string For::to_string() {
     std::string s = "for " + var->to_string() + " from " + from->to_string() + " to " + to->to_string() + " ";
     if (step)
         s += "step " + step->to_string() + " then ";
-    for (auto& i : block)
-        s += i->to_string() + "; ";
+
+    s += then->to_string();
 
     return s;
 }

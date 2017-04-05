@@ -8,19 +8,15 @@ While::~While() {
     if(cond)
         delete cond;
 
-    for (auto& i : block)
-        delete i;
+    if (then)
+        delete then;
 }
 
 void While::visit(Context& ctx) {
     while (cond->getValue(ctx))
-        for (auto i : block)
-            i->visit(ctx);
+        then->visit(ctx);
 }
 
 std::string While::to_string() {
-    std::string s = "while " + cond->to_string() + " then ";
-    for (auto& i : block)
-        s += i->to_string() + "; ";
-    return s;
+    return "while " + cond->to_string() + " then " + then->to_string();
 }

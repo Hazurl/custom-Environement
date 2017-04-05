@@ -3,6 +3,7 @@
 
 #include "../Token.h"
 #include "Instruction.h"
+#include "Block.h"
 #include "Value.h"
 #include <string>
 
@@ -17,7 +18,7 @@ public:
     virtual void visit(Context& ctx);
 
     Value* cond = nullptr;
-    std::vector<Instruction*> block;
+    Block* then = nullptr;
 };
 
 }; // namespace bash

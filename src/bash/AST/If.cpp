@@ -8,32 +8,26 @@ If::~If() {
     if(cond)
         delete cond;
 
-    for (auto& i : thenBlock)
-        delete i;
-
-    for (auto& i : elseBlock)
-        delete i;
+    if (then)
+        delete then;
+    
+    if (elze)
+        delete elze;
 }
 
 void If::visit(Context& ctx) {
     if (cond->getValue(ctx))
-        for (auto i : thenBlock)
-            i->visit(ctx);
-    else
-        for (auto i : elseBlock)
-            i->visit(ctx);
+        then->visit(ctx);
+    else if (elze)
+        elze->visit(ctx);
 }
 
 std::string If::to_string() {
     std::string s = "if " + cond->to_string() + " then ";
-    for (auto& i : thenBlock)
-        s += i->to_string() + "; ";
+    s += then->to_string();
 
-    if (!elseBlock.empty()) {
-        s += "else ";
-        for (auto& i : elseBlock)
-            s += i->to_string() + "; ";
-    }
+    if (elze)
+        s += elze->to_string();
 
     return s;
 }

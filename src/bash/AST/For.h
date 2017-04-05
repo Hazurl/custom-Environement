@@ -2,6 +2,7 @@
 #define __BASH_AST_FOR__
 
 #include "../Token.h"
+#include "Block.h"
 #include "Instruction.h"
 #include "Ident.h"
 #include "Number.h"
@@ -21,7 +22,7 @@ public:
     Number* from = nullptr;
     Number* to = nullptr;
     Number* step = nullptr;
-    std::vector<Instruction*> block;
+    Block* then = nullptr;
 };
 
 }; // namespace bash
