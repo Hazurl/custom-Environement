@@ -7,17 +7,21 @@ SyntaxicalAnalyzer::SyntaxicalAnalyzer(TokenFlow& flow) : flow(flow) {
 }
 
 SyntaxicalAnalyzer::~SyntaxicalAnalyzer() {
-    if (ast)
-        delete ast;
+    if (mainBlock)
+        delete mainBlock;
 }
 
-Instruction* SyntaxicalAnalyzer::getAST() { return ast; }
+Block* SyntaxicalAnalyzer::getAST() { return mainBlock; }
 
 void SyntaxicalAnalyzer::parse() {
-    ast = eatInstruction();
+    mainBlock = new Block();
+    while (!flow.isType(Token::Type::END))
+        mainBlock->push(eatInstruction());
 
-    if (ast == nullptr)
-        Logger::error("ast is null...");
+    mainBlock->token = mainBlock->instr.front()->token;
+
+    if (mainBlock == nullptr)
+        Logger::error("mainBlock is null...");
 }
 
 Instruction* SyntaxicalAnalyzer::eatInstruction() {
@@ -52,6 +56,7 @@ If* SyntaxicalAnalyzer::eatIf() {
         iff->elze = new Block(flow.eat(Token::Type::ELSE));
         while(!flow.isType(Token::Type::ENDIF) && !flow.isType(Token::Type::END))
             iff->elze->push(eatInstruction());
+        flow.eat(Token::Type::ENDIF);
     }
 
     return iff;
@@ -66,6 +71,7 @@ While* SyntaxicalAnalyzer::eatWhile() {
     wh->then = new Block(flow.eat(Token::Type::THEN));
     while(!flow.isType(Token::Type::ENDWH) && !flow.isType(Token::Type::END))
         wh->then->push(eatInstruction());
+    flow.eat(Token::Type::ENDWH);
 
     return wh;
 }
@@ -90,6 +96,7 @@ For* SyntaxicalAnalyzer::eatFor() {
     fr->then = new Block(flow.eat(Token::Type::THEN));
     while(!flow.isType(Token::Type::ENDFOR) && !flow.isType(Token::Type::END))
         fr->then->push(eatInstruction());
+    flow.eat(Token::Type::ENDFOR);
 
     return fr;
 }

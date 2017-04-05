@@ -8,8 +8,11 @@
 
 int main (int argc, char* argv[]) {
     // Logger : 
+    Logger::createTransport(new Transport("Debug/debugguerColored.txt"), "debugC");
+    Logger::setTransportOf(Logger::ALL, "debugC");
     Logger::createTransport(new Transport("Debug/debugguer.txt"), "debug");
-    Logger::setTransportOf(Logger::ALL, "debug");
+    Logger::addTransportOf(Logger::ALL, "debug");
+    Logger::allowColorOn("debug", false);
 
     // Sections
     //Logger::hideSection("Tokenize");

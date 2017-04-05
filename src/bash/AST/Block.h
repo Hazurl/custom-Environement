@@ -19,7 +19,6 @@ public:
 
     void push(Instruction* i);
 
-private:
     std::vector<Instruction*> instr;
 };
 

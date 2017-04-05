@@ -27,11 +27,11 @@ public:
     SyntaxicalAnalyzer(TokenFlow& flow);
     ~SyntaxicalAnalyzer();
 
-    Instruction* getAST();
+    Block* getAST();
 
 private:
     TokenFlow& flow;
-    Instruction* ast = nullptr;
+    Block* mainBlock = nullptr;
 
     void parse();
 
