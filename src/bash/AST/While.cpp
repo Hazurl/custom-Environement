@@ -13,7 +13,9 @@ While::~While() {
 }
 
 void While::visit(Context& ctx) {
-    
+    while (cond->getValue(ctx))
+        for (auto i : block)
+            i->visit(ctx);
 }
 
 std::string While::to_string() {

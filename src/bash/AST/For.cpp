@@ -22,6 +22,20 @@ For::~For() {
 }
 
 void For::visit(Context& ctx) {
+    if (from->getValue(ctx) < to->getValue(ctx))
+        for(ctx.setVar(var->name, from->getValue(ctx));                             // init
+            ctx.getVar(var->name) < to->getValue(ctx);                             // cond
+            ctx.setVar(var->name, ctx.getVar(var->name) + (step ? step->getValue(ctx) : 1))) {   // incrementation
+                for (auto i : block)
+                    i->visit(ctx);
+            }
+    else
+        for(ctx.setVar(var->name, from->getValue(ctx));                             // init
+            ctx.getVar(var->name) > to->getValue(ctx);                             // cond
+            ctx.setVar(var->name, ctx.getVar(var->name) + (step ? step->getValue(ctx) : -1))) {   // incrementation
+                for (auto i : block)
+                    i->visit(ctx);
+            }
 
 }
 

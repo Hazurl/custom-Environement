@@ -16,7 +16,12 @@ If::~If() {
 }
 
 void If::visit(Context& ctx) {
-
+    if (cond->getValue(ctx))
+        for (auto i : thenBlock)
+            i->visit(ctx);
+    else
+        for (auto i : elseBlock)
+            i->visit(ctx);
 }
 
 std::string If::to_string() {
