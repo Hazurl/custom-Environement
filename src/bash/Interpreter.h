@@ -25,7 +25,7 @@ public:
 
     void                    interactive                 ();
     void                    runTest                     ();
-    std::string             run                         (std::string code);
+    void                    run                         (std::string code, Context& ctx);
 private:  
 
 }; // class Interpreter

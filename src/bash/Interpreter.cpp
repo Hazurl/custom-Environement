@@ -10,6 +10,7 @@ Interpreter::~Interpreter () {}
 
 void Interpreter::interactive () {
     std::string cmd;
+    Context ctx;
 
     while (!std::cin.eof()) {
         std::cout << INTERACTIVE_PREFIXE;
@@ -18,13 +19,14 @@ void Interpreter::interactive () {
         if (cmd == INTERACTIVE_EXIT_CMD)
             break;
 
-        std::cout << run(cmd) << std::endl;
+        run(cmd, ctx);
+        std::cout << ctx.to_string() << std::endl;
 	}
 
     std::cout << std::endl;
 }
 
-std::string Interpreter::run(std::string code) {
+void Interpreter::run(std::string code, Context& ctx) {
 
     Logger::log("Running code : " + code);
 
@@ -45,15 +47,10 @@ std::string Interpreter::run(std::string code) {
 
     if (s.getAST() == nullptr)
         Logger::error("AST is null");
-    else {
-        Context ctx;
+    else
         s.getAST()->visit(ctx);
-        Logger::section_end("Evaluate");
-        return ctx.to_string();
-    }
 
     Logger::section_end("Evaluate");
-    return "";
 }
 
 void Interpreter::runTest () {
