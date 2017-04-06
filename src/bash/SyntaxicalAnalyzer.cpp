@@ -161,11 +161,16 @@ Value* SyntaxicalAnalyzer::eatValue() {
     return eatNumber();
 }
 
-Number* SyntaxicalAnalyzer::eatNumber() {
-    auto t = flow.eat(Token::Type::NUMBER);
-    auto num = new Number(std::stod(t->content), t);
-    Logger::info("eatNumber : " + std::to_string(num->value));
-
-    return num;
+Value* SyntaxicalAnalyzer::eatNumber() {
+    if (flow.isType(Token::Type::IDENT)) {
+        auto ident = new Ident(flow.eat(Token::Type::IDENT));
+        Logger::info("eatIdent : " + std::to_string(ident->value));
+        return ident;
+    } else {
+        auto t = flow.eat(Token::Type::NUMBER);
+        auto num = new Number(std::stod(t->content), t);
+        Logger::info("eatNumber : " + std::to_string(num->value));
+        return num;
+    }
 }
 

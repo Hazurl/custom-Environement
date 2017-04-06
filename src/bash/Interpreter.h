@@ -15,7 +15,7 @@
 
 namespace bash {
 
-#define INTERACTIVE_PREFIXE "~> "
+#define INTERACTIVE_PREFIXE ">> "
 #define INTERACTIVE_EXIT_CMD "$"
 
 class Interpreter {

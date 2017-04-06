@@ -44,7 +44,7 @@ private:
     For* eatFor();
     Value* eatFactor();
     Value* eatValue();
-    Number* eatNumber();
+    Value* eatNumber();
 
 };
 
