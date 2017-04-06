@@ -38,6 +38,9 @@ Instruction* SyntaxicalAnalyzer::eatInstruction() {
     else if (flow.next()->type == Token::Type::EQUAL) 
         return eatAssignment();
 
+    else if (flow.isType(Token::Type::PRINT))
+        return eatPrint();
+
     return nullptr;
 }
 
@@ -174,3 +177,9 @@ Value* SyntaxicalAnalyzer::eatNumber() {
     }
 }
 
+Print* SyntaxicalAnalyzer::eatPrint() {
+    auto p = new Print(flow.eat(Token::Type::PRINT));
+    flow.eat(Token::Type::COLON);
+    p->v = eatExpression();
+    return p;
+}

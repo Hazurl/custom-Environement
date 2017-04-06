@@ -28,3 +28,8 @@ std::string Context::to_string () {
 
     return s;
 }
+
+void Context::print(double v) {
+    std::cout << v << std::endl;
+    Logger::spe("Print : " + std::to_string(v));
+}

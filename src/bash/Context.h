@@ -4,6 +4,8 @@
 
 #include <map>
 #include <string>
+#include <iostream>
+#include "../../lib/Logger/src/Logger.h"
 
 namespace bash {
 
@@ -15,6 +17,8 @@ public:
     double setVar(std::string name, double value);
     double getVar(std::string name);
     std::string to_string();
+
+    void print(double v);
 
 private:
     std::map<std::string, double> variables;

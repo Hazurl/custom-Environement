@@ -6,6 +6,7 @@
 #include "AST/AST.h"
 #include "AST/Block.h"
 #include "AST/Instruction.h"
+#include "AST/Print.h"
 #include "AST/Assignment.h"
 #include "AST/For.h"
 #include "AST/While.h"
@@ -45,6 +46,7 @@ private:
     Value* eatFactor();
     Value* eatValue();
     Value* eatNumber();
+    Print* eatPrint();
 
 };
 
