@@ -8,7 +8,7 @@ Token::Token(std::string content, long charPos, long linePos, Type type) :
     content(content), charPos(charPos), linePos(linePos), type(type) {}
 
 std::string Token::to_string(bool allowColor) {
-    if (allowColor && false)
+    if (allowColor)
         return "At line " + std::to_string(linePos) + "(" + std::to_string(charPos) + ") \"\033[34m" 
          + content + "\033[0m\" : \033[33m" + bash::Token::type_to_string(type) + "\033[0m";
     return "At line " + std::to_string(linePos) + "(" + std::to_string(charPos) + ") \"" 
