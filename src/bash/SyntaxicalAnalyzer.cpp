@@ -83,14 +83,14 @@ For* SyntaxicalAnalyzer::eatFor() {
     fr->var = new Ident(flow.eat(Token::Type::IDENT));
 
     flow.eat(Token::Type::FROM);
-    fr->from = eatNumber();
+    fr->from = eatExpression();
 
     flow.eat(Token::Type::TO);
-    fr->to = eatNumber();
+    fr->to = eatExpression();
 
     if (flow.isType(Token::Type::STEP)) {
         flow.eat(Token::Type::STEP);
-        fr->step = eatNumber();
+        fr->step = eatExpression();
     }
 
     fr->then = new Block(flow.eat(Token::Type::THEN));
