@@ -18,12 +18,11 @@ void Interpreter::interactive () {
 
         if (cmd == INTERACTIVE_EXIT_CMD)
             break;
-
-        run(cmd, ctx);
-        std::cout << ctx.to_string() << std::endl;
+        else if (cmd == INTERACTIVE_PRT_CTX)
+            std::cout << ctx.to_string() << std::endl;
+        else
+            run(cmd, ctx);
 	}
-
-    std::cout << std::endl;
 }
 
 void Interpreter::run(std::string code, Context& ctx) {

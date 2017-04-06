@@ -17,6 +17,7 @@ namespace bash {
 
 #define INTERACTIVE_PREFIXE ">> "
 #define INTERACTIVE_EXIT_CMD "$"
+#define INTERACTIVE_PRT_CTX "£"
 
 class Interpreter {
 public: 
