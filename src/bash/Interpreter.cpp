@@ -38,7 +38,8 @@ void Interpreter::run(std::string code, Context& ctx) {
     Logger::section("Parser", Logger::ALL, Logger::INFO);
 
         auto s = SyntaxicalAnalyzer(l);
-        Logger::log("To_string : " + s.getAST()->to_string());
+        if (s.getAST() != nullptr)
+            Logger::log("To_string : " + s.getAST()->to_string());
 
     Logger::section_end("Parser");
 

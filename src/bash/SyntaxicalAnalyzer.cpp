@@ -15,8 +15,16 @@ Block* SyntaxicalAnalyzer::getAST() { return mainBlock; }
 
 void SyntaxicalAnalyzer::parse() {
     mainBlock = new Block();
-    while (!flow.isType(Token::Type::END))
-        mainBlock->push(eatInstruction());
+    while (!flow.isType(Token::Type::END)) {
+        auto i = eatInstruction();
+        if (i == nullptr) {
+            Logger::error("Instruction null");
+            delete mainBlock;
+            mainBlock = nullptr;
+            return;
+        }
+        mainBlock->push(i);
+    }
 
     mainBlock->token = mainBlock->instr.front()->token;
 
