@@ -4,7 +4,8 @@
 #include "../../lib/Logger/src/Logger.h"
 
 #include <vector>
-#include <string>
+#include <vector>
+#include <map>
 #include <exception>
 #include <stdexcept>
 #include <iostream>
@@ -76,10 +77,13 @@ public:
 class TokenFlow {
 protected:
     std::vector<Token*> tokens;
-    std::vector<Token*>::iterator cur;
+    std::map<Token::Type, Token*> fakes;
+    long pos = 0;
     bool iteratorReset = true;
 
     void push(Token* token);
+    Token* getAt(long p);
+    Token* fakeToken(Token::Type t);
     void reset();
 
 public:
@@ -89,6 +93,8 @@ public:
     bool isType(Token::Type type, long delta = 0);
 
     Token* eat(Token::Type type = Token::Type::FREE);
+
+    virtual ~TokenFlow();
 };
 
 }; // namespace bash

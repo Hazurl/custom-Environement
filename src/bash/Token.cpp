@@ -16,51 +16,25 @@ std::string Token::to_string(bool allowColor) {
 }
 
 
-
-Token* TokenFlow::current () {
-    if (iteratorReset) {
-        iteratorReset = false;
-        if (tokens.empty()) {
-            push(new Token("", -1, -1, Token::Type::END));
-        }
-        cur = tokens.begin();
-    } else if (cur == tokens.end()) {
-        Logger::warning("Reach the end !");
-        push(new Token("", -1, -1, Token::Type::END));
-        cur = tokens.end() - 1;
-        return tokens.back();
-    }
-    
-    Logger::verbose("current : " + (*cur)->to_string(true));
-    return *cur;
+TokenFlow::~TokenFlow() {
+    for(Token* t : tokens) 
+        delete t;
+    for(auto p : fakes) 
+        delete p.second;
 }
+
+Token* TokenFlow::current () { return next(0); }
+Token* TokenFlow::previous() { return next(-1); }
 
 Token* TokenFlow::next(long delta) {
-    if (iteratorReset) {
-        iteratorReset = false;
-        if (tokens.empty()) {
-            push(new Token("", -1, -1, Token::Type::END));
-            cur = tokens.begin();
-            return *cur;
-        }
-        cur = tokens.begin();
-    }
+    Token* t = getAt(pos + delta);
+    if (!t)
+        return fakeToken(Token::Type::END);
 
-    if ((cur + delta) == tokens.end()) {
-        push(new Token("", -1, -1, Token::Type::END));
-        return tokens.back();
-    }
-    Logger::verbose("next(+" + std::to_string(delta) + ") : " + (*cur)->to_string(true));
-    return *(cur + delta);
-}
-
-Token* TokenFlow::previous() {
-    return next(-1);
+    return t;
 }
 
 bool TokenFlow::isType(Token::Type type, long delta) {
-    if (delta == 0)
-        return current()->type == type;
     return next(delta)->type == type;
 }
 
@@ -70,7 +44,7 @@ Token* TokenFlow::eat(Token::Type type) {
     if (t->type != type && type != Token::Type::FREE)
         throw std::runtime_error("Excepted type " + Token::type_to_string(type) + " and found " + Token::type_to_string(t->type));
 
-    cur++;
+    pos++;
     return t;
 }
 
@@ -83,6 +57,19 @@ void TokenFlow::reset() {
         delete t;
     tokens.clear();
 
-    iteratorReset = true;
+    pos = 0;
 }
 
+Token* TokenFlow::getAt(long p) {
+    try {
+        return tokens.at(p);
+    } catch (std::out_of_range const& e) {
+        return nullptr;
+    }
+}
+
+Token* TokenFlow::fakeToken(Token::Type t) {
+    if (fakes.find(t) == fakes.end())
+        return fakes[t] = new Token("", -1, -1, t);
+    return fakes[t];
+}

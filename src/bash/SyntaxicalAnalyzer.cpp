@@ -43,7 +43,7 @@ Instruction* SyntaxicalAnalyzer::eatInstruction() {
     else if (flow.isType(Token::Type::WHILE))
         return eatWhile();
         
-    else if (flow.next()->type == Token::Type::EQUAL) 
+    else if (flow.isType(Token::Type::EQUAL, 1)) 
         return eatAssignment();
 
     else if (flow.isType(Token::Type::PRINT))
