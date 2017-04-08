@@ -5,15 +5,15 @@ using namespace bash;
 Context::Context() {}
 Context::~Context() {}
 
-double Context::setVar(std::string name, double value) {
+Value Context::setVar(std::string name, Value v) {
     if (variables.find(name) == variables.end())
-        variables.insert( { name, value });
+        variables.insert( { name, v });
     else 
-        variables[name] = value;
-    return value;
+        variables[name] = v;
+    return v;
 }
 
-double Context::getVar(std::string name) {
+Value Context::getVar(std::string name) {
     if (variables.find(name) == variables.end())
         variables.insert({ name, 0 });
 
@@ -24,12 +24,12 @@ std::string Context::to_string () {
     std::string s = "";
 
     for (auto pair : variables)
-        s += pair.first + " : " + std::to_string(pair.second) + ", ";
+        s += pair.first + " : " + pair.second.to_string() + ", ";
 
     return s;
 }
 
-void Context::print(double v) {
-    std::cout << v << std::endl;
-    Logger::spe("Print : " + std::to_string(v));
+void Context::print(Value const& v) {
+    std::cout << v.to_string() << std::endl;
+    Logger::spe("Print : " + v.to_string());
 }

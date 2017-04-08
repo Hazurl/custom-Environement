@@ -10,7 +10,7 @@ Value::Value (std::initializer_list<Value> l) : type(Type::ARRAY), arr(l) {}
 
 Value::~Value() {}
 
-std::string Value::to_string() {
+std::string Value::to_string() const {
     if (type == Type::NUMBER) {
         std::string s = std::to_string (number);
         int offset = 1; 
@@ -36,6 +36,17 @@ std::string Value::to_string() {
     }
 }
 
+bool Value::to_bool() const {
+    if (type == Type::NUMBER)
+        return number != 0;
+    if (type == Type::STRING)
+        return str != "";
+    if (type == Type::ARRAY)
+        return !arr.empty();
+
+    return false;
+}
+
 Value& Value::push_front(Value v) {
     if (type != Type::ARRAY)
         throw std::runtime_error("Cannot push, if it's not an array");
@@ -54,7 +65,7 @@ Value& Value::push_back(Value v) {
 //                   OPERATOR                    //
 ///////////////////////////////////////////////////
 
-Value operator+(Value& v0, Value& v1) {
+Value operator+(Value const& v0, Value const& v1) {
     if (v0.type == Value::Type::NUMBER && v1.type == Value::Type::NUMBER)
         return Value(v0.number + v1.number);
 
@@ -68,43 +79,51 @@ Value operator+(Value& v0, Value& v1) {
     return Value(v0.to_string() + v1.to_string());
 }
 
-Value operator-(Value& v0, Value& v1) {
+Value operator-(Value const& v0, Value const& v1) {
     if (v0.type == Value::Type::NUMBER && v1.type == Value::Type::NUMBER)
         return Value(v0.number - v1.number);
 
     return Value("");
 }
 
-Value operator/(Value& v0, Value& v1) {
-    if (v0.type == Value::Type::NUMBER && v1.type == Value::Type::NUMBER)
-        if (v1.number != 0)
-            return Value(v0.number / v1.number);
-        else 
-            throw std::runtime_error("Division by 0");
+Value operator-(Value const& v0) {
+    if (v0.type == Value::Type::NUMBER)
+        return Value(-v0.number);
 
     return Value("");
 }
 
-Value operator*(Value& v0, Value& v1) {
+Value operator/(Value const& v0, Value const& v1) {
+    if (v0.type == Value::Type::NUMBER && v1.type == Value::Type::NUMBER) {
+        if (v1.number != 0)
+            return Value(v0.number / v1.number);
+        else 
+            throw std::runtime_error("Division by 0");
+    }
+
+    return Value("");
+}
+
+Value operator*(Value const& v0, Value const& v1) {
     if (v0.type == Value::Type::NUMBER && v1.type == Value::Type::NUMBER)
         return Value(v0.number * v1.number);
 
     return Value("");
 }
 
-Value operator+=(Value& v0, Value& v1) {
+Value operator+=(Value& v0, Value const& v1) {
     return v0 = v0 + v1;
 }
 
-Value operator-=(Value& v0, Value& v1) {
+Value operator-=(Value& v0, Value const& v1) {
     return v0 = v0 - v1;
 }
 
-Value operator/=(Value& v0, Value& v1) {
+Value operator/=(Value& v0, Value const& v1) {
     return v0 = v0 / v1;
 }
 
-Value operator*=(Value& v0, Value& v1) {
+Value operator*=(Value& v0, Value const& v1) {
     return v0 = v0 * v1;
 }
 
@@ -118,27 +137,27 @@ Value operator--(Value& v0) {
     return v0 -= v;
 }
 
-bool operator<(Value& v0, Value& v1) {
+bool operator<(Value const& v0, Value const& v1) {
     if (v0.type == Value::Type::NUMBER && v1.type == Value::Type::NUMBER)
         return v0.number < v1.number;
     return false;
 }
 
-bool operator>(Value& v0, Value& v1) {
+bool operator>(Value const& v0, Value const& v1) {
     if (v0.type == Value::Type::NUMBER && v1.type == Value::Type::NUMBER)
         return v0.number > v1.number;
     return false;
 }
 
-bool operator<=(Value& v0, Value& v1) {
+bool operator<=(Value const& v0, Value const& v1) {
     return !(v0 > v1);
 }
 
-bool operator>=(Value& v0, Value& v1) {
+bool operator>=(Value const& v0, Value const& v1) {
     return !(v0 < v1);
 }
 
-bool operator==(Value& v0, Value& v1) {
+bool operator==(Value const& v0, Value const& v1) {
     if (v0.type == Value::Type::NUMBER && v1.type == Value::Type::NUMBER)
         return v0.number == v1.number;
 
@@ -159,7 +178,7 @@ bool operator==(Value& v0, Value& v1) {
     return false;
 }
 
-bool operator!=(Value& v0, Value& v1) {
+bool operator!=(Value const& v0, Value const& v1) {
     return !(v0 == v1);
 }
 

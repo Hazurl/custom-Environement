@@ -45,8 +45,11 @@ private:
     For* eatFor();
     ValueNode* eatFactor();
     ValueNode* eatValueNode();
-    ValueNode* eatNumber();
+    Ident* eatIdent();
+    Number* eatNumber();
+    String* eatString();
     Print* eatPrint();
+    ValueNode* eatValue();
 
 };
 

@@ -10,12 +10,9 @@ Expression::~Expression() {
 }
 
 std::string Expression::to_string() {
-    return expr ? expr->to_string() : "<empty expression>";
+    return expr->to_string();
 }
 
 void Expression::visit (Context& ctx) {
-    if (expr)
-        value = expr->getValue(ctx);
-    else
-        Logger::error("no expr");
+    value = expr->getValue(ctx);
 }

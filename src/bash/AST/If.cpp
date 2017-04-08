@@ -16,7 +16,7 @@ If::~If() {
 }
 
 void If::visit(Context& ctx) {
-    if (cond->getValue(ctx))
+    if (cond->getValue(ctx).to_bool())
         then->visit(ctx);
     else if (elze)
         elze->visit(ctx);

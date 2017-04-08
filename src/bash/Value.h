@@ -11,25 +11,26 @@ namespace bash {
     class Value;
 };
 
-bash::Value operator+(bash::Value& v0, bash::Value& v1);
-bash::Value operator-(bash::Value& v0, bash::Value& v1);
-bash::Value operator*(bash::Value& v0, bash::Value& v1);
-bash::Value operator/(bash::Value& v0, bash::Value& v1);
+bash::Value operator+(bash::Value const& v0, bash::Value const& v1);
+bash::Value operator-(bash::Value const& v0, bash::Value const& v1);
+bash::Value operator-(bash::Value const& v0);
+bash::Value operator*(bash::Value const& v0, bash::Value const& v1);
+bash::Value operator/(bash::Value const& v0, bash::Value const& v1);
 
-bash::Value operator+=(bash::Value& v0, bash::Value& v1);
-bash::Value operator-=(bash::Value& v0, bash::Value& v1);
-bash::Value operator*=(bash::Value& v0, bash::Value& v1);
-bash::Value operator/=(bash::Value& v0, bash::Value& v1);
+bash::Value operator+=(bash::Value& v0, bash::Value const& v1);
+bash::Value operator-=(bash::Value& v0, bash::Value const& v1);
+bash::Value operator*=(bash::Value& v0, bash::Value const& v1);
+bash::Value operator/=(bash::Value& v0, bash::Value const& v1);
 
 bash::Value operator++(bash::Value& v0);
 bash::Value operator--(bash::Value& v0);
 
-bool operator<(bash::Value& v0, bash::Value& v1);
-bool operator>(bash::Value& v0, bash::Value& v1);
-bool operator<=(bash::Value& v0, bash::Value& v1);
-bool operator>=(bash::Value& v0, bash::Value& v1);
-bool operator==(bash::Value& v0, bash::Value& v1);
-bool operator!=(bash::Value& v0, bash::Value& v1);
+bool operator<(bash::Value const& v0, bash::Value const& v1);
+bool operator>(bash::Value const& v0, bash::Value const& v1);
+bool operator<=(bash::Value const& v0, bash::Value const& v1);
+bool operator>=(bash::Value const& v0, bash::Value const& v1);
+bool operator==(bash::Value const& v0, bash::Value const& v1);
+bool operator!=(bash::Value const& v0, bash::Value const& v1);
 
 namespace bash {
 
@@ -47,31 +48,33 @@ public:
     ~Value();
 
     Type getType() { return type; }
-    std::string to_string();
+    std::string to_string() const;
+    bool to_bool() const;
 
     Value& push_front(Value v);
     Value& push_back(Value v);
 
 private:
 
-    friend Value ( ::operator+) (Value& v0, Value& v1);
-    friend Value ( ::operator-) (Value& v0, Value& v1);
-    friend Value ( ::operator/) (Value& v0, Value& v1);
-    friend Value ( ::operator*) (Value& v0, Value& v1);
-    friend Value ( ::operator+=) (Value& v0, Value& v1);
-    friend Value ( ::operator-=) (Value& v0, Value& v1);
-    friend Value ( ::operator/=) (Value& v0, Value& v1);
-    friend Value ( ::operator*=) (Value& v0, Value& v1);
+    friend Value ( ::operator+) (Value const& v0, Value const& v1);
+    friend Value ( ::operator-) (Value const& v0, Value const& v1);
+    friend Value ( ::operator-) (Value const& v0);
+    friend Value ( ::operator/) (Value const& v0, Value const& v1);
+    friend Value ( ::operator*) (Value const& v0, Value const& v1);
+    friend Value ( ::operator+=) (Value& v0, Value const& v1);
+    friend Value ( ::operator-=) (Value& v0, Value const& v1);
+    friend Value ( ::operator/=) (Value& v0, Value const& v1);
+    friend Value ( ::operator*=) (Value& v0, Value const& v1);
 
     friend Value ( ::operator++) (Value& v0);
     friend Value ( ::operator--) (Value& v0);
 
-    friend bool ( ::operator<) (Value& v0, Value& v1);
-    friend bool ( ::operator>) (Value& v0, Value& v1);
-    friend bool ( ::operator<=) (Value& v0, Value& v1);
-    friend bool ( ::operator>=) (Value& v0, Value& v1);
-    friend bool ( ::operator==) (Value& v0, Value& v1);
-    friend bool ( ::operator!=) (Value& v0, Value& v1);
+    friend bool ( ::operator<) (Value const& v0, Value const& v1);
+    friend bool ( ::operator>) (Value const& v0, Value const& v1);
+    friend bool ( ::operator<=) (Value const& v0, Value const& v1);
+    friend bool ( ::operator>=) (Value const& v0, Value const& v1);
+    friend bool ( ::operator==) (Value const& v0, Value const& v1);
+    friend bool ( ::operator!=) (Value const& v0, Value const& v1);
 
     Type type = Type::NUMBER;
     

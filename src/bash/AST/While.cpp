@@ -13,7 +13,7 @@ While::~While() {
 }
 
 void While::visit(Context& ctx) {
-    while (cond->getValue(ctx))
+    while (cond->getValue(ctx).to_bool())
         then->visit(ctx);
 }
 

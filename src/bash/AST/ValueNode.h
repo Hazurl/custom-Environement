@@ -3,18 +3,19 @@
 
 #include "../Token.h"
 #include "AST.h"
+#include "../Value.h"
 #include <string>
 
 namespace bash {
 
 class ValueNode : public AST {
 public:
-    ValueNode(double v, Token* t = nullptr);
+    ValueNode(Value v, Token* t = nullptr);
     virtual std::string to_string() = 0;
     virtual void visit(Context& ctx) = 0;
-    double getValue(Context& ctx);
+    Value getValue(Context& ctx);
 
-    double value = 0.0;
+    Value value;
 };
 
 }; // namespace bash

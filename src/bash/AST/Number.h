@@ -9,7 +9,7 @@ namespace bash {
 
 class Number : public ValueNode {
 public:
-    Number(double v, Token* t = nullptr);
+    Number(Value v, Token* t = nullptr);
     virtual ~Number ();
     virtual std::string to_string();
     virtual void visit(Context& ctx);

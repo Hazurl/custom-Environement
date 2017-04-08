@@ -6,6 +6,7 @@
 #include <string>
 #include <iostream>
 #include "../../lib/Logger/src/Logger.h"
+#include "Value.h"
 
 namespace bash {
 
@@ -14,14 +15,14 @@ public:
     Context();
     ~Context();
 
-    double setVar(std::string name, double value);
-    double getVar(std::string name);
+    Value setVar(std::string name, Value v);
+    Value getVar(std::string name);
     std::string to_string();
 
-    void print(double v);
+    void print(Value const& v);
 
 private:
-    std::map<std::string, double> variables;
+    std::map<std::string, Value> variables;
 };
 
 }; // namespace bash
