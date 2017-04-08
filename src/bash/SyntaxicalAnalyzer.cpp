@@ -140,26 +140,26 @@ Expression* SyntaxicalAnalyzer::eatExpression() {
     return e;
 }
 
-Value* SyntaxicalAnalyzer::eatFactor() {
+ValueNode* SyntaxicalAnalyzer::eatFactor() {
     Logger::info("eatFactor");
-    Value* node = eatValue();
+    ValueNode* node = eatValueNode();
 
     while (flow.isType(Token::Type::MUL) || flow.isType(Token::Type::DIV)) {
         Logger::verbose("new mul/div");
         auto binOp = new BinOp();
         binOp->left = node;
         binOp->token = flow.eat();
-        binOp->right = eatValue();
+        binOp->right = eatValueNode();
         node = binOp;
     }
 
     return node;
 }
 
-Value* SyntaxicalAnalyzer::eatValue() {
+ValueNode* SyntaxicalAnalyzer::eatValueNode() {
     if (flow.isType(Token::Type::MINUS)) {
         auto v = new UnOp(flow.eat());
-        v->v = eatValue();
+        v->v = eatValueNode();
         return v;
     }
     if (flow.isType(Token::Type::PARENTHESIS_LEFT)) {
@@ -172,7 +172,7 @@ Value* SyntaxicalAnalyzer::eatValue() {
     return eatNumber();
 }
 
-Value* SyntaxicalAnalyzer::eatNumber() {
+ValueNode* SyntaxicalAnalyzer::eatNumber() {
     if (flow.isType(Token::Type::IDENT)) {
         auto ident = new Ident(flow.eat(Token::Type::IDENT));
         Logger::info("eatIdent : " + std::to_string(ident->value));

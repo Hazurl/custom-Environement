@@ -3,7 +3,7 @@
 
 #include "../Token.h"
 #include "AST.h"
-#include "Value.h"
+#include "ValueNode.h"
 #include "Instruction.h"
 #include <string>
 
@@ -17,7 +17,7 @@ public:
     virtual std::string to_string();
     virtual void visit(Context& ctx);
 
-    Value* v = nullptr;
+    ValueNode* v = nullptr;
 };
 
 }; // namespace bash

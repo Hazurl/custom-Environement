@@ -2,7 +2,7 @@
 
 using namespace bash;
 
-Expression::Expression (Token* t) : Value(0, t) {}
+Expression::Expression (Token* t) : ValueNode(0, t) {}
 
 Expression::~Expression() {
     if (expr)

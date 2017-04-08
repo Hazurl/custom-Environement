@@ -2,8 +2,7 @@
 #include <string>
 
 #include "bash/Interpreter.h"
-#include "bash/LexicalAnalyzer.h"
-#include "bash/Token.h"
+#include "bash/Value.h"
 #include "../lib/Logger/src/Logger.h"
 
 int main (int argc, char* argv[]) {
@@ -38,7 +37,6 @@ int main (int argc, char* argv[]) {
     }
 
     bash_interpreter.interactive();
-
 
     return 0;
 }

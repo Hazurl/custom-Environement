@@ -2,7 +2,7 @@
 
 using namespace bash;
 
-Number::Number(double v, Token* t) : Value(v, t) {}
+Number::Number(double v, Token* t) : ValueNode(v, t) {}
 
 Number::~Number() {}
 

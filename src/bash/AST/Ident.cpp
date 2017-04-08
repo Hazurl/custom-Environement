@@ -2,7 +2,7 @@
 
 using namespace bash;
 
-Ident::Ident (Token* t) : Value(0, t), name(t->content) {}
+Ident::Ident (Token* t) : ValueNode(0, t), name(t->content) {}
 
 Ident::~Ident() {}
 

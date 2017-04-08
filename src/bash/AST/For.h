@@ -19,9 +19,9 @@ public:
     virtual void visit(Context& ctx);
 
     Ident* var = nullptr;
-    Value* from = nullptr;
-    Value* to = nullptr;
-    Value* step = nullptr;
+    ValueNode* from = nullptr;
+    ValueNode* to = nullptr;
+    ValueNode* step = nullptr;
     Block* then = nullptr;
 };
 

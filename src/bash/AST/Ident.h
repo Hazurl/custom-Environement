@@ -2,12 +2,12 @@
 #define __BASH_AST_IDENT__
 
 #include "../Token.h"
-#include "Value.h"
+#include "ValueNode.h"
 #include <string>
 
 namespace bash {
 
-class Ident : public Value {
+class Ident : public ValueNode {
 public:
     Ident(Token* t = nullptr);
     virtual ~Ident ();

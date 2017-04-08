@@ -10,7 +10,7 @@
 #include "AST/Assignment.h"
 #include "AST/For.h"
 #include "AST/While.h"
-#include "AST/Value.h"
+#include "AST/ValueNode.h"
 #include "AST/If.h"
 #include "AST/Expression.h"
 #include "AST/BinOp.h"
@@ -43,9 +43,9 @@ private:
     If* eatIf();
     While* eatWhile();
     For* eatFor();
-    Value* eatFactor();
-    Value* eatValue();
-    Value* eatNumber();
+    ValueNode* eatFactor();
+    ValueNode* eatValueNode();
+    ValueNode* eatNumber();
     Print* eatPrint();
 
 };

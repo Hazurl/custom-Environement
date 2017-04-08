@@ -7,9 +7,9 @@
 
 namespace bash {
 
-class Value : public AST {
+class ValueNode : public AST {
 public:
-    Value(double v, Token* t = nullptr);
+    ValueNode(double v, Token* t = nullptr);
     virtual std::string to_string() = 0;
     virtual void visit(Context& ctx) = 0;
     double getValue(Context& ctx);

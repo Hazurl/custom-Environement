@@ -5,7 +5,7 @@
 #include "Instruction.h"
 #include "Expression.h"
 #include "Ident.h"
-#include "Value.h"
+#include "ValueNode.h"
 #include <string>
 
 namespace bash {

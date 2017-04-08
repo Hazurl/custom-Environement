@@ -2,7 +2,7 @@
 
 using namespace bash;
 
-UnOp::UnOp (Token* t) : Value(0, t) {}
+UnOp::UnOp (Token* t) : ValueNode(0, t) {}
 
 UnOp::~UnOp() {
     if (v)

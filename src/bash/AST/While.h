@@ -4,7 +4,7 @@
 #include "../Token.h"
 #include "Instruction.h"
 #include "Block.h"
-#include "Value.h"
+#include "ValueNode.h"
 #include <string>
 
 namespace bash {
@@ -17,7 +17,7 @@ public:
     virtual std::string to_string();
     virtual void visit(Context& ctx);
 
-    Value* cond = nullptr;
+    ValueNode* cond = nullptr;
     Block* then = nullptr;
 };
 
