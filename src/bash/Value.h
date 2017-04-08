@@ -12,6 +12,24 @@ namespace bash {
 };
 
 bash::Value operator+(bash::Value& v0, bash::Value& v1);
+bash::Value operator-(bash::Value& v0, bash::Value& v1);
+bash::Value operator*(bash::Value& v0, bash::Value& v1);
+bash::Value operator/(bash::Value& v0, bash::Value& v1);
+
+bash::Value operator+=(bash::Value& v0, bash::Value& v1);
+bash::Value operator-=(bash::Value& v0, bash::Value& v1);
+bash::Value operator*=(bash::Value& v0, bash::Value& v1);
+bash::Value operator/=(bash::Value& v0, bash::Value& v1);
+
+bash::Value operator++(bash::Value& v0);
+bash::Value operator--(bash::Value& v0);
+
+bool operator<(bash::Value& v0, bash::Value& v1);
+bool operator>(bash::Value& v0, bash::Value& v1);
+bool operator<=(bash::Value& v0, bash::Value& v1);
+bool operator>=(bash::Value& v0, bash::Value& v1);
+bool operator==(bash::Value& v0, bash::Value& v1);
+bool operator!=(bash::Value& v0, bash::Value& v1);
 
 namespace bash {
 
@@ -36,26 +54,24 @@ public:
 
 private:
 
-    friend Value ( ::operator+) (Value& v0, Value& v1);/*
-    friend Value operator-(Value& v0, Value& v1);
-    friend Value operator/(Value& v0, Value& v1);
-    friend Value operator*(Value& v0, Value& v1);
-    friend Value operator%(Value& v0, Value& v1);
-    friend Value operator+=(Value& v0, Value& v1);
-    friend Value operator-=(Value& v0, Value& v1);
-    friend Value operator/=(Value& v0, Value& v1);
-    friend Value operator*=(Value& v0, Value& v1);
-    friend Value operator%=(Value& v0, Value& v1);
+    friend Value ( ::operator+) (Value& v0, Value& v1);
+    friend Value ( ::operator-) (Value& v0, Value& v1);
+    friend Value ( ::operator/) (Value& v0, Value& v1);
+    friend Value ( ::operator*) (Value& v0, Value& v1);
+    friend Value ( ::operator+=) (Value& v0, Value& v1);
+    friend Value ( ::operator-=) (Value& v0, Value& v1);
+    friend Value ( ::operator/=) (Value& v0, Value& v1);
+    friend Value ( ::operator*=) (Value& v0, Value& v1);
 
-    friend Value operator++(Value& v0);
-    friend Value operator--(Value& v0);
+    friend Value ( ::operator++) (Value& v0);
+    friend Value ( ::operator--) (Value& v0);
 
-    friend bool operator<(Value& v0, Value& v1);
-    friend bool operator>(Value& v0, Value& v1);
-    friend bool operator<=(Value& v0, Value& v1);
-    friend bool operator>=(Value& v0, Value& v1);
-    friend bool operator==(Value& v0, Value& v1);
-    friend bool operator!=(Value& v0, Value& v1);*/
+    friend bool ( ::operator<) (Value& v0, Value& v1);
+    friend bool ( ::operator>) (Value& v0, Value& v1);
+    friend bool ( ::operator<=) (Value& v0, Value& v1);
+    friend bool ( ::operator>=) (Value& v0, Value& v1);
+    friend bool ( ::operator==) (Value& v0, Value& v1);
+    friend bool ( ::operator!=) (Value& v0, Value& v1);
 
     Type type = Type::NUMBER;
     

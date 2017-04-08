@@ -5,6 +5,8 @@
 #include "bash/Value.h"
 #include "../lib/Logger/src/Logger.h"
 
+using namespace bash;
+
 int main (int argc, char* argv[]) {
     // Logger : 
     Logger::createTransport(new Transport("Debug/debugguerColored.txt"), "debugC");

@@ -56,7 +56,7 @@ Value& Value::push_back(Value v) {
 
 Value operator+(Value& v0, Value& v1) {
     if (v0.type == Value::Type::NUMBER && v1.type == Value::Type::NUMBER)
-            return Value(v0.number + v1.number);
+        return Value(v0.number + v1.number);
 
     else if (v0.type == Value::Type::ARRAY && v1.type == Value::Type::ARRAY) {
         Value v(v0);
@@ -67,24 +67,99 @@ Value operator+(Value& v0, Value& v1) {
 
     return Value(v0.to_string() + v1.to_string());
 }
-/*
-Value operator-(Value& v0, Value& v1);
-Value operator/(Value& v0, Value& v1);
-Value operator*(Value& v0, Value& v1);
-Value operator%(Value& v0, Value& v1);
-Value operator+=(Value& v0, Value& v1);
-Value operator-=(Value& v0, Value& v1);
-Value operator/=(Value& v0, Value& v1);
-Value operator*=(Value& v0, Value& v1);
-Value operator%=(Value& v0, Value& v1);
 
-Value operator++(Value& v0);
-Value operator--(Value& v0);
+Value operator-(Value& v0, Value& v1) {
+    if (v0.type == Value::Type::NUMBER && v1.type == Value::Type::NUMBER)
+        return Value(v0.number - v1.number);
 
-bool operator<(Value& v0, Value& v1);
-bool operator>(Value& v0, Value& v1);
-bool operator<=(Value& v0, Value& v1);
-bool operator>=(Value& v0, Value& v1);
-bool operator==(Value& v0, Value& v1);
-bool operator!=(Value& v0, Value& v1);
-*/
+    return Value("");
+}
+
+Value operator/(Value& v0, Value& v1) {
+    if (v0.type == Value::Type::NUMBER && v1.type == Value::Type::NUMBER)
+        if (v1.number != 0)
+            return Value(v0.number / v1.number);
+        else 
+            throw std::runtime_error("Division by 0");
+
+    return Value("");
+}
+
+Value operator*(Value& v0, Value& v1) {
+    if (v0.type == Value::Type::NUMBER && v1.type == Value::Type::NUMBER)
+        return Value(v0.number * v1.number);
+
+    return Value("");
+}
+
+Value operator+=(Value& v0, Value& v1) {
+    return v0 = v0 + v1;
+}
+
+Value operator-=(Value& v0, Value& v1) {
+    return v0 = v0 - v1;
+}
+
+Value operator/=(Value& v0, Value& v1) {
+    return v0 = v0 / v1;
+}
+
+Value operator*=(Value& v0, Value& v1) {
+    return v0 = v0 * v1;
+}
+
+Value operator++(Value& v0) {
+    auto v = Value(1);
+    return v0 += v;
+}
+
+Value operator--(Value& v0) {
+    auto v = Value(1);
+    return v0 -= v;
+}
+
+bool operator<(Value& v0, Value& v1) {
+    if (v0.type == Value::Type::NUMBER && v1.type == Value::Type::NUMBER)
+        return v0.number < v1.number;
+    return false;
+}
+
+bool operator>(Value& v0, Value& v1) {
+    if (v0.type == Value::Type::NUMBER && v1.type == Value::Type::NUMBER)
+        return v0.number > v1.number;
+    return false;
+}
+
+bool operator<=(Value& v0, Value& v1) {
+    return !(v0 > v1);
+}
+
+bool operator>=(Value& v0, Value& v1) {
+    return !(v0 < v1);
+}
+
+bool operator==(Value& v0, Value& v1) {
+    if (v0.type == Value::Type::NUMBER && v1.type == Value::Type::NUMBER)
+        return v0.number == v1.number;
+
+    if (v0.type == Value::Type::STRING && v1.type == Value::Type::STRING)
+        return v0.str == v1.str;
+
+    if (v0.type == Value::Type::ARRAY && v1.type == Value::Type::ARRAY) {
+        if (v1.arr.size() != v0.arr.size())
+            return false;
+
+        auto i1 = v1.arr.begin();
+        for (auto i0 = v0.arr.begin(); i0 != v0.arr.end(); ++i0, ++i1)
+             if (*i0 != *i1)
+                return false;
+        return true;
+    }
+
+    return false;
+}
+
+bool operator!=(Value& v0, Value& v1) {
+    return !(v0 == v1);
+}
+
