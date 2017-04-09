@@ -40,6 +40,7 @@ bool TokenFlow::isType(Token::Type type, long delta) {
 
 Token* TokenFlow::eat(Token::Type type) {
     Token* t = current();
+    Logger::warn("Eat : " + t->to_string(true));
 
     if (t->type != type && type != Token::Type::FREE)
         throw std::runtime_error("Excepted type " + Token::type_to_string(type) + " and found " + Token::type_to_string(t->type));

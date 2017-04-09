@@ -53,6 +53,7 @@ public:
 
     Value& push_front(Value v);
     Value& push_back(Value v);
+    Value& clearArray();
 
 private:
 

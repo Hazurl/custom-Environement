@@ -61,6 +61,11 @@ Value& Value::push_back(Value v) {
     return *this;
 }
 
+Value& Value::clearArray() {
+    arr.clear();
+    return *this;
+}
+
 ///////////////////////////////////////////////////
 //                   OPERATOR                    //
 ///////////////////////////////////////////////////

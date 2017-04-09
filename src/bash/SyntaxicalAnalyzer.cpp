@@ -157,6 +157,7 @@ ValueNode* SyntaxicalAnalyzer::eatFactor() {
 }
 
 ValueNode* SyntaxicalAnalyzer::eatValueNode() {
+    Logger::info("eatValueNode");
     if (flow.isType(Token::Type::MINUS)) {
         auto v = new UnOp(flow.eat());
         v->v = eatValueNode();
@@ -194,17 +195,36 @@ Primitive* SyntaxicalAnalyzer::eatString() {
     return prm;
 }
 
+Array* SyntaxicalAnalyzer::eatArray() {
+    Logger::info("eatArray");
+    auto a = new Array(flow.eat(Token::Type::BRACKET_LEFT));
+    while (!flow.isType(Token::Type::BRACKET_RIGHT)) {
+        a->push(eatExpression());
+
+        if (flow.isType(Token::Type::COMMA))
+            flow.eat();
+    }
+
+    flow.eat();
+
+    return a;
+}
+
 Primitive* SyntaxicalAnalyzer::eatPrimitive() {
+    Logger::info("eatPrimitive");
     Token::Type t = flow.current()->type;
     if (t == Token::Type::NUMBER)
         return eatNumber();
     if (t == Token::Type::STRING)
         return eatString();
+    if (t == Token::Type::BRACKET_LEFT)
+        return eatArray();
 
     throw std::runtime_error("Expected a primitive value");
 }
 
 Print* SyntaxicalAnalyzer::eatPrint() {
+    Logger::info("eatPrint");
     auto p = new Print(flow.eat(Token::Type::PRINT));
     flow.eat(Token::Type::COLON);
     p->v = eatExpression();

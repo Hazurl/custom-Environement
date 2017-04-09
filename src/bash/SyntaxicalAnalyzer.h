@@ -17,6 +17,7 @@
 #include "AST/UnOp.h"
 #include "AST/Ident.h"
 #include "AST/Primitive.h"
+#include "AST/Array.h"
 
 #include <vector>
 #include <string>
@@ -48,7 +49,7 @@ private:
     Ident* eatIdent();
     Primitive* eatNumber();
     Primitive* eatString();
-    Primitive* eatArray();
+    Array* eatArray();
     Print* eatPrint();
     Primitive* eatPrimitive();
 
