@@ -47,7 +47,7 @@ private:
     ValueNode* eatValueNode();
     Ident* eatIdent();
     Number* eatNumber();
-    String* eatString();
+    //String* eatString();
     Print* eatPrint();
     ValueNode* eatValue();
 

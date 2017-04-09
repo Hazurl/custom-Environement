@@ -30,8 +30,9 @@ public:
     enum class Type {
         PLUS, MINUS, DIV, MUL,
         PARENTHESIS_LEFT, PARENTHESIS_RIGHT,
-        EQUAL, COLON,
-        IDENT, NUMBER, // float
+        BRACKET_LEFT, BRACKET_RIGHT,
+        EQUAL, COLON, COMMA, 
+        IDENT, NUMBER, STRING,
         IF, THEN, ELSE, ENDIF, // if
         WHILE, ENDWH, // while
         FOR, FROM, TO, STEP, ENDFOR, // for
@@ -48,8 +49,12 @@ public:
             case Type::MUL: return "Multiply";
             case Type::PARENTHESIS_LEFT: return "Parenthesis left";
             case Type::PARENTHESIS_RIGHT: return "Parenthesis right";
+            case Type::BRACKET_LEFT: return "Bracket left";
+            case Type::BRACKET_RIGHT: return "Bracket right";
             case Type::EQUAL: return "Equal";
             case Type::COLON: return "Colon";
+            case Type::COMMA: return "Comma";
+            case Type::STRING: return "String";
             case Type::IDENT: return "Ident";
             case Type::NUMBER: return "Number";
             case Type::IF: return "If";

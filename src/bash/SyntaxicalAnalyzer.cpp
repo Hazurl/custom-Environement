@@ -184,20 +184,20 @@ Number* SyntaxicalAnalyzer::eatNumber() {
     Logger::info("eatNumber : " + num->value.to_string());
     return num;
 }
-
+/*
 String* SyntaxicalAnalyzer::eatString() {
     auto t = flow.eat(Token::Type::STRING);
     auto str = new String(t->content, t);
     Logger::info("eatString : " + str->value.to_string());
     return str;
 }
-
+*/
 ValueNode* SyntaxicalAnalyzer::eatValue() {
     Token::Type t = flow.current()->type;
     if (t == Token::Type::NUMBER)
         return eatNumber();
-    if (t == Token::Type::STRING)
-        return eatString();
+    //if (t == Token::Type::STRING)
+        //return eatString();
     if (t == Token::Type::IDENT)
         return eatIdent();
 

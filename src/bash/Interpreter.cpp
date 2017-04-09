@@ -34,7 +34,7 @@ void Interpreter::run(std::string code, Context& ctx) {
         auto l = LexicalAnalyzer(code);            
 
     Logger::section_end("Tokenize");
-
+/*
     Logger::section("Parser", Logger::ALL, Logger::INFO);
 
         auto s = SyntaxicalAnalyzer(l);
@@ -50,7 +50,7 @@ void Interpreter::run(std::string code, Context& ctx) {
     else
         s.getAST()->visit(ctx);
 
-    Logger::section_end("Evaluate");
+    Logger::section_end("Evaluate");*/
 }
 
 void Interpreter::runTest () {

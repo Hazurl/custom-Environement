@@ -72,16 +72,52 @@ Token* LexicalAnalyzer::findNextToken () {
         return new Token(word, startPos, curLine, getTypeOfIdent(word));
     }
 
+    if (c == '"' || c == '\'') {
+        bool escape = false;
+        if (c == '"') {
+            while ((c = next()) != '"' || escape) {
+                if (escape) {
+                    escape = false;
+                    if (c == 'n')
+                        word += '\n';
+                    else if (c == 't')
+                        word += '\t';
+                    else 
+                        word += c;
+                } else
+                    if (!(escape = (c == '\\')))
+                        word += c;
+            }
+        } else {
+            while ((c = next()) != '\'' || escape) {
+                if (escape && c == 'n') {
+                    escape = false;
+                    word += '\n';
+                } else 
+                    if (!(escape = (c == '\\')))
+                        word += c;
+            }
+        }
+
+        return new Token(word, startPos, curLine, Token::Type::STRING);
+    }
+
     // OTHER
 
     if (c == '(')
         return new Token (std::string(1, c), curPos, curLine, Token::Type::PARENTHESIS_LEFT);
     if (c == ')')
         return new Token (std::string(1, c), curPos, curLine, Token::Type::PARENTHESIS_RIGHT);
+    if (c == '[')
+        return new Token (std::string(1, c), curPos, curLine, Token::Type::BRACKET_LEFT);
+    if (c == ']')
+        return new Token (std::string(1, c), curPos, curLine, Token::Type::BRACKET_RIGHT);
     if (c == '=')
         return new Token (std::string(1, c), curPos, curLine, Token::Type::EQUAL);
     if (c == ':')
         return new Token (std::string(1, c), curPos, curLine, Token::Type::COLON);
+    if (c == ',')
+        return new Token (std::string(1, c), curPos, curLine, Token::Type::COMMA);
 
     Logger::error("No token found");
     return nullptr;
