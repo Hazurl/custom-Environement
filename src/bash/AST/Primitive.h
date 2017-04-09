@@ -1,5 +1,5 @@
-#ifndef __BASH_AST_NUMBER__
-#define __BASH_AST_NUMBER__
+#ifndef __BASH_AST_PRIMITIVE__
+#define __BASH_AST_PRIMITIVE__
 
 #include "../Token.h"
 #include "ValueNode.h"
@@ -7,10 +7,10 @@
 
 namespace bash {
 
-class Number : public ValueNode {
+class Primitive : public ValueNode {
 public:
-    Number(Value v, Token* t = nullptr);
-    virtual ~Number ();
+    Primitive(Value v, Token* t = nullptr);
+    virtual ~Primitive ();
     virtual std::string to_string();
     virtual void visit(Context& ctx);
 };

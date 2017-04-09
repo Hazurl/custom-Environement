@@ -168,8 +168,10 @@ ValueNode* SyntaxicalAnalyzer::eatValueNode() {
         flow.eat(Token::Type::PARENTHESIS_RIGHT);
         return e;
     }
+    if (flow.isType(Token::Type::IDENT))
+        return eatIdent();
 
-    return eatNumber();
+    return eatPrimitive();
 }
 
 Ident* SyntaxicalAnalyzer::eatIdent() {
@@ -178,30 +180,28 @@ Ident* SyntaxicalAnalyzer::eatIdent() {
     return ident;
 }
 
-Number* SyntaxicalAnalyzer::eatNumber() {
+Primitive* SyntaxicalAnalyzer::eatNumber() {
     auto t = flow.eat(Token::Type::NUMBER);
-    auto num = new Number(std::stod(t->content), t);
-    Logger::info("eatNumber : " + num->value.to_string());
-    return num;
+    auto prm = new Primitive(std::stod(t->content), t);
+    Logger::info("eatNumber : " + prm->value.to_string());
+    return prm;
 }
-/*
-String* SyntaxicalAnalyzer::eatString() {
+
+Primitive* SyntaxicalAnalyzer::eatString() {
     auto t = flow.eat(Token::Type::STRING);
-    auto str = new String(t->content, t);
-    Logger::info("eatString : " + str->value.to_string());
-    return str;
+    auto prm = new Primitive(t->content, t);
+    Logger::info("eatString : " + prm->value.to_string());
+    return prm;
 }
-*/
-ValueNode* SyntaxicalAnalyzer::eatValue() {
+
+Primitive* SyntaxicalAnalyzer::eatPrimitive() {
     Token::Type t = flow.current()->type;
     if (t == Token::Type::NUMBER)
         return eatNumber();
-    //if (t == Token::Type::STRING)
-        //return eatString();
-    if (t == Token::Type::IDENT)
-        return eatIdent();
+    if (t == Token::Type::STRING)
+        return eatString();
 
-    throw std::runtime_error("Expected a value");
+    throw std::runtime_error("Expected a primitive value");
 }
 
 Print* SyntaxicalAnalyzer::eatPrint() {

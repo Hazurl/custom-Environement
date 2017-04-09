@@ -16,7 +16,7 @@
 #include "AST/BinOp.h"
 #include "AST/UnOp.h"
 #include "AST/Ident.h"
-#include "AST/Number.h"
+#include "AST/Primitive.h"
 
 #include <vector>
 #include <string>
@@ -46,10 +46,11 @@ private:
     ValueNode* eatFactor();
     ValueNode* eatValueNode();
     Ident* eatIdent();
-    Number* eatNumber();
-    //String* eatString();
+    Primitive* eatNumber();
+    Primitive* eatString();
+    Primitive* eatArray();
     Print* eatPrint();
-    ValueNode* eatValue();
+    Primitive* eatPrimitive();
 
 };
 

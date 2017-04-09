@@ -5,7 +5,6 @@
 #include "Block.h"
 #include "Instruction.h"
 #include "Ident.h"
-#include "Number.h"
 #include <string>
 
 namespace bash {
