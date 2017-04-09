@@ -15,7 +15,7 @@ Value Context::setVar(std::string name, Value v) {
 
 Value Context::getVar(std::string name) {
     if (variables.find(name) == variables.end())
-        variables.insert({ name, 0 });
+        variables.insert({ name, Value(0) });
 
     return variables[name];
 }
