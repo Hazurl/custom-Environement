@@ -11,6 +11,7 @@
 #include "AST/For.h"
 #include "AST/While.h"
 #include "AST/ValueNode.h"
+#include "AST/ArrayAccess.h"
 #include "AST/If.h"
 #include "AST/Expression.h"
 #include "AST/BinOp.h"
@@ -52,7 +53,7 @@ private:
     Array* eatArray();
     Print* eatPrint();
     Primitive* eatPrimitive();
-
+    ArrayAccess* eatArrayAccess(ValueNode* var = nullptr);
 };
 
 }; // namespace bash

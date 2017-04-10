@@ -1,7 +1,7 @@
 #ifndef __BASH_VALUE__
 #define __BASH_VALUE__
 
-#include <list>
+#include <deque>
 #include <string>
 #include <stdexcept>
 #include <initializer_list>
@@ -43,7 +43,7 @@ public:
     Value ();
     Value (double n);
     Value (std::string s);
-    Value (std::list<Value> a);
+    Value (std::deque<Value> a);
     Value (std::initializer_list<Value> l);
     ~Value();
 
@@ -54,6 +54,7 @@ public:
     Value& push_front(Value v);
     Value& push_back(Value v);
     Value& clearArray();
+    Value& at(Value const& v);
 
 private:
 
@@ -81,7 +82,7 @@ private:
     
     double number = 0;
     std::string str = "";
-    std::list<Value> arr;
+    std::deque<Value> arr;
 };
 
 }; // namespace bash

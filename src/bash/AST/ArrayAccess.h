@@ -1,5 +1,5 @@
-#ifndef __BASH_AST__
-#define __BASH_AST__
+#ifndef __BASH_ARRAY_ACC__
+#define __BASH_ARRAY_ACC__
 
 #include "../Token.h"
 #include "ValueNode.h"
@@ -15,6 +15,7 @@ public:
     virtual void visit(Context& ctx);
 
     ValueNode* var = nullptr;
+    ValueNode* key = nullptr;
 };
 
 }; // namespace bash

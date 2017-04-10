@@ -11,6 +11,7 @@ namespace bash {
 class ValueNode : public AST {
 public:
     ValueNode(Value v, Token* t = nullptr);
+    virtual ~ValueNode();
     virtual std::string to_string() = 0;
     virtual void visit(Context& ctx) = 0;
     Value getValue(Context& ctx);

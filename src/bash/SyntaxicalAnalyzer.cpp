@@ -167,12 +167,21 @@ ValueNode* SyntaxicalAnalyzer::eatValueNode() {
         flow.eat();
         auto e = eatExpression();
         flow.eat(Token::Type::PARENTHESIS_RIGHT);
+        if (flow.isType(Token::Type::BRACKET_LEFT))
+            return eatArrayAccess(e);
         return e;
     }
-    if (flow.isType(Token::Type::IDENT))
-        return eatIdent();
+    if (flow.isType(Token::Type::IDENT)) {
+        auto i = eatIdent();
+        if (flow.isType(Token::Type::BRACKET_LEFT))
+            return eatArrayAccess(i);
+        return i;
+    }
 
-    return eatPrimitive();
+    auto p = eatPrimitive();
+    if (flow.isType(Token::Type::BRACKET_LEFT))
+        return eatArrayAccess(p);
+    return p;
 }
 
 Ident* SyntaxicalAnalyzer::eatIdent() {
@@ -221,6 +230,17 @@ Primitive* SyntaxicalAnalyzer::eatPrimitive() {
         return eatArray();
 
     throw std::runtime_error("Expected a primitive value");
+}
+
+ArrayAccess* SyntaxicalAnalyzer::eatArrayAccess(ValueNode* var) {
+    Logger::info("eatArrayAccess");
+    if (!var)
+        var = eatExpression();
+    ArrayAccess* a = new ArrayAccess(flow.eat(Token::Type::BRACKET_LEFT));
+    a->var = var;
+    a->key = eatExpression();
+    flow.eat(Token::Type::BRACKET_RIGHT);
+    return a;
 }
 
 Print* SyntaxicalAnalyzer::eatPrint() {

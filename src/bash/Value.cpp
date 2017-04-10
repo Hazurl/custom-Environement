@@ -5,7 +5,7 @@ using namespace bash;
 Value::Value () {}
 Value::Value (double n) : type(Type::NUMBER), number(n) {}
 Value::Value (std::string s) : type(Type::STRING), str(s) {}
-Value::Value (std::list<Value> a) : type(Type::ARRAY), arr(a) {}
+Value::Value (std::deque<Value> a) : type(Type::ARRAY), arr(a) {}
 Value::Value (std::initializer_list<Value> l) : type(Type::ARRAY), arr(l) {}
 
 Value::~Value() {}
@@ -64,6 +64,15 @@ Value& Value::push_back(Value v) {
 Value& Value::clearArray() {
     arr.clear();
     return *this;
+}
+
+Value& Value::at(Value const& v) {
+    if (v.type != Value::Type::NUMBER)
+        throw std::runtime_error("Array key can only be numbers");
+    if (v.number < 0)
+        throw std::runtime_error("Array key can only be positive");
+
+    return arr[(int)v.number];
 }
 
 ///////////////////////////////////////////////////
