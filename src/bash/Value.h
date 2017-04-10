@@ -37,7 +37,7 @@ namespace bash {
 class Value {
 public:
     enum class Type {
-        STRING, NUMBER, ARRAY
+        STRING, NUMBER, ARRAY, VOID
     };
 
     Value ();
@@ -78,7 +78,7 @@ private:
     friend bool ( ::operator==) (Value const& v0, Value const& v1);
     friend bool ( ::operator!=) (Value const& v0, Value const& v1);
 
-    Type type = Type::NUMBER;
+    Type type = Type::VOID;
     
     double number = 0;
     std::string str = "";

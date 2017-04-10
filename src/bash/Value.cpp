@@ -2,7 +2,7 @@
 
 using namespace bash;
 
-Value::Value () {}
+Value::Value () : type(Type::VOID) {}
 Value::Value (double n) : type(Type::NUMBER), number(n) {}
 Value::Value (std::string s) : type(Type::STRING), str(s) {}
 Value::Value (std::deque<Value> a) : type(Type::ARRAY), arr(a) {}
@@ -20,6 +20,8 @@ std::string Value::to_string() const {
         return s; 
     } else if (type == Type::STRING)
         return str;
+    else if (type == Type::VOID)
+        return "void";
     else { // array
         std::string ret = "[";
         bool first = true;
@@ -41,6 +43,8 @@ bool Value::to_bool() const {
         return number != 0;
     if (type == Type::STRING)
         return str != "";
+    if (type == Type::VOID)
+        return false;
     if (type == Type::ARRAY)
         return !arr.empty();
 
@@ -80,6 +84,9 @@ Value& Value::at(Value const& v) {
 ///////////////////////////////////////////////////
 
 Value operator+(Value const& v0, Value const& v1) {
+    if (v0.type == Value::Type::VOID || v1.type == Value::Type::VOID)
+        return Value();
+
     if (v0.type == Value::Type::NUMBER && v1.type == Value::Type::NUMBER)
         return Value(v0.number + v1.number);
 
@@ -94,6 +101,9 @@ Value operator+(Value const& v0, Value const& v1) {
 }
 
 Value operator-(Value const& v0, Value const& v1) {
+    if (v0.type == Value::Type::VOID || v1.type == Value::Type::VOID)
+        return Value();
+
     if (v0.type == Value::Type::NUMBER && v1.type == Value::Type::NUMBER)
         return Value(v0.number - v1.number);
 
@@ -101,6 +111,9 @@ Value operator-(Value const& v0, Value const& v1) {
 }
 
 Value operator-(Value const& v0) {
+    if (v0.type == Value::Type::VOID)
+        return Value();
+
     if (v0.type == Value::Type::NUMBER)
         return Value(-v0.number);
 
@@ -108,6 +121,9 @@ Value operator-(Value const& v0) {
 }
 
 Value operator/(Value const& v0, Value const& v1) {
+    if (v0.type == Value::Type::VOID || v1.type == Value::Type::VOID)
+        return Value();
+
     if (v0.type == Value::Type::NUMBER && v1.type == Value::Type::NUMBER) {
         if (v1.number != 0)
             return Value(v0.number / v1.number);
@@ -119,6 +135,9 @@ Value operator/(Value const& v0, Value const& v1) {
 }
 
 Value operator*(Value const& v0, Value const& v1) {
+    if (v0.type == Value::Type::VOID || v1.type == Value::Type::VOID)
+        return Value();
+
     if (v0.type == Value::Type::NUMBER && v1.type == Value::Type::NUMBER)
         return Value(v0.number * v1.number);
 
@@ -126,18 +145,30 @@ Value operator*(Value const& v0, Value const& v1) {
 }
 
 Value operator+=(Value& v0, Value const& v1) {
+    if (v0.type == Value::Type::VOID || v1.type == Value::Type::VOID)
+        return v0 = Value();
+
     return v0 = v0 + v1;
 }
 
 Value operator-=(Value& v0, Value const& v1) {
+    if (v0.type == Value::Type::VOID || v1.type == Value::Type::VOID)
+        return v0 = Value();
+
     return v0 = v0 - v1;
 }
 
 Value operator/=(Value& v0, Value const& v1) {
+    if (v0.type == Value::Type::VOID || v1.type == Value::Type::VOID)
+        return v0 = Value();
+
     return v0 = v0 / v1;
 }
 
 Value operator*=(Value& v0, Value const& v1) {
+    if (v0.type == Value::Type::VOID || v1.type == Value::Type::VOID)
+        return v0 = Value();
+        
     return v0 = v0 * v1;
 }
 
@@ -152,26 +183,41 @@ Value operator--(Value& v0) {
 }
 
 bool operator<(Value const& v0, Value const& v1) {
+    if (v0.type == Value::Type::VOID || v1.type == Value::Type::VOID)
+        return false;
+    
     if (v0.type == Value::Type::NUMBER && v1.type == Value::Type::NUMBER)
         return v0.number < v1.number;
     return false;
 }
 
 bool operator>(Value const& v0, Value const& v1) {
+    if (v0.type == Value::Type::VOID || v1.type == Value::Type::VOID)
+        return false;
+
     if (v0.type == Value::Type::NUMBER && v1.type == Value::Type::NUMBER)
         return v0.number > v1.number;
     return false;
 }
 
 bool operator<=(Value const& v0, Value const& v1) {
+    if (v0.type == Value::Type::VOID || v1.type == Value::Type::VOID)
+        return false;
+
     return !(v0 > v1);
 }
 
 bool operator>=(Value const& v0, Value const& v1) {
+    if (v0.type == Value::Type::VOID || v1.type == Value::Type::VOID)
+        return false;
+
     return !(v0 < v1);
 }
 
 bool operator==(Value const& v0, Value const& v1) {
+    if (v0.type == Value::Type::VOID && v1.type == Value::Type::VOID)
+        return true;
+
     if (v0.type == Value::Type::NUMBER && v1.type == Value::Type::NUMBER)
         return v0.number == v1.number;
 
