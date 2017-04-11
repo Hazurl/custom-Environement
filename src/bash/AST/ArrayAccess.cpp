@@ -17,5 +17,5 @@ std::string ArrayAccess::to_string() {
 
 void ArrayAccess::visit(Context& ctx) {
     auto v = var->getValue(ctx);
-    value = v.at(key->value);
+    value = v.at(key->getValue(ctx));
 }

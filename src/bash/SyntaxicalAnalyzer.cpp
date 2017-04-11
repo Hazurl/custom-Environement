@@ -236,10 +236,20 @@ ArrayAccess* SyntaxicalAnalyzer::eatArrayAccess(ValueNode* var) {
     Logger::info("eatArrayAccess");
     if (!var)
         var = eatExpression();
+
     ArrayAccess* a = new ArrayAccess(flow.eat(Token::Type::BRACKET_LEFT));
     a->var = var;
     a->key = eatExpression();
     flow.eat(Token::Type::BRACKET_RIGHT);
+
+    while (flow.isType(Token::Type::BRACKET_LEFT)) {
+        ArrayAccess* a_ = new ArrayAccess(flow.eat());
+        a_->var = a;
+        a_->key = eatExpression();
+        a = a_;
+        flow.eat(Token::Type::BRACKET_RIGHT);
+    }
+
     return a;
 }
 

@@ -71,12 +71,14 @@ Value& Value::clearArray() {
 }
 
 Value& Value::at(Value const& v) {
-    if (v.type != Value::Type::NUMBER)
+    if (v.type != Value::Type::ARRAY)
         throw std::runtime_error("Array key can only be numbers");
-    if (v.number < 0)
+
+    int key = static_cast<int>(v.number);
+    if (key < 0)
         throw std::runtime_error("Array key can only be positive");
 
-    return arr[(int)v.number];
+    return arr[key];
 }
 
 ///////////////////////////////////////////////////
