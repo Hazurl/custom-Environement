@@ -2,7 +2,7 @@
 
 using namespace bash;
 
-Ident::Ident (Token* t) : ValueNode(0, t), name(t->content) {}
+Ident::Ident (Token* t) : LeftValue(0, t), name(t->content) {}
 
 Ident::~Ident() {}
 
@@ -12,4 +12,8 @@ void Ident::visit(Context& ctx) {
 
 std::string Ident::to_string() {
     return name;
+}
+
+void Ident::setValue(Context& ctx, Value v) {
+    ctx.setVar(name, v);
 }

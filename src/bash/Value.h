@@ -48,13 +48,14 @@ public:
     ~Value();
 
     Type getType() { return type; }
-    std::string to_string() const;
+    std::string to_string(bool showType = false) const;
     bool to_bool() const;
 
     Value& push_front(Value v);
     Value& push_back(Value v);
     Value& clearArray();
     Value& at(Value const& v);
+    void setAt(Value const& key_v, Value v);
 
 private:
 

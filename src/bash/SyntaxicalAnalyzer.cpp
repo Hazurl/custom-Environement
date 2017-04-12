@@ -43,13 +43,11 @@ Instruction* SyntaxicalAnalyzer::eatInstruction() {
     else if (flow.isType(Token::Type::WHILE))
         return eatWhile();
         
-    else if (flow.isType(Token::Type::EQUAL, 1)) 
-        return eatAssignment();
-
     else if (flow.isType(Token::Type::PRINT))
         return eatPrint();
 
-    return nullptr;
+    else 
+        return eatAssignment();
 }
 
 If* SyntaxicalAnalyzer::eatIf() {
@@ -115,7 +113,7 @@ For* SyntaxicalAnalyzer::eatFor() {
 Assignment* SyntaxicalAnalyzer::eatAssignment() {
     Logger::info("eatAssignment");
     Assignment* ass = new Assignment(flow.current());
-    ass->var = new Ident(flow.eat(Token::Type::IDENT));
+    ass->var = eatLeftValue();
     flow.eat(Token::Type::EQUAL);
     ass->expr = eatExpression();
     
@@ -186,7 +184,7 @@ ValueNode* SyntaxicalAnalyzer::eatValueNode() {
 
 Ident* SyntaxicalAnalyzer::eatIdent() {
     auto ident = new Ident(flow.eat(Token::Type::IDENT));
-    Logger::info("eatIdent : " + ident->value.to_string());
+    Logger::info("eatIdent : " + ident->name);
     return ident;
 }
 
@@ -251,6 +249,27 @@ ArrayAccess* SyntaxicalAnalyzer::eatArrayAccess(ValueNode* var) {
     }
 
     return a;
+}
+
+LeftValue* SyntaxicalAnalyzer::eatLeftValue () {
+    Logger::info("eatLeftValue");
+    Ident* id = eatIdent();
+    if (flow.isType(Token::Type::BRACKET_LEFT)) {
+        auto a = new LeftArrayAccess(flow.eat());
+        a->var = id;
+        a->key = eatExpression();
+        flow.eat(Token::Type::BRACKET_RIGHT);
+
+        while(flow.isType(Token::Type::BRACKET_LEFT)) {
+            auto a_ = new LeftArrayAccess(flow.eat());
+            a_->var = a;
+            a_->key = eatExpression();
+            flow.eat(Token::Type::BRACKET_RIGHT);
+            a = a_;
+        }
+        return a;
+    }
+    return id;
 }
 
 Print* SyntaxicalAnalyzer::eatPrint() {

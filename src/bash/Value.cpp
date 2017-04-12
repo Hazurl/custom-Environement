@@ -10,18 +10,27 @@ Value::Value (std::initializer_list<Value> l) : type(Type::ARRAY), arr(l) {}
 
 Value::~Value() {}
 
-std::string Value::to_string() const {
+std::string Value::to_string(bool showType) const {
     if (type == Type::NUMBER) {
         std::string s = std::to_string (number);
         int offset = 1; 
         if (s.find_last_not_of('0') == s.find('.')) 
             offset = 0; 
         s.erase(s.find_last_not_of('0') + offset, std::string::npos); 
-        return s; 
-    } else if (type == Type::STRING)
-        return str;
-    else if (type == Type::VOID)
+        if (showType)
+            return s + " (Number)"; 
+        else 
+            return s;
+
+    } else if (type == Type::STRING) {
+        if (showType)
+            return str + " (String)"; 
+        else 
+            return str;
+
+    } else if (type == Type::VOID)
         return "void";
+
     else { // array
         std::string ret = "[";
         bool first = true;
@@ -33,8 +42,10 @@ std::string Value::to_string() const {
                 first = false;
             ret += v.to_string();
         }
-
-        return ret + "]";
+        if (showType)
+            return ret + "]"  + " (Array)";
+        else
+            return ret + "]";
     }
 }
 
@@ -71,14 +82,33 @@ Value& Value::clearArray() {
 }
 
 Value& Value::at(Value const& v) {
-    if (v.type != Value::Type::ARRAY)
-        throw std::runtime_error("Array key can only be numbers");
+    if (type != Value::Type::ARRAY)
+        throw std::runtime_error("Operators [] can only work with Array");
 
-    int key = static_cast<int>(v.number);
-    if (key < 0)
+    if (static_cast<int>(v.number) < 0)
         throw std::runtime_error("Array key can only be positive");
+    
+    unsigned int key = static_cast<unsigned int>(v.number);
+
+    for (unsigned int i = arr.size(); i <= key; ++i)
+        arr.push_back(Value());
 
     return arr[key];
+}
+
+void Value::setAt(Value const& key_v, Value v) {
+    if (type != Value::Type::ARRAY)
+        throw std::runtime_error("Operators [] can only work with Array");
+
+    if (static_cast<int>(key_v.number) < 0)
+        throw std::runtime_error("Array key can only be positive");
+
+    unsigned int key = static_cast<unsigned int>(key_v.number);
+
+    for (unsigned int i = arr.size(); i <= key; ++i)
+        arr.push_back(Value());
+
+    arr[key] = v;
 }
 
 ///////////////////////////////////////////////////

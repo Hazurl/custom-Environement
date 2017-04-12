@@ -13,7 +13,7 @@ Assignment::~Assignment() {
 }
 
 void Assignment::visit(Context& ctx) {
-    ctx.setVar(var->name, expr->getValue(ctx));
+    var->setValue(ctx, expr->getValue(ctx));
 }
 
 std::string Assignment::to_string() {
