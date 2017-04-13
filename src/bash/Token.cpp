@@ -69,8 +69,8 @@ Token* TokenFlow::getAt(long p) {
     }
 }
 
-Token* TokenFlow::fakeToken(Token::Type t) {
+Token* TokenFlow::fakeToken(Token::Type t, std::string startContent) {
     if (fakes.find(t) == fakes.end())
-        return fakes[t] = new Token("", -1, -1, t);
+        return fakes[t] = new Token(startContent, -1, -1, t);
     return fakes[t];
 }

@@ -43,7 +43,7 @@ Instruction* SyntaxicalAnalyzer::eatInstruction() {
     else if (flow.isType(Token::Type::WHILE))
         return eatWhile();
         
-    else if (flow.isType(Token::Type::PRINT))
+    else if (flow.next()->type == Token::Type::COLON)
         return eatPrint();
 
     else 
@@ -112,10 +112,34 @@ For* SyntaxicalAnalyzer::eatFor() {
 
 Assignment* SyntaxicalAnalyzer::eatAssignment() {
     Logger::info("eatAssignment");
-    Assignment* ass = new Assignment(flow.current());
+    Assignment* ass = new Assignment();
     ass->var = eatLeftValue();
-    flow.eat(Token::Type::EQUAL);
-    ass->expr = eatExpression();
+    ass->token = flow.eat();
+    auto tp = ass->token->type;
+    if (tp == Token::Type::EQUAL) {
+        ass->expr = eatExpression();
+    } else if (tp == Token::Type::EQUAL_PLUS) {
+        auto binOp = new BinOp();
+        binOp->left = ass->var;
+        binOp->token = flow.fakeToken(Token::Type::PLUS, "+");
+        binOp->right = eatExpression();
+    } else if (tp == Token::Type::EQUAL_MIN) {
+        auto binOp = new BinOp();
+        binOp->left = ass->var;
+        binOp->token = flow.fakeToken(Token::Type::MINUS, "-");
+        binOp->right = eatExpression();
+    } else if (tp == Token::Type::EQUAL_MUL) {
+        auto binOp = new BinOp();
+        binOp->left = ass->var;
+        binOp->token = flow.fakeToken(Token::Type::MUL, "*");
+        binOp->right = eatExpression();
+    } else if (tp == Token::Type::EQUAL_DIV) {
+        auto binOp = new BinOp();
+        binOp->left = ass->var;
+        binOp->token = flow.fakeToken(Token::Type::DIV, "/");
+        binOp->right = eatExpression();
+    } else
+        Logger::error("Assignment Operator not allowed");
     
     return ass;
 }

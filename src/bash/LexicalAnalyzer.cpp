@@ -52,6 +52,32 @@ Token* LexicalAnalyzer::findNextToken () {
     }
 
     if (isOperator(c)) { // OPERATOR
+        
+        char prev = c;
+        if (isOperator(c = next())) { // == += *= /= -= <= >= || &&
+            if (c == '|' && prev == '|')
+                return new Token(word + prev + c, curPos, curLine, Token::Type::OR);
+            if (c == '&' && prev == '&')
+                return new Token(word + prev + c, curPos, curLine, Token::Type::AND);
+            if (c == '=') {
+                if (prev == '+')
+                    return new Token(word + prev + c, curPos, curLine, Token::Type::EQUAL_PLUS);
+                if (prev == '-')
+                    return new Token(word + prev + c, curPos, curLine, Token::Type::EQUAL_MIN);
+                if (prev == '*')
+                    return new Token(word + prev + c, curPos, curLine, Token::Type::EQUAL_MUL);
+                if (prev == '/')
+                    return new Token(word + prev + c, curPos, curLine, Token::Type::EQUAL_DIV);
+                if (prev == '<')
+                    return new Token(word + prev + c, curPos, curLine, Token::Type::LESS_EQUAL);
+                if (prev == '>')
+                    return new Token(word + prev + c, curPos, curLine, Token::Type::GREATER_EQUAL);
+                if (prev == '=')
+                    return new Token(word + prev + c, curPos, curLine, Token::Type::EQUAL_EQUAL);
+            }            
+        } // + - * / = < >
+
+        c = previous();
         if (c == '+')
             return new Token(std::string(1, c), curPos, curLine, Token::Type::PLUS);
         if (c == '*')
@@ -60,6 +86,13 @@ Token* LexicalAnalyzer::findNextToken () {
             return new Token(std::string(1, c), curPos, curLine, Token::Type::MINUS);
         if (c == '/')
             return new Token(std::string(1, c), curPos, curLine, Token::Type::DIV);
+        if (c == '=')
+            return new Token(std::string(1, c), curPos, curLine, Token::Type::EQUAL);
+        if (c == '<')
+            return new Token(std::string(1, c), curPos, curLine, Token::Type::LESS);
+        if (c == '>')
+            return new Token(std::string(1, c), curPos, curLine, Token::Type::GREATER);
+
     }
 
     if (isAlpha(c)) {
@@ -112,8 +145,6 @@ Token* LexicalAnalyzer::findNextToken () {
         return new Token (std::string(1, c), curPos, curLine, Token::Type::BRACKET_LEFT);
     if (c == ']')
         return new Token (std::string(1, c), curPos, curLine, Token::Type::BRACKET_RIGHT);
-    if (c == '=')
-        return new Token (std::string(1, c), curPos, curLine, Token::Type::EQUAL);
     if (c == ':')
         return new Token (std::string(1, c), curPos, curLine, Token::Type::COLON);
     if (c == ',')
@@ -137,7 +168,7 @@ bool LexicalAnalyzer::isDigit(char c) {
 }
 
 bool LexicalAnalyzer::isOperator(char c) {
-    return c == '+' || c == '-' || c == '*' || c == '/';
+    return c == '+' || c == '-' || c == '*' || c == '/' || c == '=' || c == '&' || c == '|' || c == '<' || c == '>';
 }
 
 char LexicalAnalyzer::currentChar() {

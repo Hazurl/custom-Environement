@@ -31,7 +31,9 @@ public:
         PLUS, MINUS, DIV, MUL,
         PARENTHESIS_LEFT, PARENTHESIS_RIGHT,
         BRACKET_LEFT, BRACKET_RIGHT,
-        EQUAL, COLON, COMMA, 
+        EQUAL, EQUAL_PLUS, EQUAL_MUL, EQUAL_DIV, EQUAL_MIN,
+        EQUAL_EQUAL, LESS, LESS_EQUAL, GREATER, GREATER_EQUAL, OR, AND,
+        COLON, COMMA, 
         IDENT, NUMBER, STRING,
         IF, THEN, ELSE, ENDIF, // if
         WHILE, ENDWH, // while
@@ -52,6 +54,17 @@ public:
             case Type::BRACKET_LEFT: return "Bracket left";
             case Type::BRACKET_RIGHT: return "Bracket right";
             case Type::EQUAL: return "Equal";
+            case Type::EQUAL_PLUS: return "Plus-Equal";
+            case Type::EQUAL_MUL: return "Mul-Equal";
+            case Type::EQUAL_DIV: return "Div-Equal";
+            case Type::EQUAL_MIN: return "Min-Equal";
+            case Type::EQUAL_EQUAL: return "Equal-Equal";
+            case Type::LESS: return "Less";
+            case Type::LESS_EQUAL: return "Less-Equal";
+            case Type::GREATER: return "Greater";
+            case Type::GREATER_EQUAL: return "Greater-Equal";
+            case Type::OR: return "Or";
+            case Type::AND: return "And";
             case Type::COLON: return "Colon";
             case Type::COMMA: return "Comma";
             case Type::STRING: return "String";
@@ -88,7 +101,6 @@ protected:
 
     void push(Token* token);
     Token* getAt(long p);
-    Token* fakeToken(Token::Type t);
     void reset();
 
 public:
@@ -96,6 +108,7 @@ public:
     Token* next(long delta = 1);
     Token* previous(); // maybe useless
     bool isType(Token::Type type, long delta = 0);
+    Token* fakeToken(Token::Type t, std::string startContent = "");
 
     Token* eat(Token::Type type = Token::Type::FREE);
 
