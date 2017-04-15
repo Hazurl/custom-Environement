@@ -138,8 +138,10 @@ Assignment* SyntaxicalAnalyzer::eatAssignment() {
         binOp->left = ass->var;
         binOp->token = flow.fakeToken(Token::Type::DIV, "/");
         binOp->right = eatExpression();
-    } else
+    } else {
+        throw std::runtime_error("Expected an assignment");
         Logger::error("Assignment Operator not allowed");
+    }
     
     return ass;
 }

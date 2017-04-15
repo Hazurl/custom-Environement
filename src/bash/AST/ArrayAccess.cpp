@@ -22,8 +22,6 @@ void ArrayAccess::visit(Context& ctx) {
 
 void ArrayAccess::setValue(Context& ctx, Value v_) {
     Value v = var->getValue(ctx);
-    Logger::verb("getValue returns : " + v.to_string(true));
     v.setAt(key->getValue(ctx), v_);
-    Logger::verb("after setAt : " + v.to_string());
     var->setValue(ctx, v);
 }
