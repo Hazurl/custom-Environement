@@ -41,7 +41,6 @@ std::string Context::to_string () {
 
 void Context::print(Value const& v) {
     std::cout << v.to_string() << std::endl;
-    Logger::spe("Print : " + v.to_string());
 }
 
 void Context::call(std::string name, std::vector<Value> args) {

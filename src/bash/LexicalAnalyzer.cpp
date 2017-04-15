@@ -149,6 +149,8 @@ Token* LexicalAnalyzer::findNextToken () {
         return new Token (std::string(1, c), curPos, curLine, Token::Type::COLON);
     if (c == ',')
         return new Token (std::string(1, c), curPos, curLine, Token::Type::COMMA);
+    if (c == ';')
+        return new Token (std::string(1, c), curPos, curLine, Token::Type::SEMICOLON);
 
     Logger::error("No token found");
     return nullptr;
@@ -213,8 +215,6 @@ Token::Type LexicalAnalyzer::getTypeOfIdent(std::string const& ident) {
         return Token::Type::FOR;
     if (ident == "endfor")
         return Token::Type::ENDFOR;
-    if (ident == "print")
-        return Token::Type::PRINT;
     if (ident == "then")
         return Token::Type::THEN;
     if (ident == "else")

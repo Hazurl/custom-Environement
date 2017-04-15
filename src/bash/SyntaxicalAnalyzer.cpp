@@ -44,7 +44,7 @@ Instruction* SyntaxicalAnalyzer::eatInstruction() {
         return eatWhile();
         
     else if (flow.next()->type == Token::Type::COLON)
-        return eatPrint();
+        return eatFuncCall();
 
     else 
         return eatAssignment();
@@ -276,32 +276,18 @@ ArrayAccess* SyntaxicalAnalyzer::eatArrayAccess(ValueNode* var) {
 
     return a;
 }
-/*
-LeftValue* SyntaxicalAnalyzer::eatLeftValue () {
-    Logger::info("eatLeftValue");
-    Ident* id = eatIdent();
-    if (flow.isType(Token::Type::BRACKET_LEFT)) {
-        auto a = new ArrayAccess(flow.eat());
-        a->var = id;
-        a->key = eatExpression();
-        flow.eat(Token::Type::BRACKET_RIGHT);
 
-        while(flow.isType(Token::Type::BRACKET_LEFT)) {
-            auto a_ = new ArrayAccess(flow.eat());
-            a_->var = a;
-            a_->key = eatExpression();
-            flow.eat(Token::Type::BRACKET_RIGHT);
-            a = a_;
-        }
-        return a;
+FuncCall* SyntaxicalAnalyzer::eatFuncCall() {
+    Logger::info("eatFuncCall");
+    auto f = new FuncCall();
+    f->func = eatIdent();
+    f->token = flow.eat(Token::Type::COLON);
+    while (!flow.isType(Token::Type::SEMICOLON) && !flow.isType(Token::Type::END)) {
+        f->args.push_back(eatExpression());
+
+        if (flow.isType(Token::Type::COMMA))
+            flow.eat();
     }
-    return id;
-}
-*/
-Print* SyntaxicalAnalyzer::eatPrint() {
-    Logger::info("eatPrint");
-    auto p = new Print(flow.eat(Token::Type::PRINT));
-    flow.eat(Token::Type::COLON);
-    p->v = eatExpression();
-    return p;
+    flow.eat(Token::Type::SEMICOLON);
+    return f;
 }

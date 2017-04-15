@@ -33,12 +33,11 @@ public:
         BRACKET_LEFT, BRACKET_RIGHT,
         EQUAL, EQUAL_PLUS, EQUAL_MUL, EQUAL_DIV, EQUAL_MIN,
         EQUAL_EQUAL, LESS, LESS_EQUAL, GREATER, GREATER_EQUAL, OR, AND,
-        COLON, COMMA, 
+        COLON, COMMA, SEMICOLON, 
         IDENT, NUMBER, STRING,
         IF, THEN, ELSE, ENDIF, // if
         WHILE, ENDWH, // while
         FOR, FROM, TO, STEP, ENDFOR, // for
-        PRINT, // used to print value to standard output
 
         END, FREE // used to eat a token who his type don't care 
     };
@@ -66,6 +65,7 @@ public:
             case Type::OR: return "Or";
             case Type::AND: return "And";
             case Type::COLON: return "Colon";
+            case Type::SEMICOLON: return "Semi-Colon";
             case Type::COMMA: return "Comma";
             case Type::STRING: return "String";
             case Type::IDENT: return "Ident";
@@ -81,7 +81,6 @@ public:
             case Type::TO: return "To";
             case Type::STEP: return "Step";
             case Type::ENDFOR: return "EndFor";
-            case Type::PRINT: return "Print";
             case Type::END: return "End";
             case Type::FREE: return "Free";
 

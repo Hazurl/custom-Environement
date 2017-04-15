@@ -6,7 +6,7 @@
 #include "AST/AST.h"
 #include "AST/Block.h"
 #include "AST/Instruction.h"
-#include "AST/Print.h"
+#include "AST/FuncCall.h"
 #include "AST/Assignment.h"
 #include "AST/For.h"
 #include "AST/While.h"
@@ -52,7 +52,7 @@ private:
     Primitive* eatNumber();
     Primitive* eatString();
     Array* eatArray();
-    Print* eatPrint();
+    FuncCall* eatFuncCall();
     Primitive* eatPrimitive();
     ArrayAccess* eatArrayAccess(ValueNode* var = nullptr);
 };
