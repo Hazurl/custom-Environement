@@ -7,8 +7,10 @@
 #include <exception>
 #include <stdlib.h>
 #include <assert.h>
-#include "Context.h"
+
 #include "../../lib/Logger/src/Logger.h"
+#include "StandardFunc.h"
+#include "Context.h"
 #include "Token.h"
 #include "LexicalAnalyzer.h"
 #include "SyntaxicalAnalyzer.h"
@@ -28,6 +30,10 @@ public:
     void                    runTest                     ();
     void                    run                         (std::string code, Context& ctx);
 private:  
+
+    void                    initStdFunc                 ();
+
+    std::map<std::string, void (*) (Context&)> stdFuncs;
 
 }; // class Interpreter
 

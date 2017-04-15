@@ -4,13 +4,19 @@ using namespace bash;
 
 //      =====   INTERPRETER    =====
 
-Interpreter::Interpreter () {}
+Interpreter::Interpreter () {
+    initStdFunc();
+}
 
 Interpreter::~Interpreter () {}
 
+void Interpreter::initStdFunc() {
+    stdFuncs.insert( {"print", &std_bash_func::print} );
+}
+
 void Interpreter::interactive () {
     std::string cmd;
-    Context ctx;
+    Context ctx(&stdFuncs, "BASH", {});
 
     while (!std::cin.eof()) {
         std::cout << INTERACTIVE_PREFIXE;
