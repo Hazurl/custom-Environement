@@ -2,7 +2,7 @@
 
 using namespace bash;
 
-BinOp::BinOp (Token* t) : ValueNode(0, t) {}
+BinOp::BinOp (Token* t) : ConstValueNode(0, t) {}
 
 BinOp::~BinOp() {
     if (left)

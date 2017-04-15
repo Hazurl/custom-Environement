@@ -2,12 +2,12 @@
 #define __BASH_AST_EXPR__
 
 #include "../Token.h"
-#include "ValueNode.h"
+#include "ConstValueNode.h"
 #include <string>
 
 namespace bash {
 
-class Expression : public ValueNode {
+class Expression : public ConstValueNode {
 public:
     Expression(Token* t = nullptr);
     virtual ~Expression ();

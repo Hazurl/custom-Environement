@@ -3,12 +3,11 @@
 
 #include "../Token.h"
 #include "ValueNode.h"
-#include "LeftValue.h"
 #include <string>
 
 namespace bash {
 
-class Ident : public LeftValue {
+class Ident : public ValueNode {
 public:
     Ident(Token* t = nullptr);
     virtual ~Ident ();

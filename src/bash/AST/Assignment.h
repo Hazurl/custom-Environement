@@ -6,7 +6,6 @@
 #include "Expression.h"
 #include "Ident.h"
 #include "ValueNode.h"
-#include "LeftValue.h"
 #include <string>
 
 namespace bash {
@@ -19,7 +18,7 @@ public:
     virtual std::string to_string();
     virtual void visit(Context& ctx);
 
-    LeftValue* var = nullptr;
+    ValueNode* var = nullptr;
     Expression* expr = nullptr;
 };
 

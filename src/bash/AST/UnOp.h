@@ -2,13 +2,13 @@
 #define __BASH_AST_UNOP__
 
 #include "../Token.h"
-#include "ValueNode.h"
+#include "ConstValueNode.h"
 #include <string>
 #include <stdexcept>
 
 namespace bash {
 
-class UnOp : public ValueNode {
+class UnOp : public ConstValueNode {
 public:
     UnOp(Token* t = nullptr);
     virtual ~UnOp ();

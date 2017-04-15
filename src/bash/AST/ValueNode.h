@@ -15,6 +15,7 @@ public:
     virtual std::string to_string() = 0;
     virtual void visit(Context& ctx) = 0;
     Value getValue(Context& ctx);
+    virtual void setValue(Context& ctx, Value v) = 0;
 
     Value value;
 };

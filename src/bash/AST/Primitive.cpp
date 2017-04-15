@@ -2,7 +2,7 @@
 
 using namespace bash;
 
-Primitive::Primitive(Value v, Token* t) : ValueNode(v, t) {}
+Primitive::Primitive(Value v, Token* t) : ConstValueNode(v, t) {}
 
 Primitive::~Primitive() {}
 

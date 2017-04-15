@@ -2,13 +2,13 @@
 #define __BASH_AST_BINOP__
 
 #include "../Token.h"
-#include "ValueNode.h"
+#include "ConstValueNode.h"
 #include <string>
 #include <stdexcept>
 
 namespace bash {
 
-class BinOp : public ValueNode {
+class BinOp : public ConstValueNode {
 public:
     BinOp(Token* t = nullptr);
     virtual ~BinOp ();
