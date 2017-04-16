@@ -195,7 +195,7 @@ char LexicalAnalyzer::previous() {
 }
 
 bool LexicalAnalyzer::isAlpha(char c) {
-    return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
+    return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' || c== '$';
 }
 
 bool LexicalAnalyzer::isAlphanum(char c) {

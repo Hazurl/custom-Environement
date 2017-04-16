@@ -3,16 +3,17 @@
 using namespace bash;
 
 Context::Context(std::map<std::string, void (*) (Context&)>* funcs, std::string progName, std::vector<Value> params) : funcs(funcs) {
-    this->params.push_back(Value(progName));
+    setVar("$0", Value(progName));
+
+    unsigned long i = 1;
     for (auto& v : params)
-        this->params.push_back(v);
+        setVar("$" + std::to_string(i++), v);
 }
+
 Context::~Context() {}
 
 Value Context::getParam(unsigned long i) {
-    if (i >= params.size())
-        return Value();
-    return params[i];
+    return getVar("$" + std::to_string(i));
 }
 
 Value Context::setVar(std::string name, Value v) {
