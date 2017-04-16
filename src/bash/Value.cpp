@@ -220,6 +220,10 @@ bool operator<(Value const& v0, Value const& v1) {
     
     if (v0.type == Value::Type::NUMBER && v1.type == Value::Type::NUMBER)
         return v0.number < v1.number;
+
+    if (v0.type == Value::Type::STRING && v1.type == Value::Type::STRING)
+        return v0.str < v1.str;
+
     return false;
 }
 
@@ -229,6 +233,10 @@ bool operator>(Value const& v0, Value const& v1) {
 
     if (v0.type == Value::Type::NUMBER && v1.type == Value::Type::NUMBER)
         return v0.number > v1.number;
+
+    if (v0.type == Value::Type::STRING && v1.type == Value::Type::STRING)
+        return v0.str > v1.str;
+
     return false;
 }
 
@@ -236,11 +244,17 @@ bool operator<=(Value const& v0, Value const& v1) {
     if (v0.type == Value::Type::VOID || v1.type == Value::Type::VOID)
         return false;
 
+    if (v0.type == Value::Type::ARRAY || v1.type == Value::Type::ARRAY)
+        return false;
+
     return !(v0 > v1);
 }
 
 bool operator>=(Value const& v0, Value const& v1) {
     if (v0.type == Value::Type::VOID || v1.type == Value::Type::VOID)
+        return false;
+
+    if (v0.type == Value::Type::ARRAY || v1.type == Value::Type::ARRAY)
         return false;
 
     return !(v0 < v1);

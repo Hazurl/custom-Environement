@@ -41,13 +41,19 @@ private:
 
     // EAT
     Instruction* eatInstruction();
-    Expression* eatExpression();
     Assignment* eatAssignment();
     If* eatIf();
     While* eatWhile();
     For* eatFor();
-    ValueNode* eatFactor();
+
+    Expression* eatExpression();
+    ValueNode* eatOr();
+    ValueNode* eatAnd();
+    ValueNode* eatComp();
+    ValueNode* eatAdd();
+    ValueNode* eatMul();
     ValueNode* eatValueNode();
+
     Ident* eatIdent();
     Primitive* eatNumber();
     Primitive* eatString();

@@ -10,12 +10,17 @@ namespace bash {
 
 class UnOp : public ConstValueNode {
 public:
-    UnOp(Token* t = nullptr);
+    enum class Op {
+        MIN, NOT
+    };
+
+    UnOp(Op mode, Token* t = nullptr);
     virtual ~UnOp ();
     virtual std::string to_string();
     virtual void visit(Context& ctx);
 
     ValueNode* v = nullptr;
+    Op mode;
 };
 
 }; // namespace bash

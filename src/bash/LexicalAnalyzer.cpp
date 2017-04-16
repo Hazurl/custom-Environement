@@ -74,6 +74,8 @@ Token* LexicalAnalyzer::findNextToken () {
                     return new Token(word + prev + c, curPos, curLine, Token::Type::GREATER_EQUAL);
                 if (prev == '=')
                     return new Token(word + prev + c, curPos, curLine, Token::Type::EQUAL_EQUAL);
+                if (prev == '!')
+                    return new Token(word + prev + c, curPos, curLine, Token::Type::NOT_EQUAL);
             }            
         } // + - * / = < >
 
@@ -92,6 +94,8 @@ Token* LexicalAnalyzer::findNextToken () {
             return new Token(std::string(1, c), curPos, curLine, Token::Type::LESS);
         if (c == '>')
             return new Token(std::string(1, c), curPos, curLine, Token::Type::GREATER);
+        if (c == '!')
+            return new Token(std::string(1, c), curPos, curLine, Token::Type::NOT);
 
     }
 
@@ -170,7 +174,7 @@ bool LexicalAnalyzer::isDigit(char c) {
 }
 
 bool LexicalAnalyzer::isOperator(char c) {
-    return c == '+' || c == '-' || c == '*' || c == '/' || c == '=' || c == '&' || c == '|' || c == '<' || c == '>';
+    return c == '+' || c == '-' || c == '*' || c == '/' || c == '=' || c == '&' || c == '|' || c == '<' || c == '>' || c == '!';
 }
 
 char LexicalAnalyzer::currentChar() {

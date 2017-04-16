@@ -119,58 +119,140 @@ Assignment* SyntaxicalAnalyzer::eatAssignment() {
     if (tp == Token::Type::EQUAL) {
         ass->expr = eatExpression();
     } else if (tp == Token::Type::EQUAL_PLUS) {
-        auto binOp = new BinOp();
+        auto binOp = new BinOp(BinOp::Op::ADD, ass->token);
         binOp->left = ass->var;
-        binOp->token = flow.fakeToken(Token::Type::PLUS, "+");
         binOp->right = eatExpression();
     } else if (tp == Token::Type::EQUAL_MIN) {
-        auto binOp = new BinOp();
+        auto binOp = new BinOp(BinOp::Op::SUB, ass->token);
         binOp->left = ass->var;
-        binOp->token = flow.fakeToken(Token::Type::MINUS, "-");
         binOp->right = eatExpression();
     } else if (tp == Token::Type::EQUAL_MUL) {
-        auto binOp = new BinOp();
+        auto binOp = new BinOp(BinOp::Op::MUL, ass->token);
         binOp->left = ass->var;
-        binOp->token = flow.fakeToken(Token::Type::MUL, "*");
         binOp->right = eatExpression();
     } else if (tp == Token::Type::EQUAL_DIV) {
-        auto binOp = new BinOp();
+        auto binOp = new BinOp(BinOp::Op::DIV, ass->token);
         binOp->left = ass->var;
-        binOp->token = flow.fakeToken(Token::Type::DIV, "/");
         binOp->right = eatExpression();
-    } else {
+    } else
         throw std::runtime_error("Expected an assignment");
-        Logger::error("Assignment Operator not allowed");
-    }
     
     return ass;
 }
 
 Expression* SyntaxicalAnalyzer::eatExpression() {
+    /* Priority Operator :
+    *
+    * unary minus
+    * not
+    * parenthesis
+    * multiplication / division
+    * addition / substraction
+    * comparison ( != == <= >= < > )
+    * and ( && )
+    * or  ( || )
+    *
+    */
     Logger::info("eatExpression");
+
     auto e = new Expression();
-
-    e->expr = eatFactor();
-
-    while (flow.isType(Token::Type::PLUS) || flow.isType(Token::Type::MINUS)) {
-        Logger::verbose("new add/minus");
-        auto binOp = new BinOp();
-        binOp->left = e->expr;
-        binOp->token = flow.eat();
-        binOp->right = eatFactor();
-        e->expr = binOp;
-    }
-
+    e->expr = eatOr();
     return e;
 }
 
-ValueNode* SyntaxicalAnalyzer::eatFactor() {
-    Logger::info("eatFactor");
+ValueNode* SyntaxicalAnalyzer::eatOr() {
+    Logger::info("eatOr");
+    ValueNode* node = eatAnd();
+
+    while (flow.isType(Token::Type::OR)) {
+        Logger::verbose("new or");
+        auto binOp = new BinOp(BinOp::Op::OR);
+        binOp->left = node;
+        binOp->token = flow.eat();
+        binOp->right = eatAnd();
+        node = binOp;
+    }
+
+    return node;
+}
+
+ValueNode* SyntaxicalAnalyzer::eatAnd() {
+    Logger::info("eatAnd");
+    ValueNode* node = eatComp();
+
+    while (flow.isType(Token::Type::AND)) {
+        Logger::verbose("new and");
+        auto binOp = new BinOp(BinOp::Op::AND);
+        binOp->left = node;
+        binOp->token = flow.eat();
+        binOp->right = eatComp();
+        node = binOp;
+    }
+
+    return node;
+}
+
+ValueNode* SyntaxicalAnalyzer::eatComp() {
+    Logger::info("eatComp");
+    ValueNode* node = eatAdd();
+
+    auto tp = flow.current()->type;
+
+    while (tp == Token::Type::EQUAL_EQUAL ||
+           tp == Token::Type::NOT_EQUAL ||
+           tp == Token::Type::LESS ||
+           tp == Token::Type::LESS_EQUAL ||
+           tp == Token::Type::GREATER ||
+           tp == Token::Type::GREATER_EQUAL) {
+        Logger::verbose("new Comp");
+        BinOp* binOp;
+        if (tp == Token::Type::EQUAL_EQUAL)
+            binOp = new BinOp(BinOp::Op::EQ);
+        else if (tp == Token::Type::NOT_EQUAL)
+            binOp = new BinOp(BinOp::Op::NEQ);
+        else if (tp == Token::Type::LESS)
+            binOp = new BinOp(BinOp::Op::LT);
+        else if (tp == Token::Type::LESS_EQUAL)
+            binOp = new BinOp(BinOp::Op::LT_EQ);
+        else if (tp == Token::Type::GREATER)
+            binOp = new BinOp(BinOp::Op::GT);
+        else if (tp == Token::Type::GREATER_EQUAL)
+            binOp = new BinOp(BinOp::Op::GT_EQ);
+         
+        binOp->left = node;
+        binOp->token = flow.eat();
+        binOp->right = eatAdd();
+        node = binOp;
+        tp = flow.current()->type;
+    }
+
+    return node;
+}
+
+ValueNode* SyntaxicalAnalyzer::eatAdd() {
+    Logger::info("eatAdd");
+    ValueNode* node = eatMul();
+
+    while (flow.isType(Token::Type::PLUS) || flow.isType(Token::Type::MINUS)) {
+        Logger::verbose("new add/sub");
+        auto binOp = new BinOp(flow.isType(Token::Type::PLUS) ? BinOp::Op::ADD : BinOp::Op::SUB);
+        binOp->left = node;
+        binOp->token = flow.eat();
+        binOp->right = eatMul();
+        node = binOp;
+    }
+
+    return node;
+}
+
+
+ValueNode* SyntaxicalAnalyzer::eatMul() {
+    Logger::info("eatMul");
     ValueNode* node = eatValueNode();
 
     while (flow.isType(Token::Type::MUL) || flow.isType(Token::Type::DIV)) {
         Logger::verbose("new mul/div");
-        auto binOp = new BinOp();
+        auto binOp = new BinOp(flow.isType(Token::Type::MUL) ? BinOp::Op::MUL : BinOp::Op::DIV);
         binOp->left = node;
         binOp->token = flow.eat();
         binOp->right = eatValueNode();
@@ -183,7 +265,12 @@ ValueNode* SyntaxicalAnalyzer::eatFactor() {
 ValueNode* SyntaxicalAnalyzer::eatValueNode() {
     Logger::info("eatValueNode");
     if (flow.isType(Token::Type::MINUS)) {
-        auto v = new UnOp(flow.eat());
+        auto v = new UnOp(UnOp::Op::MIN, flow.eat());
+        v->v = eatValueNode();
+        return v;
+    }
+    if (flow.isType(Token::Type::NOT)) {
+        auto v = new UnOp(UnOp::Op::NOT, flow.eat());
         v->v = eatValueNode();
         return v;
     }

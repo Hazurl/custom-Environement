@@ -10,13 +10,21 @@ namespace bash {
 
 class BinOp : public ConstValueNode {
 public:
-    BinOp(Token* t = nullptr);
+    enum class Op {
+        AND, OR,
+        NEQ, EQ, GT_EQ, GT, LT, LT_EQ,
+        ADD, SUB,
+        MUL, DIV
+    };
+
+    BinOp(Op mode, Token* t = nullptr);
     virtual ~BinOp ();
     virtual std::string to_string();
     virtual void visit(Context& ctx);
 
     ValueNode* left = nullptr;
     ValueNode* right = nullptr;
+    Op mode;
 };
 
 }; // namespace bash
