@@ -1,4 +1,4 @@
-SRC_DIR := lib/Logger/src src/bash/AST src/bash src
+SRC_DIR := lib/Logger/src src/bash/AST src/bash src/system src
 EXCLUDE := lib/Logger/src/main.cpp
 
 SRC_ALL := $(foreach d,$(SRC_DIR),$(wildcard $(d)/*.cpp))

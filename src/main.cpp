@@ -1,10 +1,10 @@
 #include <iostream>
 #include <string>
 
-#include "bash/Interpreter.h"
-#include "bash/Value.h"
+#include "system/System.h"
 #include "../lib/Logger/src/Logger.h"
 
+using namespace haz;
 using namespace bash;
 
 int main (int argc, char* argv[]) {
@@ -18,7 +18,7 @@ int main (int argc, char* argv[]) {
     //Logger::hideSection("Evaluate");
 
     Logger::title("Nouveau Run", Logger::SPE);
-
+/*
     bool runTest = false;
 
     for (int i = 1; i < argc; ++i) {
@@ -26,19 +26,9 @@ int main (int argc, char* argv[]) {
 
         if (v == "-t" || v == "-T" || v == "--test") runTest = true;
     }
-
-    bash::Interpreter bash_interpreter;
-
-    if (runTest) {
-        Logger::hideSection("Tokenize");
-        Logger::hideSection("Parser");
-        Logger::hideSection("Evaluate");
-        bash_interpreter.runTest();
-
-        return 0;
-    }
-
-    bash_interpreter.interactive();
+*/
+    System sstm;
+    sstm.getCmd().interactive();
 
     return 0;
 }
