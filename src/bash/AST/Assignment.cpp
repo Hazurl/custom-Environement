@@ -2,6 +2,8 @@
 
 using namespace bash;
 
+using namespace haz;
+
 Assignment::Assignment (Token* t) : Instruction(t) {}
 
 Assignment::~Assignment() {
@@ -13,7 +15,9 @@ Assignment::~Assignment() {
 }
 
 void Assignment::visit(Context& ctx) {
+    logger->ENTERING({"Context&"});
     var->setValue(ctx, expr->getValue(ctx));
+    logger->EXITING("void");
 }
 
 std::string Assignment::to_string() {

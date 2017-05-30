@@ -2,6 +2,8 @@
 
 using namespace bash;
 
+using namespace haz;
+
 BinOp::BinOp (Op mode, Token* t) : ConstValueNode(0, t), mode(mode) {}
 
 BinOp::~BinOp() {
@@ -12,7 +14,7 @@ BinOp::~BinOp() {
 }
 
 std::string BinOp::to_string() {
-         if (mode == Op::ADD)
+    if (mode == Op::ADD)
         return " ( " + left->to_string() + "+" + right->to_string() + " ) ";
     else if (mode == Op::SUB)
         return " ( " + left->to_string() + "-" + right->to_string() + " ) ";
@@ -37,11 +39,13 @@ std::string BinOp::to_string() {
     else if (mode == Op::LT_EQ)
         return " ( " + left->to_string() + "<=" + right->to_string() + " ) ";
 
-    throw std::runtime_error("BinOp - operator not allow");
+    logger->THROWEXCEPTION(std::runtime_error, "BinOp - operator not allow");
+    return ""; // removing warning
 }
 
 void BinOp::visit (Context& ctx) {
-         if (mode == Op::ADD)
+    logger->ENTERING({"Context&"});
+    if (mode == Op::ADD)
         value = left->getValue(ctx) + right->getValue(ctx);
     else if (mode == Op::SUB)
         value = left->getValue(ctx) - right->getValue(ctx);
@@ -66,5 +70,6 @@ void BinOp::visit (Context& ctx) {
     else if (mode == Op::LT_EQ)
         value = (left->getValue(ctx) <= right->getValue(ctx)) ? Value(1) : Value(0);
     else
-        throw std::runtime_error("BinOp - operator not allow");
+        logger->THROWEXCEPTION(std::runtime_error, "BinOp - operator not allow");
+    logger->EXITING("void");
 }

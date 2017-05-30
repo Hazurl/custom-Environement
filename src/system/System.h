@@ -2,6 +2,7 @@
 #define __SYSTEM_H__
 
 #include "../bash/Interpreter.h"
+#include <logger.h>
 
 namespace haz {
 
@@ -13,6 +14,7 @@ public:
     bash::Interpreter& getCmd();
 
 private:
+    Logger* logger = &Logger::get("#.System");
     bash::Interpreter cmd;
 
 };

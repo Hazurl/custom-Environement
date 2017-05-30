@@ -8,6 +8,8 @@
 #include <string>
 #include <vector>
 
+using namespace haz;
+
 namespace bash {
 
 class Array : public Primitive {

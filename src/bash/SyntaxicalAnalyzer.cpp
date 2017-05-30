@@ -2,7 +2,10 @@
 
 using namespace bash;
 
+using namespace haz;
+
 SyntaxicalAnalyzer::SyntaxicalAnalyzer(TokenFlow& flow) : flow(flow) {
+    logger->setLevel(Level::WARNING);
     parse();
 }
 
@@ -14,14 +17,17 @@ SyntaxicalAnalyzer::~SyntaxicalAnalyzer() {
 Block* SyntaxicalAnalyzer::getAST() { return mainBlock; }
 
 void SyntaxicalAnalyzer::parse() {
+    logger->ENTERING({});
+    if (mainBlock)
+        delete mainBlock;
     mainBlock = new Block();
     while (!flow.isType(Token::Type::END)) {
         auto i = eatInstruction();
         if (i == nullptr) {
-            Logger::error("Instruction null");
+            logger->ERROR("Instruction null");
             delete mainBlock;
             mainBlock = nullptr;
-            return;
+            return logger->RET("void");
         }
         mainBlock->push(i);
     }
@@ -29,29 +35,30 @@ void SyntaxicalAnalyzer::parse() {
     mainBlock->token = mainBlock->instr.front()->token;
 
     if (mainBlock == nullptr)
-        Logger::error("mainBlock is null...");
+        logger->ERROR("mainBlock is null...");
+    logger->EXITING("void");
 }
 
 Instruction* SyntaxicalAnalyzer::eatInstruction() {
-    Logger::info("eatInstruction");
+    logger->ENTERING({});
     if (flow.isType(Token::Type::IF))
-        return eatIf();
+        return logger->RET("If* as Instruction*", eatIf());
 
     else if (flow.isType(Token::Type::FOR))
-        return eatFor();
+        return logger->RET("For* as Instruction*", eatFor());
 
     else if (flow.isType(Token::Type::WHILE))
-        return eatWhile();
+        return logger->RET("While* as Instruction*", eatWhile());
         
     else if (flow.next()->type == Token::Type::COLON)
-        return eatFuncCall();
+        return logger->RET("FuncCall* as Instruction*", eatFuncCall());
 
-    else 
-        return eatAssignment();
+    else
+        return logger->RET("Assignment* as Instruction*", eatAssignment());
 }
 
 If* SyntaxicalAnalyzer::eatIf() {
-    Logger::info("eatIf");
+    logger->ENTERING({});
     If* iff = new If(flow.eat());
 
     iff->cond = eatExpression();
@@ -61,18 +68,18 @@ If* SyntaxicalAnalyzer::eatIf() {
         iff->then->push(eatInstruction());
 
     if (flow.isType(Token::Type::ELSE)) {
-        Logger::verbose("with an else");
+        logger->DEBUG("with an else");
         iff->elze = new Block(flow.eat(Token::Type::ELSE));
         while(!flow.isType(Token::Type::ENDIF) && !flow.isType(Token::Type::END))
             iff->elze->push(eatInstruction());
         flow.eat(Token::Type::ENDIF);
     }
 
-    return iff;
+    return logger->RET("If*", iff);
 }
 
 While* SyntaxicalAnalyzer::eatWhile() {
-    Logger::info("eatWhile");
+    logger->ENTERING({});
     While* wh = new While(flow.eat());
 
     wh->cond = eatExpression();
@@ -82,11 +89,11 @@ While* SyntaxicalAnalyzer::eatWhile() {
         wh->then->push(eatInstruction());
     flow.eat(Token::Type::ENDWH);
 
-    return wh;
+    return logger->RET("While*", wh);
 }
 
 For* SyntaxicalAnalyzer::eatFor() {
-    Logger::info("eatFor");
+    logger->ENTERING({});
     For* fr = new For(flow.eat());
 
     fr->var = new Ident(flow.eat(Token::Type::IDENT));
@@ -107,11 +114,11 @@ For* SyntaxicalAnalyzer::eatFor() {
         fr->then->push(eatInstruction());
     flow.eat(Token::Type::ENDFOR);
 
-    return fr;
+    return logger->RET("For*", fr);
 }
 
 Assignment* SyntaxicalAnalyzer::eatAssignment() {
-    Logger::info("eatAssignment");
+    logger->ENTERING({});
     Assignment* ass = new Assignment();
     ass->var = eatValueNode();
     ass->token = flow.eat();
@@ -135,9 +142,9 @@ Assignment* SyntaxicalAnalyzer::eatAssignment() {
         binOp->left = ass->var;
         binOp->right = eatExpression();
     } else
-        throw std::runtime_error("Expected an assignment");
+        logger->THROWEXCEPTION(std::runtime_error, "Expected an assignment");
     
-    return ass;
+    return logger->RET("Assignment*", ass);
 }
 
 Expression* SyntaxicalAnalyzer::eatExpression() {
@@ -153,47 +160,45 @@ Expression* SyntaxicalAnalyzer::eatExpression() {
     * or  ( || )
     *
     */
-    Logger::info("eatExpression");
+    logger->ENTERING({});
 
     auto e = new Expression();
     e->expr = eatOr();
-    return e;
+    return logger->RET("Expression*", e);
 }
 
 ValueNode* SyntaxicalAnalyzer::eatOr() {
-    Logger::info("eatOr");
+    logger->ENTERING({});
     ValueNode* node = eatAnd();
 
     while (flow.isType(Token::Type::OR)) {
-        Logger::verbose("new or");
+        logger->DEBUG("new or");
         auto binOp = new BinOp(BinOp::Op::OR);
         binOp->left = node;
         binOp->token = flow.eat();
         binOp->right = eatAnd();
         node = binOp;
     }
-
-    return node;
+    return logger->RET("ValueNode*", node);
 }
 
 ValueNode* SyntaxicalAnalyzer::eatAnd() {
-    Logger::info("eatAnd");
+    logger->ENTERING({});
     ValueNode* node = eatComp();
 
     while (flow.isType(Token::Type::AND)) {
-        Logger::verbose("new and");
+        logger->DEBUG("new and");
         auto binOp = new BinOp(BinOp::Op::AND);
         binOp->left = node;
         binOp->token = flow.eat();
         binOp->right = eatComp();
         node = binOp;
     }
-
-    return node;
+    return logger->RET("ValueNode*", node);
 }
 
 ValueNode* SyntaxicalAnalyzer::eatComp() {
-    Logger::info("eatComp");
+    logger->ENTERING({});
     ValueNode* node = eatAdd();
 
     auto tp = flow.current()->type;
@@ -204,7 +209,7 @@ ValueNode* SyntaxicalAnalyzer::eatComp() {
            tp == Token::Type::LESS_EQUAL ||
            tp == Token::Type::GREATER ||
            tp == Token::Type::GREATER_EQUAL) {
-        Logger::verbose("new Comp");
+        logger->DEBUG("new Comp");
         BinOp* binOp;
         if (tp == Token::Type::EQUAL_EQUAL)
             binOp = new BinOp(BinOp::Op::EQ);
@@ -225,16 +230,15 @@ ValueNode* SyntaxicalAnalyzer::eatComp() {
         node = binOp;
         tp = flow.current()->type;
     }
-
-    return node;
+    return logger->RET("ValueNode*", node);
 }
 
 ValueNode* SyntaxicalAnalyzer::eatAdd() {
-    Logger::info("eatAdd");
+    logger->ENTERING({});
     ValueNode* node = eatMul();
 
     while (flow.isType(Token::Type::PLUS) || flow.isType(Token::Type::MINUS)) {
-        Logger::verbose("new add/sub");
+        logger->DEBUG("new add/sub");
         auto binOp = new BinOp(flow.isType(Token::Type::PLUS) ? BinOp::Op::ADD : BinOp::Op::SUB);
         binOp->left = node;
         binOp->token = flow.eat();
@@ -242,81 +246,86 @@ ValueNode* SyntaxicalAnalyzer::eatAdd() {
         node = binOp;
     }
 
-    return node;
+    return logger->RET("ValueNode*", node);
 }
 
 
 ValueNode* SyntaxicalAnalyzer::eatMul() {
-    Logger::info("eatMul");
+    logger->ENTERING({});
     ValueNode* node = eatValueNode();
 
     while (flow.isType(Token::Type::MUL) || flow.isType(Token::Type::DIV)) {
-        Logger::verbose("new mul/div");
+        logger->DEBUG("new mul/div");
         auto binOp = new BinOp(flow.isType(Token::Type::MUL) ? BinOp::Op::MUL : BinOp::Op::DIV);
         binOp->left = node;
         binOp->token = flow.eat();
         binOp->right = eatValueNode();
         node = binOp;
     }
-
-    return node;
+    return logger->RET("ValueNode*", node);
 }
 
 ValueNode* SyntaxicalAnalyzer::eatValueNode() {
-    Logger::info("eatValueNode");
+    logger->ENTERING({});
     if (flow.isType(Token::Type::MINUS)) {
         auto v = new UnOp(UnOp::Op::MIN, flow.eat());
         v->v = eatValueNode();
-        return v;
+        return logger->RET("UnOp* as ValueNode*", v);
     }
     if (flow.isType(Token::Type::NOT)) {
         auto v = new UnOp(UnOp::Op::NOT, flow.eat());
         v->v = eatValueNode();
-        return v;
+        return logger->RET("UnOp* as ValueNode*", v);
     }
     if (flow.isType(Token::Type::PARENTHESIS_LEFT)) {
         flow.eat();
         auto e = eatExpression();
         flow.eat(Token::Type::PARENTHESIS_RIGHT);
         if (flow.isType(Token::Type::BRACKET_LEFT))
-            return eatArrayAccess(e);
-        return e;
+            return logger->RET("ArrayAccess* as ValueNode*", eatArrayAccess(e));
+
+        return logger->RET("Expression* as ValueNode*", e);
     }
     if (flow.isType(Token::Type::IDENT)) {
         auto i = eatIdent();
         if (flow.isType(Token::Type::BRACKET_LEFT))
-            return eatArrayAccess(i);
-        return i;
+            return logger->RET("ArrayAccess* as ValueNode*", eatArrayAccess(i));
+
+        return logger->RET("Ident* as ValueNode*", i);
     }
 
     auto p = eatPrimitive();
     if (flow.isType(Token::Type::BRACKET_LEFT))
-        return eatArrayAccess(p);
-    return p;
+        return logger->RET("ArrayAccess* as ValueNode*", eatArrayAccess(p));
+
+    return logger->RET("Primitive* as ValueNode*", p);
 }
 
 Ident* SyntaxicalAnalyzer::eatIdent() {
+    logger->ENTERING({});
     auto ident = new Ident(flow.eat(Token::Type::IDENT));
-    Logger::info("eatIdent : " + ident->name);
-    return ident;
+    logger->INFO("eatIdent : " + ident->name);
+    return logger->RET("Ident*", ident);
 }
 
 Primitive* SyntaxicalAnalyzer::eatNumber() {
+    logger->ENTERING({});
     auto t = flow.eat(Token::Type::NUMBER);
     auto prm = new Primitive(std::stod(t->content), t);
-    Logger::info("eatNumber : " + prm->value.to_string());
-    return prm;
+    logger->INFO("eatNumber : " + prm->value.to_string());
+    return logger->RET("Primitive*", prm);
 }
 
 Primitive* SyntaxicalAnalyzer::eatString() {
+    logger->ENTERING({});
     auto t = flow.eat(Token::Type::STRING);
     auto prm = new Primitive(t->content, t);
-    Logger::info("eatString : " + prm->value.to_string());
-    return prm;
+    logger->INFO("eatString : " + prm->value.to_string());
+    return logger->RET("Primitive*", prm);
 }
 
 Array* SyntaxicalAnalyzer::eatArray() {
-    Logger::info("eatArray");
+    logger->ENTERING({});
     auto a = new Array(flow.eat(Token::Type::BRACKET_LEFT));
     while (!flow.isType(Token::Type::BRACKET_RIGHT)) {
         a->push(eatExpression());
@@ -327,24 +336,25 @@ Array* SyntaxicalAnalyzer::eatArray() {
 
     flow.eat();
 
-    return a;
+    return logger->RET("Array*", a);
 }
 
 Primitive* SyntaxicalAnalyzer::eatPrimitive() {
-    Logger::info("eatPrimitive");
+    logger->ENTERING({});
     Token::Type t = flow.current()->type;
     if (t == Token::Type::NUMBER)
-        return eatNumber();
+        return logger->RET("Array*", eatNumber());
     if (t == Token::Type::STRING)
-        return eatString();
+        return logger->RET("Array*", eatString());
     if (t == Token::Type::BRACKET_LEFT)
-        return eatArray();
+        return logger->RET("Array*", eatArray());
 
-    throw std::runtime_error("Expected a primitive value");
+    logger->THROWEXCEPTION(std::runtime_error, "Expected a primitive value");
+    return nullptr;
 }
 
 ArrayAccess* SyntaxicalAnalyzer::eatArrayAccess(ValueNode* var) {
-    Logger::info("eatArrayAccess");
+    logger->ENTERING({ (var ? "ValueNode* (nullptr)" : "ValueNode*") });
     if (!var)
         var = eatValueNode();
 
@@ -361,11 +371,11 @@ ArrayAccess* SyntaxicalAnalyzer::eatArrayAccess(ValueNode* var) {
         flow.eat(Token::Type::BRACKET_RIGHT);
     }
 
-    return a;
+    return logger->RET("ArrayAccess*", a);
 }
 
 FuncCall* SyntaxicalAnalyzer::eatFuncCall() {
-    Logger::info("eatFuncCall");
+    logger->ENTERING({});
     auto f = new FuncCall();
     f->func = eatIdent();
     f->token = flow.eat(Token::Type::COLON);
@@ -375,6 +385,8 @@ FuncCall* SyntaxicalAnalyzer::eatFuncCall() {
         if (flow.isType(Token::Type::COMMA))
             flow.eat();
     }
-    flow.eat(Token::Type::SEMICOLON);
-    return f;
+
+    if (flow.isType(Token::Type::SEMICOLON))
+        flow.eat(Token::Type::SEMICOLON);
+    return logger->RET("FuncCall*", f);
 }

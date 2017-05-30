@@ -6,8 +6,10 @@
 #include <string>
 #include <iostream>
 #include <stdexcept>
-#include "../../lib/Logger/src/Logger.h"
+#include <logger.h>
 #include "Value.h"
+
+using namespace haz;
 
 namespace bash {
 
@@ -26,6 +28,7 @@ public:
     void call(std::string name, std::vector<Value> args);
 
 private:
+    Logger* logger = &Logger::get("#.Context");
     std::map<std::string, Value> variables;
     std::vector<Value> params;
 

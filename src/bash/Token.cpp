@@ -2,6 +2,8 @@
 
 using namespace bash;
 
+using namespace haz;
+
 Token::~Token() {}
 
 Token::Token(std::string content, long charPos, long linePos, Type type) :
@@ -15,6 +17,9 @@ std::string Token::to_string(bool allowColor) {
         + content + "\" : " + bash::Token::type_to_string(type) + "";
 }
 
+TokenFlow::TokenFlow() {
+    logger->setLevel(Level::WARNING);
+}
 
 TokenFlow::~TokenFlow() {
     for(Token* t : tokens) 
@@ -40,10 +45,10 @@ bool TokenFlow::isType(Token::Type type, long delta) {
 
 Token* TokenFlow::eat(Token::Type type) {
     Token* t = current();
-    Logger::warn("Eat : " + t->to_string(true));
+    logger->DEBUG("Eat : " + t->to_string(true));
 
     if (t->type != type && type != Token::Type::FREE)
-        throw std::runtime_error("Excepted type " + Token::type_to_string(type) + " and found " + Token::type_to_string(t->type));
+        logger->THROWEXCEPTION(std::runtime_error, "Excepted type " + Token::type_to_string(type) + " and found " + Token::type_to_string(t->type));
 
     pos++;
     return t;

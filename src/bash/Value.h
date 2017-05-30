@@ -5,7 +5,9 @@
 #include <string>
 #include <stdexcept>
 #include <initializer_list>
-#include "../../lib/Logger/src/Logger.h"
+#include <logger.h>
+
+using namespace haz;
 
 namespace bash {
     class Value;
@@ -58,6 +60,7 @@ public:
     void setAt(Value const& key_v, Value v);
 
 private:
+    Logger* logger = &Logger::get("#.Value");
 
     friend Value ( ::operator+) (Value const& v0, Value const& v1);
     friend Value ( ::operator-) (Value const& v0, Value const& v1);

@@ -7,6 +7,8 @@
 #include "ValueNode.h"
 #include <string>
 
+using namespace haz;
+
 namespace bash {
 
 class While : public Instruction {

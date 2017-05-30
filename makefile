@@ -20,7 +20,7 @@ all: build/customEnv
 # Main build task
 build/customEnv: $(BUILD_DIR) $(OBJ)
 	@echo -n "\033[32m"
-	g++ $(FLAGS) -o $(DEST) $(OBJ) $(LIBS)
+	g++ $(FLAGS) $(OBJ) -o $(DEST) $(LIBS)
 	@echo -n "\033[34m"
 	@echo "---------------"
 	@echo "Build finished!"

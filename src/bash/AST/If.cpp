@@ -2,6 +2,8 @@
 
 using namespace bash;
 
+using namespace haz;
+
 If::If (Token* t) : Instruction(t) {}
 
 If::~If() {
@@ -16,10 +18,12 @@ If::~If() {
 }
 
 void If::visit(Context& ctx) {
+    logger->ENTERING({"Context&"});
     if (cond->getValue(ctx).to_bool())
         then->visit(ctx);
     else if (elze)
         elze->visit(ctx);
+    logger->EXITING("void");
 }
 
 std::string If::to_string() {

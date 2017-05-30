@@ -1,7 +1,7 @@
 #ifndef __BASH_SYNTAXICAL__
 #define __BASH_SYNTAXICAL__
 
-#include "../../lib/Logger/src/Logger.h"
+#include <logger.h>
 #include "Token.h"
 #include "AST/AST.h"
 #include "AST/Block.h"
@@ -24,6 +24,8 @@
 #include <vector>
 #include <string>
 
+using namespace haz;
+
 namespace bash {
 
 class SyntaxicalAnalyzer {
@@ -34,6 +36,7 @@ public:
     Block* getAST();
 
 private:
+    Logger* logger = &Logger::get("#.SyntaxicalAnalyzer");
     TokenFlow& flow;
     Block* mainBlock = nullptr;
 

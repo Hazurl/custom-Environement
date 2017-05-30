@@ -7,6 +7,8 @@
 #include <exception>
 #include <stdexcept>
 
+using namespace haz;
+
 namespace bash {
 
 class ConstValueNode : public ValueNode {

@@ -6,6 +6,8 @@
 #include "../Value.h"
 #include <string>
 
+using namespace haz;
+
 namespace bash {
 
 class ValueNode : public AST {

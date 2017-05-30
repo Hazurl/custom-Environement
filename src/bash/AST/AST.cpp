@@ -2,6 +2,10 @@
 
 using namespace bash;
 
-AST::AST(Token* t) : token(t) {}
+using namespace haz;
+
+AST::AST(Token* t) : token(t) {
+    logger->setLevel(Level::WARNING);
+}
 
 AST::~AST() {}

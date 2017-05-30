@@ -2,6 +2,8 @@
 
 using namespace bash;
 
+using namespace haz;
+
 For::For (Token* t) : Instruction(t) {}
 
 For::~For() {
@@ -22,6 +24,7 @@ For::~For() {
 }
 
 void For::visit(Context& ctx) {
+    logger->ENTERING({"Context&"});
     if (from->getValue(ctx) < to->getValue(ctx))
         for(ctx.setVar(var->name, from->getValue(ctx));                             // init
             ctx.getVar(var->name) < to->getValue(ctx);                             // cond
@@ -32,7 +35,7 @@ void For::visit(Context& ctx) {
             ctx.getVar(var->name) > to->getValue(ctx);                             // cond
             ctx.setVar(var->name, ctx.getVar(var->name) + (step ? step->getValue(ctx) : -1)))   // incrementation
                 then->visit(ctx);
-
+    logger->EXITING("void");
 }
 
 std::string For::to_string() {

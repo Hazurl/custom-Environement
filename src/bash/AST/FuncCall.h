@@ -6,6 +6,8 @@
 #include "Instruction.h"
 #include <string>
 
+using namespace haz;
+
 namespace bash {
 
 class FuncCall : public Instruction {

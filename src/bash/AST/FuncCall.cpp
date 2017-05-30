@@ -2,6 +2,8 @@
 
 using namespace bash;
 
+using namespace haz;
+
 FuncCall::FuncCall (Token* t) : Instruction(t) {}
 
 FuncCall::~FuncCall() {
@@ -13,10 +15,12 @@ FuncCall::~FuncCall() {
 }
 
 void FuncCall::visit(Context& ctx) {
+    logger->ENTERING({"Context&"});
     std::vector<Value> vs;
     for (auto arg : args)
         vs.push_back(arg->getValue(ctx));
     ctx.call(func->name, vs);
+    logger->EXITING("void");
 }
 
 std::string FuncCall::to_string() {

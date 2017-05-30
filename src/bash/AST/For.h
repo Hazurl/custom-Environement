@@ -7,6 +7,8 @@
 #include "Ident.h"
 #include <string>
 
+using namespace haz;
+
 namespace bash {
 
 class For : public Instruction {

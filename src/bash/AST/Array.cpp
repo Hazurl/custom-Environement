@@ -2,6 +2,8 @@
 
 using namespace bash;
 
+using namespace haz;
+
 Array::Array(Token* t) : Primitive(Value({}), t) {}
 
 Array::~Array() {
@@ -29,7 +31,9 @@ std::string Array::to_string() {
 }
 
 void Array::visit(Context& ctx) {
+    logger->ENTERING({"Context&"});
     value.clearArray();
     for (ValueNode* v : elems)
         value.push_back(v->getValue(ctx));
+    logger->EXITING("void");
 }

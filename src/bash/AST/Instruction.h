@@ -5,6 +5,8 @@
 #include "AST.h"
 #include <string>
 
+using namespace haz;
+
 namespace bash {
 
 class Instruction : public AST {

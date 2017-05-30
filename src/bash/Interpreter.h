@@ -8,12 +8,14 @@
 #include <stdlib.h>
 #include <assert.h>
 
-#include "../../lib/Logger/src/Logger.h"
+#include <logger.h>
 #include "StandardFunc.h"
 #include "Context.h"
 #include "Token.h"
 #include "LexicalAnalyzer.h"
 #include "SyntaxicalAnalyzer.h"
+
+using namespace haz;
 
 namespace bash {
 
@@ -30,6 +32,8 @@ public:
     void                    runTest                     ();
     void                    run                         (std::string code, Context& ctx);
 private:  
+
+    Logger* logger = &Logger::get("#.Interpreter");
 
     void                    initStdFunc                 ();
 

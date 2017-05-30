@@ -2,9 +2,12 @@
 
 using namespace bash;
 
+using namespace haz;
+
 //      =====   INTERPRETER    =====
 
 Interpreter::Interpreter () {
+    logger->setLevel(Level::CONFIG);
     initStdFunc();
 }
 
@@ -15,6 +18,7 @@ void Interpreter::initStdFunc() {
 }
 
 void Interpreter::interactive () {
+    logger->ENTERING({});
     std::string cmd;
     Context ctx(&stdFuncs, "BASH", {});
 
@@ -29,37 +33,31 @@ void Interpreter::interactive () {
         else
             run(cmd, ctx);
 	}
+    logger->EXITING("void");
 }
 
 void Interpreter::run(std::string code, Context& ctx) {
+    logger->ENTERING({"Context*"});
+    logger->CONFIG("Running code : " + code);
 
-    Logger::log("Running code : " + code);
+    logger->TRACE("Tokenize");
+    auto l = LexicalAnalyzer(code);            
 
-    Logger::section("Tokenize", Logger::ALL, Logger::INFO);
 
-        auto l = LexicalAnalyzer(code);            
+    logger->TRACE("Parser");
+    auto s = SyntaxicalAnalyzer(l);
+    if (s.getAST() != nullptr)
+        logger->DEBUG("To_string : " + s.getAST()->to_string());
 
-    Logger::section_end("Tokenize");
-
-    Logger::section("Parser", Logger::ALL, Logger::INFO);
-
-        auto s = SyntaxicalAnalyzer(l);
-        if (s.getAST() != nullptr)
-            Logger::log("To_string : " + s.getAST()->to_string());
-
-    Logger::section_end("Parser");
-
-    Logger::section("Evaluate", Logger::ALL, Logger::INFO);
-
+    logger->TRACE("Evaluate");
     if (s.getAST() == nullptr)
-        Logger::error("AST is null");
+        logger->ERROR("AST is null");
     else
         s.getAST()->visit(ctx);
-
-    Logger::section_end("Evaluate");
+    logger->EXITING("void");
 }
 
 void Interpreter::runTest () {
-    Logger::log("Run Test (Nothing)");
+    logger->DEBUG("Run Test (Nothing)");
 }
 

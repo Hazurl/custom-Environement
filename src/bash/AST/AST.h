@@ -4,6 +4,9 @@
 #include "../Token.h"
 #include "../Context.h"
 #include <string>
+#include <logger.h>
+
+using namespace haz;
 
 namespace bash {
 
@@ -15,6 +18,9 @@ public:
     virtual void visit(Context& ctx) = 0;
 
     Token* token = nullptr;
+
+protected:
+    Logger* logger = &Logger::get("#.AST");
 };
 
 }; // namespace bash

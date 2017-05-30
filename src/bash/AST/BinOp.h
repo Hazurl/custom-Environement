@@ -6,6 +6,8 @@
 #include <string>
 #include <stdexcept>
 
+using namespace haz;
+
 namespace bash {
 
 class BinOp : public ConstValueNode {

@@ -2,6 +2,8 @@
 
 using namespace bash;
 
+using namespace haz;
+
 /* Namspace that contains all the standards functions of the custom bash
  *
  * Prototype for all function are : 

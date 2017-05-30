@@ -2,6 +2,8 @@
 
 using namespace bash;
 
+using namespace haz;
+
 ArrayAccess::ArrayAccess(Token* t) : ValueNode(0, t) {}
 
 ArrayAccess::~ArrayAccess() {
@@ -16,8 +18,10 @@ std::string ArrayAccess::to_string() {
 }
 
 void ArrayAccess::visit(Context& ctx) {
+    logger->ENTERING({"Context&"});
     auto v = var->getValue(ctx);
     value = v.at(key->getValue(ctx));
+    logger->EXITING("void");
 }
 
 void ArrayAccess::setValue(Context& ctx, Value v_) {

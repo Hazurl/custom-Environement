@@ -2,8 +2,11 @@
 
 using namespace bash;
 
+using namespace haz;
+
 LexicalAnalyzer::LexicalAnalyzer(std::string const& code) :
     code(code), len(code.size()), curLine(1), curPos(0) {
+    logger->setLevel(Level::WARNING);
     
     tokenize();
 }
@@ -11,6 +14,7 @@ LexicalAnalyzer::LexicalAnalyzer(std::string const& code) :
 LexicalAnalyzer::~LexicalAnalyzer () {}
 
 void LexicalAnalyzer::tokenize() {
+    logger->ENTERING({});
     this->reset();
 
     for(curPos = 0; curPos < len; ++curPos) {
@@ -18,9 +22,10 @@ void LexicalAnalyzer::tokenize() {
         Token* t = findNextToken();
         if (t) { // not null
             this->push(t);
-            Logger::verbose( t->to_string(true) );
+            logger->DEBUG( t->to_string(true) );
         }
     }
+    logger->EXITING("void");
 }
 
 Token* LexicalAnalyzer::findNextToken () {
@@ -156,7 +161,7 @@ Token* LexicalAnalyzer::findNextToken () {
     if (c == ';')
         return new Token (std::string(1, c), curPos, curLine, Token::Type::SEMICOLON);
 
-    Logger::error("No token found");
+    logger->ERROR("No token found");
     return nullptr;
 }
 

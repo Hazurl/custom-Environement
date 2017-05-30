@@ -5,6 +5,8 @@
 #include "ConstValueNode.h"
 #include <string>
 
+using namespace haz;
+
 namespace bash {
 
 class Primitive : public ConstValueNode {

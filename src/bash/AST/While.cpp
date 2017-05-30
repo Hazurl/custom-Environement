@@ -2,6 +2,8 @@
 
 using namespace bash;
 
+using namespace haz;
+
 While::While (Token* t) : Instruction(t) {}
 
 While::~While() {
@@ -13,8 +15,10 @@ While::~While() {
 }
 
 void While::visit(Context& ctx) {
+    logger->ENTERING({"Context&"});
     while (cond->getValue(ctx).to_bool())
         then->visit(ctx);
+    logger->EXITING("void");
 }
 
 std::string While::to_string() {

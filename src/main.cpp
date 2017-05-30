@@ -1,23 +1,28 @@
 #include <iostream>
 #include <string>
 
+#include <logger.h>
 #include "system/System.h"
-#include "../lib/Logger/src/Logger.h"
 
 using namespace haz;
 using namespace bash;
 
 int main (int argc, char* argv[]) {
     // Logger : 
-    Logger::createTransport(new Transport("Debug/debugguerColored.txt"), "debugC");
-    Logger::setTransportOf(Logger::ALL, "debugC");
+    Logger::get("#").addHandler(new FileHandler("Debug/debugguerColored.txt"));
+                    ;//.addHandler((new FileHandler("Debug/debugguerNoColored.txt"))->color(false));
 
-    // Sections
-    //Logger::hideSection("Tokenize");
-    //Logger::hideSection("Parser");
-    //Logger::hideSection("Evaluate");
+    Logger* logger = &Logger::get("#.main");
+    logger->setColorsLevel({
+        { Formatting::RED, 600 },
+        { Formatting::YELLOW, 500 },
+        { Formatting::MAGENTA, 400 },
+        { Formatting::GREEN, 300 },
+        { Formatting::BLUE, 200 },
+        { Formatting::CYAN, 100 }
+    });
+    logger->CONFIG("START");
 
-    Logger::title("Nouveau Run", Logger::SPE);
 /*
     bool runTest = false;
 

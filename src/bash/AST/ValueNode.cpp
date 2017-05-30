@@ -2,6 +2,8 @@
 
 using namespace bash;
 
+using namespace haz;
+
 ValueNode::ValueNode(Value v, Token* t) : AST(t), value(v) {}
 ValueNode::~ValueNode() {};
 

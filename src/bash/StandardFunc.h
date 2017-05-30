@@ -3,6 +3,8 @@
 
 #include "Context.h"
 
+using namespace haz;
+
 namespace bash {
 namespace std_bash_func {
 

@@ -1,8 +1,11 @@
 #include "Context.h"
 
 using namespace bash;
+using namespace haz;
 
 Context::Context(std::map<std::string, void (*) (Context&)>* funcs, std::string progName, std::vector<Value> params) : funcs(funcs) {
+    logger->setLevel(Level::WARNING);
+
     setVar("$0", Value(progName));
 
     unsigned long i = 1;
@@ -46,7 +49,7 @@ void Context::print(Value const& v) {
 
 void Context::call(std::string name, std::vector<Value> args) {
     if (!funcs || funcs->find(name) == funcs->end())
-        throw std::runtime_error("Cannot call : " + name);
+        logger->THROWEXCEPTION(std::runtime_error, "Cannot call : " + name);
 
     Context ctx(funcs, name, args);
     (*funcs)[name](ctx);

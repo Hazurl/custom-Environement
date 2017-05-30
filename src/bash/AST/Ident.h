@@ -5,6 +5,8 @@
 #include "ValueNode.h"
 #include <string>
 
+using namespace haz;
+
 namespace bash {
 
 class Ident : public ValueNode {

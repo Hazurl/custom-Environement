@@ -2,6 +2,8 @@
 
 using namespace bash;
 
+using namespace haz;
+
 Block::Block (Token* t) : AST(t) {}
 
 Block::~Block() {
@@ -10,8 +12,10 @@ Block::~Block() {
 }
 
 void Block::visit(Context& ctx) {
+    logger->ENTERING({"Context&"});
     for (auto i : instr)
         i->visit(ctx);
+    logger->EXITING("void");
 }
 
 std::string Block::to_string() {

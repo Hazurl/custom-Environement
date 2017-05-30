@@ -6,6 +6,8 @@
 #include <string>
 #include <stdexcept>
 
+using namespace haz;
+
 namespace bash {
 
 class UnOp : public ConstValueNode {

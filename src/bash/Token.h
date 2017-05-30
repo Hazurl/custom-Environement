@@ -1,7 +1,7 @@
 #ifndef __BASH_TOKEN__
 #define __BASH_TOKEN__
 
-#include "../../lib/Logger/src/Logger.h"
+#include <logger.h>
 
 #include <vector>
 #include <vector>
@@ -9,6 +9,8 @@
 #include <exception>
 #include <stdexcept>
 #include <iostream>
+
+using namespace haz;
 
 namespace bash {
 
@@ -87,10 +89,13 @@ public:
             case Type::FREE: return "Free";
 
             default:
-                throw std::runtime_error("type_to_string : unkknown type (" + std::to_string((int)type) + ")");
+                Logger::get("#.Token").THROWEXCEPTION(std::runtime_error, ("type_to_string : unknown type (" + std::to_string((int)type) + ")"));
+                return "";
             break;
         }
     }
+private:
+    Logger* logger = &Logger::get("#.Token");
 };
 
 class TokenFlow {
@@ -113,7 +118,11 @@ public:
 
     Token* eat(Token::Type type = Token::Type::FREE);
 
+    TokenFlow();
     virtual ~TokenFlow();
+
+private:
+    Logger* logger = &Logger::get("#.TokenFlow");
 };
 
 }; // namespace bash

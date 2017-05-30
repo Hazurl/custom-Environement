@@ -2,10 +2,12 @@
 #define __BASH_LEXICAL__
 
 #include "Token.h"
-#include "../../lib/Logger/src/Logger.h"
+#include <logger.h>
 #include <vector>
 #include <string>
 #include <exception>
+
+using namespace haz;
 
 namespace bash {
 
@@ -15,6 +17,8 @@ public:
     ~LexicalAnalyzer();
 
 private:
+    Logger* logger = &Logger::get("#.LexicalAnalyzer");
+
     std::string code;
     long len;
     long curLine;

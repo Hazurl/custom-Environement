@@ -7,6 +7,8 @@
 #include <string>
 #include <vector>
 
+using namespace haz;
+
 namespace bash {
 
 class Block : public AST {
