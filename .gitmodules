@@ -1,3 +1,0 @@
-[submodule "Logger"]
-	path = lib/Logger
-	url = https://github.com/Hazurl/debug-Lib.git

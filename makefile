@@ -12,7 +12,7 @@ OBJ := $(patsubst %.cpp,build/%.o,$(SRC))
 
 OPTIM := -O2
 FLAGS := -std=c++17 -g3 -Wall -Wextra -Wno-pmf-conversions
-LIBS := 
+LIBS := -llogger
 MAKEFLAGS += --no-print-directory
 
 all: build/customEnv
