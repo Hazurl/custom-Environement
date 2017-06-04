@@ -33,7 +33,6 @@ int main (int argc, char* argv[]) {
     }
 */
     System sstm;
-    sstm.getCmd().interactive();
 
     return 0;
 }

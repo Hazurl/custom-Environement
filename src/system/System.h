@@ -2,7 +2,10 @@
 #define __SYSTEM_H__
 
 #include "../bash/Interpreter.h"
+#include "Console.h"
+#include "Inputs.h"
 #include <logger.h>
+#include <SFML/Graphics.hpp>
 
 namespace haz {
 
@@ -11,14 +14,18 @@ public:
     System ();
     ~System ();
 
-    bash::Interpreter& getCmd();
-
 private:
     Logger* logger = &Logger::get("#.System");
-    bash::Interpreter cmd;
+
+    sf::RenderWindow* window = nullptr;
+    Inputs inputs;
+    unsigned int width;
+    unsigned int height;
+
+    void start ();
 
 };
 
-} // namespace system
+} // namespace haz
 
 #endif
