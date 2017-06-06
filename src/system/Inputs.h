@@ -28,18 +28,24 @@ public:
         Count
     };
 
-    Inputs();
+    Inputs(sf::Window* window);
     ~Inputs();
 
     void update();
+    void onEvent(sf::Event const& e);
+    
+    bool isKeyDown (KeyCode key) const;
+    bool isKeyUp (KeyCode key) const;
+    bool isKeyPressed (KeyCode key) const;
+    bool isKeyReleased (KeyCode key) const;
+    bool AltDown() const;
+    bool CtrlDown() const;
+    bool ShiftDown() const;
 
-    bool isKeyDown (KeyCode key);
-    bool isKeyUp (KeyCode key);
-    bool isKeyPressed (KeyCode key);
-    bool isKeyReleased (KeyCode key);
+    int getMouseX() const;
+    int getMouseY() const;
 
-    int getMouseX();
-    int getMouseY();
+    std::vector<sf::Uint32> getTextEntered () const;
 
 private:
     Logger* logger = &Logger::get("#.Inputs");
@@ -48,6 +54,12 @@ private:
     std::map<KeyCode, bool> keysLastState = {};
 
     int mouseX = 0, mouseY = 0;
+
+    std::vector<sf::Uint32> txtEntered;
+
+    sf::Window* window = nullptr;
+    int width, height;
+
 };
 
 } // namespace haz

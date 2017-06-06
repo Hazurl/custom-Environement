@@ -9,7 +9,8 @@ using namespace bash;
 
 int main (int argc, char* argv[]) {
     // Logger : 
-    Logger::get("#").addHandler(new FileHandler("Debug/debugguerColored.txt"));
+    auto fh = new FileHandler("Debug/debugguerColored.txt");
+    Logger::get("#").addHandler(fh);
                     ;//.addHandler((new FileHandler("Debug/debugguerNoColored.txt"))->color(false));
 
     Logger* logger = &Logger::get("#.main");
@@ -21,8 +22,13 @@ int main (int argc, char* argv[]) {
         { Formatting::BLUE, 200 },
         { Formatting::CYAN, 100 }
     });
+    // http://patorjk.com/software/taag/#p=display&h=0&v=0&f=Small&t=START%20APPLICATION
+    fh->commonFormat("{endl} ___   _____     _     ___   _____       _     ___   ___   _      ___    ___     _     _____   ___    ___    _  _ {endl}"
+                           R"(/ __| |_   _|   /_\\   | _ \\ |_   _|     /_\\   | _ \\ | _ \\ | |    |_ _|  / __|   /_\\   |_   _| |_ _|  / _ \\  | \\| |{endl})"
+                           R"(\\__ \\   | |    / _ \\  |   /   | |      / _ \\  |  _/ |  _/ | |__   | |  | (__   / _ \\    | |    | |  | (_) | | .` |{endl})"
+                           R"(|___/   |_|   /_/ \\_\\ |_|_\\   |_|     /_/ \\_\\ |_|   |_|   |____| |___|  \\___| /_/ \\_\\   |_|   |___|  \\___/  |_|\\_|{endl}{endl})");
     logger->CONFIG("START");
-
+    fh->commonFormat("[ {hour}:{min}:{sec} ] {col}{func} ({line}){clr} : {bld}{msg}{clr}");
 /*
     bool runTest = false;
 

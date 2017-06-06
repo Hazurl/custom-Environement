@@ -2,7 +2,7 @@
 
 using namespace haz;
 
-Inputs::Inputs() {
+Inputs::Inputs(sf::Window* window) : window(window), width(window->getSize().x), height(window->getSize().y) {
     logger->CONFIG("Init Inputs");
     IPT_INIT( A ); IPT_INIT( B ); IPT_INIT( C ); IPT_INIT( D ); IPT_INIT( E ); IPT_INIT( F );
     IPT_INIT( G ); IPT_INIT( H ); IPT_INIT( I ); IPT_INIT( J ); IPT_INIT( K ); IPT_INIT( L );
@@ -35,9 +35,11 @@ Inputs::Inputs() {
 
     IPT_INIT( LMouse ); IPT_INIT( RMouse ); IPT_INIT( MMouse ); IPT_INIT( XMouse1 ); IPT_INIT( XMouse2 );
 
-    sf::Vector2i mousePos = sf::Mouse::getPosition();
-    mouseX = mousePos.x;
-    mouseY = mousePos.y;
+    sf::Vector2i mousePos = sf::Mouse::getPosition(*window);
+    mouseX = (mousePos.x < 0 ? 0 : (mousePos.x > width ? width : mousePos.x));
+    mouseY = (mousePos.y < 0 ? 0 : (mousePos.y > height ? height : mousePos.y));
+
+    txtEntered = {};
 }
 
 Inputs::~Inputs() {}
@@ -74,31 +76,54 @@ void Inputs::update() {
 
     IPT_UPT_M( LMouse, Left ); IPT_UPT_M( RMouse, Right ); IPT_UPT_M( MMouse, Middle ); IPT_UPT_M( XMouse1, XButton1 ); IPT_UPT_M( XMouse2, XButton2 );
 
-    sf::Vector2i mousePos = sf::Mouse::getPosition();
-    mouseX = mousePos.x;
-    mouseY = mousePos.y;
+    sf::Vector2i mousePos = sf::Mouse::getPosition(*window);
+    mouseX = (mousePos.x < 0 ? 0 : (mousePos.x > width ? width : mousePos.x));
+    mouseY = (mousePos.y < 0 ? 0 : (mousePos.y > height ? height : mousePos.y));
+
+    txtEntered = {};
 }
 
-bool Inputs::isKeyDown (Inputs::KeyCode key) {
-    return keysState[key];
+void Inputs::onEvent(sf::Event const& e) {
+    if (e.type == sf::Event::TextEntered)
+        txtEntered.push_back(e.text.unicode);
 }
 
-bool Inputs::isKeyUp (Inputs::KeyCode key) {
-    return !keysState[key];
+bool Inputs::isKeyDown (Inputs::KeyCode key) const {
+    return keysState.at(key);
 }
 
-bool Inputs::isKeyPressed (Inputs::KeyCode key) {
-    return keysState[key] && !keysLastState[key];
+bool Inputs::isKeyUp (Inputs::KeyCode key) const {
+    return !keysState.at(key);
 }
 
-bool Inputs::isKeyReleased (Inputs::KeyCode key) {
-    return !keysState[key] && keysLastState[key];
+bool Inputs::isKeyPressed (Inputs::KeyCode key) const {
+    return keysState.at(key) && !keysLastState.at(key);
 }
 
-int Inputs::getMouseX() {
+bool Inputs::isKeyReleased (Inputs::KeyCode key) const {
+    return !keysState.at(key) && keysLastState.at(key);
+}
+
+int Inputs::getMouseX() const {
     return mouseX;
 }
 
-int Inputs::getMouseY() {
+int Inputs::getMouseY() const {
     return mouseY;
+}
+
+bool Inputs::AltDown() const {
+    return isKeyDown(KeyCode::LAlt) || isKeyUp(KeyCode::RAlt);
+}
+
+bool Inputs::CtrlDown() const {
+    return isKeyDown(KeyCode::LControl) || isKeyUp(KeyCode::RControl);
+}
+
+bool Inputs::ShiftDown() const {
+    return isKeyDown(KeyCode::LShift) || isKeyUp(KeyCode::RShift);
+}
+
+std::vector<sf::Uint32> Inputs::getTextEntered () const {
+    return txtEntered;
 }
