@@ -17,6 +17,9 @@ class System {
 #define SCREEN_HEIGHT 900
 #define SCALE_CURSOR 0.008
 
+#define CONSOLE_ROWS (SCREEN_HEIGHT - CONSOLE_BORDER*2) / 20
+#define CONSOLE_COLUMNS (SCREEN_WIDTH - CONSOLE_BORDER*2) / 10
+
 public:
     System ();
     ~System ();
@@ -33,7 +36,7 @@ private:
     Inputs inputs;
     Loader loader;
 
-    typedef Console<(SCREEN_HEIGHT - CONSOLE_BORDER) / 20, (SCREEN_WIDTH - CONSOLE_BORDER) / 10> Console_t;
+    typedef Console<CONSOLE_ROWS, CONSOLE_COLUMNS> Console_t;
     Console_t* console;
 
     sf::Clock clock;

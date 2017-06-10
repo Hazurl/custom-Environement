@@ -23,7 +23,6 @@ System::System() : width(SCREEN_WIDTH), height(SCREEN_HEIGHT),
     mouseCursorSp.setScale(SCALE_CURSOR, SCALE_CURSOR);
 
     loader.loadFont(PATH_FONT("cour.ttf"), "courrier_new");
-    loader.loadFont(PATH_FONT("cour.ttf"), "courrier_new");
 
     start();
 }
@@ -83,7 +82,7 @@ void System::manageDraw() {
         window->draw(mouseCursorSp);
     } else if (mode == Mode::Console) {
         window->clear(console->getBackgroundColor());
-        console->draw(window);
+        console->draw(window, &loader);
     } else 
         logger->WARN("System mode doesn't found");
 }
