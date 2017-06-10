@@ -2,8 +2,9 @@
 #define __SYSTEM_H__
 
 #include "../bash/Interpreter.h"
-#include "Console.h"
 #include "Inputs.h"
+#include "Loader.h"
+#include "Console.h"
 #include <logger.h>
 #include <SFML/Graphics.hpp>
 #include <string>
@@ -20,6 +21,9 @@ public:
     System ();
     ~System ();
 
+    sf::Time getDeltaTime();
+    long getTicks();
+
 private:
     Logger* logger = &Logger::get("#.System");
 
@@ -27,6 +31,14 @@ private:
     unsigned int height;
     sf::RenderWindow* window = nullptr;
     Inputs inputs;
+    Loader loader;
+
+    typedef Console<(SCREEN_HEIGHT - CONSOLE_BORDER) / 20, (SCREEN_WIDTH - CONSOLE_BORDER) / 10> Console_t;
+    Console_t* console;
+
+    sf::Clock clock;
+    sf::Time time;
+    long ticks = 0; // 1000 ticks correspond to 1 seconds, ticks stay between 0 and 1 billion (so max is 1 million seconds)
 
     enum class Mode { Console, Desktop };
     Mode mode;
@@ -36,11 +48,7 @@ private:
     void manageWindowEvents ();
     void manageDraw();
 
-    sf::Texture mouseCursorTex;
     sf::Sprite mouseCursorSp;
-
-    sf::Font courrier_new;
-
 };
 
 } // namespace haz

@@ -3,6 +3,7 @@
 
 #include <logger.h>
 #include <SFML/Graphics.hpp>
+#include <vector>
 
 // juste for better comprehension
 #define IPT_INIT(key) keysState[haz::Inputs::KeyCode::key] = keysLastState[haz::Inputs::KeyCode::key] = false

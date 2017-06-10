@@ -13,20 +13,17 @@ System::System() : width(SCREEN_WIDTH), height(SCREEN_HEIGHT),
     //window->setMouseCursorGrabbed(true); // SFML 2.4
 
     mode = Mode::Console;
+    console = new Console_t ();
 
     // Cursor
     logger->CONFIG("Load cursor image");
-    if (!mouseCursorTex.loadFromFile("Image/cursor.png")) {
-        logger->THROWEXCEPTION(std::runtime_error, "cursor.png doesn't exist");
-    }
-
-    mouseCursorSp.setTexture(mouseCursorTex);
+    mouseCursorSp.setTexture(
+        loader.getTexture(PATH_TEXTURE("cursor.png"), "cursor")
+    );
     mouseCursorSp.setScale(SCALE_CURSOR, SCALE_CURSOR);
 
-    logger->CONFIG("Load courrier new font");
-    if (!courrier_new.loadFromFile("Font/cour.ttf")) {
-        logger->THROWEXCEPTION(std::runtime_error, "cour.ttf doesn't exist");
-    }
+    loader.loadFont(PATH_FONT("cour.ttf"), "courrier_new");
+    loader.loadFont(PATH_FONT("cour.ttf"), "courrier_new");
 
     start();
 }
@@ -36,15 +33,24 @@ System::~System() {
     delete window;
 }
 
+sf::Time System::getDeltaTime () {
+    return time;
+}
+
+long System::getTicks () {
+    return ticks;
+}
+
 void System::start() {
     logger->ENTERING({});
     if (!window)
         return logger->RET("void");
 
     while (window->isOpen()) {
-        manageWindowEvents();
+        time = clock.restart();
+        ticks = ( ticks + time.asMilliseconds() ) % 1000000000;
 
-        window->clear(sf::Color(0, 0, 160));
+        manageWindowEvents();
 
         manageDraw();
         
@@ -64,12 +70,22 @@ void System::manageWindowEvents () {
         if (event.type == sf::Event::Closed)
             close();
     }
+
+    if (mode == Mode::Console)
+        console->update(inputs, getDeltaTime(), getTicks());
 }
 
 void System::manageDraw() {
-    //Pointer
-    mouseCursorSp.setPosition(inputs.getMouseX(), inputs.getMouseY());
-    window->draw(mouseCursorSp);
+    if (mode == Mode::Desktop) {
+        window->clear(sf::Color(0, 0, 160));
+        //Pointer
+        mouseCursorSp.setPosition(inputs.getMouseX(), inputs.getMouseY());
+        window->draw(mouseCursorSp);
+    } else if (mode == Mode::Console) {
+        window->clear(console->getBackgroundColor());
+        console->draw(window);
+    } else 
+        logger->WARN("System mode doesn't found");
 }
 
 void System::close() {

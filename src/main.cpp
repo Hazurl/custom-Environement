@@ -7,7 +7,7 @@
 using namespace haz;
 using namespace bash;
 
-int main (int argc, char* argv[]) {
+int main (int , char**) {
     // Logger : 
     auto fh = new FileHandler("Debug/debugguerColored.txt");
     Logger::get("#").addHandler(fh);
