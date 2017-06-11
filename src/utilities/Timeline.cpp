@@ -27,16 +27,19 @@ int Timeline::reset(long tick) {
 }
 
 int Timeline::updateState () {
-    int prev_state = anchors.rbegin()->second.state_to_passed;
-
-    for (std::pair<const long, Anchor> const& p : anchors) {
-        if (p.first > current_tick)
-            return state = prev_state;
-        prev_state = p.second.state_to_passed;
+    if (anchors.empty()) {
+        logger->ERROR("No State !");
+        return state = 0;
+    } else if (anchors.size() == 1) {
+        logger->WARN("Only one state");
+        return anchors.begin()->second.state_to_passed;
     }
 
-    logger->ERROR("No State !");
-    return state = 0;
+    for (auto it = anchors.rbegin(); it != anchors.rend(); ++it)
+        if (it->first < current_tick)
+            return state = it->second.state_to_passed;
+
+    return state = anchors.rbegin()->second.state_to_passed;
 }
 
 int Timeline::getState () const {
