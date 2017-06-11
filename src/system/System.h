@@ -25,7 +25,7 @@ public:
     ~System ();
 
     sf::Time getDeltaTime();
-    long getTicks();
+    long getDeltaTicks();
 
 private:
     Logger* logger = &Logger::get("#.System");
@@ -41,7 +41,7 @@ private:
 
     sf::Clock clock;
     sf::Time time;
-    long ticks = 0; // 1000 ticks correspond to 1 seconds, ticks stay between 0 and 1 billion (so max is 1 million seconds)
+    long deltaticks = 0;
 
     enum class Mode { Console, Desktop };
     Mode mode;

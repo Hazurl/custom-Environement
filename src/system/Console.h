@@ -6,6 +6,7 @@
 #include <array>
 #include "Inputs.h"
 #include "Loader.h"
+#include "../utilities/Timeline.h"
 
 #define CONSOLE_BORDER 50
 
@@ -19,35 +20,39 @@ template<std::size_t ROWS, std::size_t COLUMNS>
 class Console {
 public:
 
-    Console() : backgroundColor(sf::Color(20, 20, 20)), backgroundColor2(sf::Color(30, 30, 30)), cursorPos(0, 0)
+    Console() : backgroundColor(sf::Color(20, 20, 20)), backgroundColor2(sf::Color(30, 30, 30)), cursorPos(0, 0), 
+        anim_cursor(1000, {
+            {0, 0},
+            {500, 1}
+        })
     {}
 
     ~Console() {}
 
-    void update (Inputs const& inputs, sf::Time, long ticks) {
-        long ticks_under = ticks % anim_cursor_ticks_long;
+    void update (Inputs const& inputs, sf::Time, long deltaticks) {
+        anim_cursor.update(deltaticks);
 
         if (cursorPos.x > 0 && inputs.isKeyPressed(Inputs::KeyCode::Left)) {
             cursorPos.x--;
-            ticks_begin_anim_cursor = ticks_under;
+            anim_cursor.reset();
         }
         if (cursorPos.x < COLUMNS - 1 && inputs.isKeyPressed(Inputs::KeyCode::Right)) {
             cursorPos.x++;
-            ticks_begin_anim_cursor = ticks_under;
+            anim_cursor.reset();
         }
         if (cursorPos.y < ROWS - 1 && inputs.isKeyPressed(Inputs::KeyCode::Down)) {
             cursorPos.y++;
-            ticks_begin_anim_cursor = ticks_under;
+            anim_cursor.reset();
         }
         if (cursorPos.y > 0 && inputs.isKeyPressed(Inputs::KeyCode::Up)) {
             cursorPos.y--;
-            ticks_begin_anim_cursor = ticks_under;
+            anim_cursor.reset();
         }
 
         // TextEvent :
         auto texts = inputs.getTextEntered();
         if (!texts.empty()) {
-            ticks_begin_anim_cursor = ticks_under;
+            anim_cursor.reset();
             for (sf::Uint32& u : texts) {
                 if (u < 128)
                     write(u);
@@ -55,11 +60,6 @@ public:
                     logger->WARN("Unicode above 128");
             }
         }
-
-
-        anim_cursor_is_white = ticks_under < (anim_cursor_ticks_white + ticks_begin_anim_cursor) 
-                            && ticks_under >= ticks_begin_anim_cursor; // cursor animation
-
     }
 
     void draw(sf::RenderWindow* window, Loader* loader) {
@@ -73,7 +73,7 @@ public:
         background.setFillColor(backgroundColor2);
         window->draw(background);
         
-        if (anim_cursor_is_white) {
+        if (anim_cursor.onState(0)) {
             sf::RectangleShape cursor ({ pixPerCol, pixPerRow });
             cursor.setPosition( pixPerCol * cursorPos.x + CONSOLE_BORDER, pixPerRow * cursorPos.y + CONSOLE_BORDER );
             cursor.setFillColor(sf::Color::White);
@@ -110,10 +110,8 @@ private:
 
     std::array< std::array< gridInfos, ROWS>, COLUMNS> grid;
     sf::Vector2i cursorPos;
-    bool anim_cursor_is_white = true;
-    long ticks_begin_anim_cursor;
-    const long anim_cursor_ticks_long = 1000;
-    const long anim_cursor_ticks_white = anim_cursor_ticks_long / 2;
+
+    Timeline anim_cursor;
 
     gridInfos& gridAt() {
         return gridAt(cursorPos.x, cursorPos.y);

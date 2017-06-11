@@ -36,8 +36,8 @@ sf::Time System::getDeltaTime () {
     return time;
 }
 
-long System::getTicks () {
-    return ticks;
+long System::getDeltaTicks () {
+    return deltaticks;
 }
 
 void System::start() {
@@ -47,7 +47,7 @@ void System::start() {
 
     while (window->isOpen()) {
         time = clock.restart();
-        ticks = ( ticks + time.asMilliseconds() ) % 1000000000;
+        deltaticks = time.asMilliseconds();
 
         manageWindowEvents();
 
@@ -71,7 +71,7 @@ void System::manageWindowEvents () {
     }
 
     if (mode == Mode::Console)
-        console->update(inputs, getDeltaTime(), getTicks());
+        console->update(inputs, getDeltaTime(), getDeltaTicks());
 }
 
 void System::manageDraw() {
