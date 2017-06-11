@@ -2,7 +2,7 @@
 
 using namespace haz;
 
-Timeline::Timeline(long length, std::vector<std::pair<long, int>> user_anchors) : length(length) {
+Timeline::Timeline(long length, std::vector<std::pair<long, int>> user_anchors, float speed) : length(length), speed(speed) {
     for(std::pair<long, int> const& p : user_anchors) {
         addAnchor(p.first, p.second);
     }
@@ -17,7 +17,7 @@ void Timeline::addAnchor(long time, int state_to_passed) {
 }
 
 int Timeline::update (long ticks) {
-    current_tick = (current_tick + ticks) % length;
+    current_tick = static_cast<long>(current_tick + ticks * speed) % length;
     return updateState();
 }
 
@@ -44,6 +44,10 @@ int Timeline::updateState () {
 
 int Timeline::getState () const {
     return state;
+}
+
+void Timeline::setSpeed (int sp) {
+    speed = sp;
 }
 
 bool Timeline::onState (int st) const {

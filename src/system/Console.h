@@ -21,10 +21,14 @@ class Console {
 public:
 
     Console() : backgroundColor(sf::Color(20, 20, 20)), backgroundColor2(sf::Color(30, 30, 30)), cursorPos(0, 0), 
-        anim_cursor(1000, {
+        anim_cursor(3000, {
             {0, 0},
-            {500, 1}
-        })
+            {500, 1},
+            {1000, 2},
+            {1500, 3},
+            {2000, 4},
+            {2500, 2}
+        }, 3.0)
     {}
 
     ~Console() {}
@@ -73,12 +77,12 @@ public:
         background.setFillColor(backgroundColor2);
         window->draw(background);
         
-        if (anim_cursor.onState(0)) {
+        //if (anim_cursor.onState(0)) {
             sf::RectangleShape cursor ({ pixPerCol, pixPerRow });
-            cursor.setPosition( pixPerCol * cursorPos.x + CONSOLE_BORDER, pixPerRow * cursorPos.y + CONSOLE_BORDER );
+            cursor.setPosition( pixPerCol * (cursorPos.x + anim_cursor.getState()) + CONSOLE_BORDER, pixPerRow * cursorPos.y + CONSOLE_BORDER );
             cursor.setFillColor(sf::Color::White);
             window->draw(cursor);
-        }
+        //}
 
         for (unsigned int row = 0; row < ROWS; ++row) {
             for (unsigned int col = 0; col < COLUMNS; ++col) {
