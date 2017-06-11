@@ -19,8 +19,8 @@ all: build/customEnv
 
 # Main build task
 build/customEnv: $(BUILD_DIR) $(OBJ)
-	@echo -n "\033[32m"
-	g++ $(FLAGS) $(OBJ) -o $(DEST) $(LIBS)
+	@echo "\033[32m\033[1m :: Linking of all objects\033[0m"
+	@g++ $(FLAGS) $(OBJ) -o $(DEST) $(LIBS)
 	@echo -n "\033[34m"
 	@echo "---------------"
 	@echo "Build finished!"
@@ -28,7 +28,8 @@ build/customEnv: $(BUILD_DIR) $(OBJ)
 	@echo -n "\033[0m"
 
 build/%.o: %.cpp
-	g++ -c $(OPTIM) $(FLAGS) -o "$@" "$<"
+	@echo "\033[1m :: Building" "$<" "\033[0m"
+	@g++ -c $(OPTIM) $(FLAGS) -o "$@" "$<"
 
 $(BUILD_DIR):
 	@mkdir -p $@
