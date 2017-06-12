@@ -10,10 +10,6 @@
 
 #define CONSOLE_BORDER 50
 
-#define UNICODE_ENTER 13
-#define UNICODE_SUPR 127
-#define UNICODE_BACKSPACE 8
-
 namespace haz {
 
 template<std::size_t ROWS, std::size_t COLUMNS>
@@ -21,15 +17,23 @@ class Console {
 public:
 
     Console() : backgroundColor(sf::Color(20, 20, 20)), backgroundColor2(sf::Color(30, 30, 30)), cursorPos(0, 0), 
-        anim_cursor(3000, {
+        anim_cursor(1000, {
             {0, 0},
-            {500, 1},
-            {1000, 2},
-            {1500, 3},
-            {2000, 4},
-            {2500, 2}
-        }, 3.0)
-    {}
+            {500, 1}
+        })
+    {
+        logger->ENTERING({});
+
+        for (int i = 0; i < 128; i++) {
+            if (i % 16 == 0) {
+                cursorPos.y ++;
+                cursorPos.x = 0;
+            }
+            writeUnicode(static_cast<char>(i));
+        }
+
+        logger->EXITING("void");
+    }
 
     ~Console() {}
 
@@ -59,7 +63,7 @@ public:
             anim_cursor.reset();
             for (sf::Uint32& u : texts) {
                 if (u < 128)
-                    write(u);
+                    writeUnicode(u);
                 else
                     logger->WARN("Unicode above 128");
             }
@@ -77,12 +81,12 @@ public:
         background.setFillColor(backgroundColor2);
         window->draw(background);
         
-        //if (anim_cursor.onState(0)) {
+        if (anim_cursor.onState(0)) {
             sf::RectangleShape cursor ({ pixPerCol, pixPerRow });
-            cursor.setPosition( pixPerCol * (cursorPos.x + anim_cursor.getState()) + CONSOLE_BORDER, pixPerRow * cursorPos.y + CONSOLE_BORDER );
+            cursor.setPosition( pixPerCol * cursorPos.x + CONSOLE_BORDER, pixPerRow * cursorPos.y + CONSOLE_BORDER );
             cursor.setFillColor(sf::Color::White);
             window->draw(cursor);
-        //}
+        }
 
         for (unsigned int row = 0; row < ROWS; ++row) {
             for (unsigned int col = 0; col < COLUMNS; ++col) {
@@ -116,6 +120,42 @@ private:
     sf::Vector2i cursorPos;
 
     Timeline anim_cursor;
+
+    enum class Unicode {
+        NUL                         = 0,
+        StartOfHeader               = 1,
+        StartOfText                 = 2,
+        EndOfText                   = 3,
+        EndOfTransmission           = 4,
+        Enquiry                     = 5,
+        Acknowledge                 = 6,
+        Bell                        = 7,
+        Backspace                   = 8,
+        HorizontalTabulation        = 9,
+        NewLine                     = 10,
+        VerticalTabulation          = 11,
+        FormFeed                    = 12,
+        Carriagereturn              = 13,
+        ShiftOut                    = 14,
+        ShiftIn                     = 15,
+        DataLinkEscape              = 16,
+        DevControl1                 = 17,
+        DevControl2                 = 18,
+        DevControl3                 = 19,
+        DevControl4                 = 20,
+        NegAcknowledge              = 21,
+        SynchronousIdle             = 22,
+        EndOfTransmissionBlock      = 23,
+        Cancel                      = 24,
+        EndOfMedium                 = 25,
+        Substitute                  = 26,
+        Escape                      = 27,
+        FileSeparator               = 28,
+        GroupSeparator              = 29,
+        RecordSeparator             = 30,
+        UnitSeparator               = 31,
+        Delete                      = 127
+    };
 
     gridInfos& gridAt() {
         return gridAt(cursorPos.x, cursorPos.y);
@@ -153,19 +193,26 @@ private:
         //logger->DEBUG("Cursor (" + stringify(cursorPos.x) + ", " + stringify(cursorPos.y) + ")");
     }
 
-    void write (char c) {
-        logger->DEBUG("Write '" + stringify(static_cast<int>(c)) + "'");
-        if (c == UNICODE_ENTER) {
+    void writeUnicode (char c) {
+        if (c >= 32 && c < 127)
+            return write (c);
+
+        Unicode u = static_cast<Unicode>(c);
+
+        if (u == Unicode::Carriagereturn)
             enter();
-        } else if (c == UNICODE_BACKSPACE) {
+        else if (u == Unicode::Backspace)
             backspace();
-        }
-        else if (c == UNICODE_SUPR) {
+        else if (u == Unicode::Delete)
             supr();
-        } else {
-            gridAt().c = c;
-            advanceCursor();
-        }
+
+        logger->WARN("Unicode has not been porcessed (" + stringify(static_cast<int>(c)) + ")");
+    }
+
+    void write (char c) {
+        //logger->DEBUG("Write '" + stringify(static_cast<int>(c)) + "'");
+        gridAt().c = c;
+        advanceCursor();
     }
 
     void enter () {
