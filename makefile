@@ -104,7 +104,7 @@ bash:
 # Equivalent of make again but only on bash folder
 lbash:
 	@make bash
-	@make all
+	@make run
 
 # Recompile the utilities folder
 utilities:
@@ -115,7 +115,7 @@ utilities:
 # Equivalent of make again but only on utilities folder
 lutilities:
 	@make utilities
-	@make all
+	@make run
 
 # Recompile the system folder
 system:
@@ -126,4 +126,4 @@ system:
 # Equivalent of make again but only on system folder
 lsystem:
 	@make system
-	@make all
+	@make run
