@@ -200,11 +200,11 @@ private:
         Unicode u = static_cast<Unicode>(c);
 
         if (u == Unicode::Carriagereturn)
-            enter();
-        else if (u == Unicode::Backspace)
-            backspace();
-        else if (u == Unicode::Delete)
-            supr();
+            return enter();
+        if (u == Unicode::Backspace)
+            return backspace();
+        if (u == Unicode::Delete)
+            return supr();
 
         logger->WARN("Unicode has not been porcessed (" + stringify(static_cast<int>(c)) + ")");
     }
