@@ -4,9 +4,15 @@
 #include <logger.h>
 #include <SFML/Graphics.hpp>
 #include <array>
+#include <algorithm>
+#include <vector>
+#include <functional>
+
 #include "Inputs.h"
 #include "Loader.h"
 #include "../utilities/Timeline.h"
+#include "../bash/Context.h"
+#include "../bash/Interpreter.h"
 
 #define CONSOLE_BORDER 50
 #define CHAR_OFFSET_Y 3
@@ -17,35 +23,47 @@ template<int ROWS, int COLUMNS>
 class Console {
 public:
 
-    Console() : backgroundColor(sf::Color(20, 20, 20)), backgroundColor2(sf::Color(30, 30, 30)), cursorPos(0, 0), 
+    Console() : backgroundColor(sf::Color(20, 20, 20)), backgroundColor2(sf::Color(30, 30, 30)), cursorX(0), cursorY(0), 
         anim_cursor(1000, {
             {0, 0},
             {500, 1}
-        })
+        }),
+        context(interpreter.createContext("SYSTEM"))
     {}
 
     ~Console() {}
 
+    void initialize() {
+        bash::Context::printer_t new_printer = [this] (std::string str) {
+            logger->DEBUG("About to print : \"" + str + "\"");
+            for (char& c : str)
+                writeUnicode(c);
+        };
+
+        context.setPrinter(new_printer);
+        startCmdLine();
+    }
+
     void update (Inputs const& inputs, sf::Time, long deltaticks) {
         anim_cursor.update(deltaticks);
-
-        if (cursorPos.x > 0 && inputs.isKeyPressed(Inputs::KeyCode::Left)) {
-            cursorPos.x--;
+/*
+        if (cursorX > 0 && inputs.isKeyPressed(Inputs::KeyCode::Left)) {
+            cursorX--;
             anim_cursor.reset();
         }
-        if (cursorPos.x < COLUMNS - 1 && inputs.isKeyPressed(Inputs::KeyCode::Right)) {
-            cursorPos.x++;
+        if (cursorX < COLUMNS - 1 && inputs.isKeyPressed(Inputs::KeyCode::Right)) {
+            cursorX++;
             anim_cursor.reset();
         }
-        if (cursorPos.y < ROWS - 1 && inputs.isKeyPressed(Inputs::KeyCode::Down)) {
-            cursorPos.y++;
+        if (cursorY < ROWS - 1 && inputs.isKeyPressed(Inputs::KeyCode::Down)) {
+            cursorY++;
             anim_cursor.reset();
         }
-        if (cursorPos.y > 0 && inputs.isKeyPressed(Inputs::KeyCode::Up)) {
-            cursorPos.y--;
+        if (cursorY > 0 && inputs.isKeyPressed(Inputs::KeyCode::Up)) {
+            cursorY--;
             anim_cursor.reset();
         }
-
+*/
         // TextEvent :
         auto texts = inputs.getTextEntered();
         if (!texts.empty()) {
@@ -72,20 +90,20 @@ public:
         
         if (anim_cursor.onState(0)) {
             sf::RectangleShape cursor ({ pixPerCol, pixPerRow });
-            cursor.setPosition( pixPerCol * cursorPos.x + CONSOLE_BORDER, pixPerRow * cursorPos.y + CONSOLE_BORDER );
+            cursor.setPosition( pixPerCol * cursorX + CONSOLE_BORDER, pixPerRow * cursorY + CONSOLE_BORDER );
             cursor.setFillColor(sf::Color::White);
             window->draw(cursor);
         }
 
-        for (unsigned int row = 0; row < ROWS; ++row) {
-            for (unsigned int col = 0; col < COLUMNS; ++col) {
+        for (int row = 0; row < ROWS; ++row) {
+            for (int col = 0; col < COLUMNS; ++col) {
                 gridInfos& info = gridAt(col, row);
                 if (info.c != 0) {
                     //logger->DEBUG("Draw a character at (" + stringify(col) + ", " + stringify(row) + ")");
                     sf::String letter(info.c);
                     sf::Text letterTxt(letter, loader->getFont("courrier_new"), pixPerRow - 2);
                     letterTxt.setPosition(pixPerCol * col + CONSOLE_BORDER, pixPerRow * row + CONSOLE_BORDER - CHAR_OFFSET_Y);
-                    if (anim_cursor.onState(0) && cursorPos == sf::Vector2i(col, row))
+                    if (anim_cursor.onState(0) && cursorX == col && cursorY == row)
                         letterTxt.setColor(backgroundColor2);
                     else
                         letterTxt.setColor(sf::Color::White);
@@ -216,7 +234,7 @@ private:
 //                          Helper functions
 
     gridInfos& gridAt() {
-        return gridAt(cursorPos.x, cursorPos.y);
+        return gridAt(cursorX, cursorY);
     }
 
     gridInfos& gridAt(int col, int row) {
@@ -226,42 +244,93 @@ private:
 
 // ======================================== CURSOR ========================================
 //                          Position
-    sf::Vector2i cursorPos;
+    int cursorX, cursorY;
 
 //                          Animation Helper
     Timeline anim_cursor;
 
+// ======================================== INTERPRETER ========================================
+//                          Line Header
+    std::vector<char> lineHeader = {'U', 's', 'e', 'r', ' ', '>', '>', ' '};
+    bash::Interpreter interpreter;
+    bash::Context context;
+
+//                          Recording
+    int recordX, recordY;
+
+    void startRecording () {
+        recordX = cursorX;
+        recordY = cursorY;
+    }
+
+    std::string stopRecording () {
+        std::string records = {};
+        
+        grid_iterator_t cur = grid_iterator.at(cursorX, cursorY);
+        records.push_back(cur.info->c);
+        while(!cur.out_of_bound() && (cur.row != recordY || cur.col != recordX)) {
+            cur.prev();
+            records.push_back(cur.info->c);
+        }
+
+        std::reverse(records.begin(), records.end());
+        return records;
+    }
+
+    void startCmdLine () {
+        writeUnicodes(lineHeader);
+        startRecording();
+    }
+
+    void stopCmdLine (bool auto_new_line = true) {
+        std::string cmd = stopRecording();
+        //logger->DEBUG("Command enter : \"" +  cmd + "\"");
+        if (auto_new_line) {
+            cursorX = 0;
+            cursorY++;
+        }
+
+        interpreter.run(cmd, context);
+
+    }
+
+// ======================================== OTHER ========================================
 //                          Helper functions
     void advanceCursor (int count = 1) {
         if (count > 0) {
             for (int cur = 0; cur < count; cur++) {
-                cursorPos.x ++;
-                if (cursorPos.x >= COLUMNS) {
-                    cursorPos.x = 0;
-                    cursorPos.y++;
+                cursorX ++;
+                if (cursorX >= COLUMNS) {
+                    cursorX = 0;
+                    cursorY++;
                     // TODO: OVERFLOW y
-                    if(cursorPos.y >= ROWS)
-                        cursorPos.y = 0;
+                    if(cursorY >= ROWS)
+                        cursorY = 0;
                 }
             } 
         } else {
             for (int cur = 0; cur > count; cur--) {
-                cursorPos.x --;
-                if (cursorPos.x < 0) {
-                    cursorPos.x = COLUMNS - 1;
-                    cursorPos.y--;
+                cursorX --;
+                if (cursorX < 0) {
+                    cursorX = COLUMNS - 1;
+                    cursorY--;
                     // TODO: OVERFLOW y
-                    if(cursorPos.y < 0)
-                        cursorPos.y = ROWS - 1;
+                    if(cursorY < 0)
+                        cursorY = ROWS - 1;
                 }
             } 
         }
 
-        //logger->DEBUG("Cursor (" + stringify(cursorPos.x) + ", " + stringify(cursorPos.y) + ")");
+        //logger->DEBUG("Cursor (" + stringify(cursorX) + ", " + stringify(cursorY) + ")");
     }
 
     bool writable (char c) {
         return c >= 32 && c < 127;
+    }
+
+    void writeUnicodes (std::vector<char> cs) {
+        for (auto c : cs)
+            writeUnicode(c);
     }
 
     void writeUnicode (char c) {
@@ -301,12 +370,13 @@ private:
     }
 
     void enter () {
-        grid_iterator_t cursor_it = grid_iterator.at(cursorPos.x, cursorPos.y);
-        if (cursorPos.y + 1 == ROWS) {
+        /*
+        grid_iterator_t cursor_it = grid_iterator.at(cursorX, cursorY);
+        if (cursorY + 1 == ROWS) {
             // TODO : move all console lines upward
             return logger->ERROR("Row overflow");
         }
-        grid_iterator_t line_it = grid_iterator.at(0, cursorPos.y + 1);
+        grid_iterator_t line_it = grid_iterator.at(0, cursorY + 1);
 
         // copy cursor_it to line_it
         // until cursor_it is pointing on a zero gridInfo, then stop the process and place the cursor
@@ -317,17 +387,21 @@ private:
             line_it.next();
             cursor_it.next();
         }
-        cursorPos.x = 0;
-        cursorPos.y = line_it.row;
+        cursorX = 0;
+        cursorY = line_it.row;*/
+        stopCmdLine();
+        cursorX = 0;
+        cursorY++;
+        startCmdLine();
     }
 
     void backspace() {
         advanceCursor(-1);
-        deleteChar(cursorPos.x, cursorPos.y);
+        deleteChar(cursorX, cursorY);
     }
 
     void supr() {
-        deleteChar(cursorPos.x, cursorPos.y);
+        deleteChar(cursorX, cursorY);
     }
 };
 

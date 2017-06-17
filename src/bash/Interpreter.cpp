@@ -7,7 +7,7 @@ using namespace haz;
 //      =====   INTERPRETER    =====
 
 Interpreter::Interpreter () {
-    logger->setLevel(Level::CONFIG);
+    logger->setLevel(Level::TRACE);
     initStdFunc();
 }
 
@@ -20,7 +20,7 @@ void Interpreter::initStdFunc() {
 void Interpreter::interactive () {
     logger->ENTERING({});
     std::string cmd;
-    Context ctx(&stdFuncs, "BASH", {});
+    Context ctx = createContext("BASH");
 
     while (!std::cin.eof()) {
         std::cout << INTERACTIVE_PREFIXE;
@@ -38,7 +38,7 @@ void Interpreter::interactive () {
 
 void Interpreter::run(std::string code, Context& ctx) {
     logger->ENTERING({"Context*"});
-    logger->CONFIG("Running code : " + code);
+    logger->CONFIG("Running code : \"" + code + "\"");
 
     logger->TRACE("Tokenize");
     auto l = LexicalAnalyzer(code);            
@@ -61,3 +61,7 @@ void Interpreter::runTest () {
     logger->DEBUG("Run Test (Nothing)");
 }
 
+
+Context Interpreter::createContext (std::string name) {
+    return Context(&stdFuncs, name, {});
+}

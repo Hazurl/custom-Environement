@@ -45,6 +45,8 @@ void System::start() {
     if (!window)
         return logger->RET("void");
 
+    manageInitialization();
+
     while (window->isOpen()) {
         time = clock.restart();
         deltaticks = time.asMilliseconds();
@@ -57,6 +59,11 @@ void System::start() {
     }
 
     logger->EXITING("void");
+}
+
+void System::manageInitialization() {
+    if (mode == Mode::Console)
+        console->initialize();
 }
 
 void System::manageWindowEvents () {
