@@ -9,10 +9,11 @@
 #include "../utilities/Timeline.h"
 
 #define CONSOLE_BORDER 50
+#define CHAR_OFFSET_Y 3
 
 namespace haz {
 
-template<std::size_t ROWS, std::size_t COLUMNS>
+template<int ROWS, int COLUMNS>
 class Console {
 public:
 
@@ -21,19 +22,7 @@ public:
             {0, 0},
             {500, 1}
         })
-    {
-        logger->ENTERING({});
-
-        for (int i = 0; i < 128; i++) {
-            if (i % 16 == 0) {
-                cursorPos.y ++;
-                cursorPos.x = 0;
-            }
-            writeUnicode(static_cast<char>(i));
-        }
-
-        logger->EXITING("void");
-    }
+    {}
 
     ~Console() {}
 
@@ -95,8 +84,11 @@ public:
                     //logger->DEBUG("Draw a character at (" + stringify(col) + ", " + stringify(row) + ")");
                     sf::String letter(info.c);
                     sf::Text letterTxt(letter, loader->getFont("courrier_new"), pixPerRow - 2);
-                    letterTxt.setPosition(pixPerCol * col + CONSOLE_BORDER, pixPerRow * row + CONSOLE_BORDER);
-                    letterTxt.setColor(sf::Color::White);
+                    letterTxt.setPosition(pixPerCol * col + CONSOLE_BORDER, pixPerRow * row + CONSOLE_BORDER - CHAR_OFFSET_Y);
+                    if (anim_cursor.onState(0) && cursorPos == sf::Vector2i(col, row))
+                        letterTxt.setColor(backgroundColor2);
+                    else
+                        letterTxt.setColor(sf::Color::White);
                     window->draw(letterTxt);
                 }
             }
@@ -109,17 +101,77 @@ public:
 
 private:
     Logger* logger = &Logger::get("#.Console");
+
+// ======================================== CONSOLE CONFIGURATION ========================================
+//                          Colors
     sf::Color backgroundColor;
     sf::Color backgroundColor2;
 
+// ======================================== GRID ========================================
     struct gridInfos {
         char c = 0;
     };
 
-    std::array< std::array< gridInfos, ROWS>, COLUMNS> grid;
-    sf::Vector2i cursorPos;
+    struct grid_iterator_t {
+        Console* C = nullptr;
+        int col = 0, row = 0;
+        gridInfos* info = &C->gridAt(0, 0);
 
-    Timeline anim_cursor;
+        void next () {
+            col ++;
+            if (col >= COLUMNS) {
+                col = 0;
+                row++;
+                if(row >= ROWS) {
+                    col = row = 0;
+                    info = nullptr;
+                    return;
+                }
+            }
+            info = &C->gridAt(col, row);
+        }
+
+        void prev () {
+            col --;
+            if (col < 0) {
+                col = COLUMNS - 1;
+                row--;
+                if(row < 0) {
+                    col = COLUMNS - 1;
+                    row = ROWS - 1;
+                    info = nullptr;
+                    return;
+                }
+            }
+            info = &C->gridAt(col, row);
+        }
+
+        bool out_of_bound() {
+            return info == nullptr;
+        }
+
+        grid_iterator_t at (int col, int row) const {
+            return grid_iterator_t{C, col, row, &C->gridAt(col, row)};
+        }
+
+        grid_iterator_t begin () const {
+            return grid_iterator_t{C, 0, 0, &C->gridAt(0, 0)};
+        }
+
+        grid_iterator_t end () const {
+            return grid_iterator_t{C, 0, 0, nullptr};
+        }
+
+        grid_iterator_t rbegin () const {
+            return grid_iterator_t{C, COLUMNS - 1, ROWS - 1, &C->gridAt(COLUMNS - 1, ROWS - 1)};
+        }
+
+        grid_iterator_t rend () const {
+            return grid_iterator_t{C, COLUMNS - 1, ROWS - 1, nullptr};
+        }
+    };
+
+    const grid_iterator_t grid_iterator{this, 0, 0, &gridAt(0, 0)};
 
     enum class Unicode {
         NUL                         = 0,
@@ -157,6 +209,10 @@ private:
         Delete                      = 127
     };
 
+    std::array< std::array< gridInfos, ROWS>, COLUMNS> grid;
+
+//                          Helper functions
+
     gridInfos& gridAt() {
         return gridAt(cursorPos.x, cursorPos.y);
     }
@@ -165,6 +221,15 @@ private:
         return grid[col][row];
     }
 
+
+// ======================================== CURSOR ========================================
+//                          Position
+    sf::Vector2i cursorPos;
+
+//                          Animation Helper
+    Timeline anim_cursor;
+
+//                          Helper functions
     void advanceCursor (int count = 1) {
         if (count > 0) {
             for (int cur = 0; cur < count; cur++) {
@@ -193,8 +258,12 @@ private:
         //logger->DEBUG("Cursor (" + stringify(cursorPos.x) + ", " + stringify(cursorPos.y) + ")");
     }
 
+    bool writable (char c) {
+        return c >= 32 && c < 127;
+    }
+
     void writeUnicode (char c) {
-        if (c >= 32 && c < 127)
+        if (writable(c))
             return write (c);
 
         Unicode u = static_cast<Unicode>(c);
@@ -206,7 +275,21 @@ private:
         if (u == Unicode::Delete)
             return supr();
 
-        logger->WARN("Unicode has not been porcessed (" + stringify(static_cast<int>(c)) + ")");
+        //logger->WARN("Unicode has not been porcessed (" + stringify(static_cast<int>(c)) + ")");
+    }
+
+    void deleteChar (int col, int row) {
+        grid_iterator_t it = grid_iterator.at(col, row);
+        if (it.out_of_bound())
+            return logger->WARN("Trying to delete a non-existing character");
+
+        do {
+            gridInfos* prev = it.info;
+            it.next();
+            if (it.out_of_bound())
+                return;
+            *prev = *it.info;
+        } while(it.info->c != 0);
     }
 
     void write (char c) {
@@ -221,12 +304,11 @@ private:
 
     void backspace() {
         advanceCursor(-1);
-        gridAt().c = 0;
-        // TODO: move all the line to the left
+        deleteChar(cursorPos.x, cursorPos.y);
     }
 
     void supr() {
-        gridAt(cursorPos.x, cursorPos.y).c = 0;
+        deleteChar(cursorPos.x, cursorPos.y);
     }
 };
 
