@@ -117,7 +117,7 @@ private:
         int col = 0, row = 0;
         gridInfos* info = &C->gridAt(0, 0);
 
-        void next () {
+        grid_iterator_t& next () {
             col ++;
             if (col >= COLUMNS) {
                 col = 0;
@@ -125,13 +125,14 @@ private:
                 if(row >= ROWS) {
                     col = row = 0;
                     info = nullptr;
-                    return;
+                    return *this;
                 }
             }
             info = &C->gridAt(col, row);
+            return *this;
         }
 
-        void prev () {
+        grid_iterator_t& prev () {
             col --;
             if (col < 0) {
                 col = COLUMNS - 1;
@@ -140,10 +141,11 @@ private:
                     col = COLUMNS - 1;
                     row = ROWS - 1;
                     info = nullptr;
-                    return;
+                    return *this;
                 }
             }
             info = &C->gridAt(col, row);
+            return *this;
         }
 
         bool out_of_bound() {
@@ -275,7 +277,7 @@ private:
         if (u == Unicode::Delete)
             return supr();
 
-        //logger->WARN("Unicode has not been porcessed (" + stringify(static_cast<int>(c)) + ")");
+        logger->WARN("Unicode has not been porcessed (" + stringify(static_cast<int>(c)) + ")");
     }
 
     void deleteChar (int col, int row) {
@@ -299,7 +301,24 @@ private:
     }
 
     void enter () {
-        advanceCursor(COLUMNS - cursorPos.x);
+        grid_iterator_t cursor_it = grid_iterator.at(cursorPos.x, cursorPos.y);
+        if (cursorPos.y + 1 == ROWS) {
+            // TODO : move all console lines upward
+            return logger->ERROR("Row overflow");
+        }
+        grid_iterator_t line_it = grid_iterator.at(0, cursorPos.y + 1);
+
+        // copy cursor_it to line_it
+        // until cursor_it is pointing on a zero gridInfo, then stop the process and place the cursor
+        while (!cursor_it.out_of_bound() && cursor_it.info->c != 0) {
+            *line_it.info = *cursor_it.info;
+            *cursor_it.info = gridInfos{0};
+
+            line_it.next();
+            cursor_it.next();
+        }
+        cursorPos.x = 0;
+        cursorPos.y = line_it.row;
     }
 
     void backspace() {
