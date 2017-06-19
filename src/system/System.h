@@ -48,6 +48,7 @@ private:
 
     void start ();
     void close ();
+    void manageInitialization();
     void manageWindowEvents ();
     void manageDraw();
 

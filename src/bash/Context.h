@@ -7,6 +7,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <logger.h>
+#include <functional>
 #include "Value.h"
 
 using namespace haz;
@@ -15,8 +16,12 @@ namespace bash {
 
 class Context {
 public:
+    typedef std::function<void(std::string)> printer_t;
+
     Context(std::map<std::string, void (*) (Context&)>* funcs, std::string progName, std::vector<Value> params);
     ~Context();
+
+    void setPrinter (printer_t printer);
 
     Value getParam(unsigned long i);
 
@@ -33,6 +38,9 @@ private:
     std::vector<Value> params;
 
     std::map<std::string, void (*) (Context&)>* funcs = nullptr;
+
+    printer_t printer;
+    static void defaultPrint (std::string str);
 };
 
 }; // namespace bash

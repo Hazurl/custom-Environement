@@ -3,8 +3,8 @@
 using namespace bash;
 using namespace haz;
 
-Context::Context(std::map<std::string, void (*) (Context&)>* funcs, std::string progName, std::vector<Value> params) : funcs(funcs) {
-    logger->setLevel(Level::WARNING);
+Context::Context(std::map<std::string, void (*) (Context&)>* funcs, std::string progName, std::vector<Value> params) : funcs(funcs), printer(&Context::defaultPrint) {
+    logger->setLevel(Level::CONFIG);
 
     setVar("$0", Value(progName));
 
@@ -44,7 +44,7 @@ std::string Context::to_string () {
 }
 
 void Context::print(Value const& v) {
-    std::cout << v.to_string() << std::endl;
+    printer(v.to_string());
 }
 
 void Context::call(std::string name, std::vector<Value> args) {
@@ -52,5 +52,15 @@ void Context::call(std::string name, std::vector<Value> args) {
         logger->THROWEXCEPTION(std::runtime_error, "Cannot call : " + name);
 
     Context ctx(funcs, name, args);
+    ctx.setPrinter(printer);
     (*funcs)[name](ctx);
+}
+
+void Context::setPrinter (printer_t new_printer) {
+    logger->CONFIG("Change printer");
+    this->printer = new_printer;
+}
+
+void Context::defaultPrint(std::string str) {
+    std::cout << str << std::endl;
 }

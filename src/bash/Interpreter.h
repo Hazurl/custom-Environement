@@ -31,6 +31,8 @@ public:
     void                    interactive                 ();
     void                    runTest                     ();
     void                    run                         (std::string code, Context& ctx);
+
+    Context                 createContext               (std::string name);
 private:  
 
     Logger* logger = &Logger::get("#.Interpreter");
